@@ -11,11 +11,14 @@
     "pipeline:weekly": "tsx src/pipeline/run.ts --schedule weekly",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.pipeline.json --noEmit && tsc -p tsconfig.worker.json --noEmit"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240405.0",
     "fflate": "^0.8.2",
+    "vitest": "^2.0.0",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "yaml": "^2.4.0",

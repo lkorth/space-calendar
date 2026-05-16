@@ -83,50 +83,53 @@ const INNER_PLANETS = [
   { id: '299', name: 'Venus', minElongation: 40 },
 ];
 
+/** Find opposition dates from a daily elongation series (outer planets) */
+export function findOppositions(entries: EphemerisEntry[]): EphemerisEntry[] {
+  const results: EphemerisEntry[] = [];
+  for (let i = 1; i < entries.length - 1; i++) {
+    const prev = entries[i - 1]!;
+    const curr = entries[i]!;
+    const next = entries[i + 1]!;
+    if (curr.elongation > prev.elongation && curr.elongation > next.elongation && curr.elongation > 170) {
+      results.push(curr);
+    }
+  }
+  return results;
+}
+
+/** Find greatest elongation dates from a daily elongation series (inner planets) */
+export function findGreatestElongations(entries: EphemerisEntry[], minElongation: number): EphemerisEntry[] {
+  const results: EphemerisEntry[] = [];
+  for (let i = 1; i < entries.length - 1; i++) {
+    const prev = entries[i - 1]!;
+    const curr = entries[i]!;
+    const next = entries[i + 1]!;
+    if (curr.elongation > prev.elongation && curr.elongation > next.elongation && curr.elongation >= minElongation) {
+      results.push(curr);
+    }
+  }
+  return results;
+}
+
 export async function fetchPlanetaryEvents(year: number): Promise<PlanetaryEvent[]> {
   const events: PlanetaryEvent[] = [];
 
   for (const planet of OUTER_PLANETS) {
     const entries = await fetchElongation(planet.id, year);
-    // Opposition = elongation peaks above 170° (daily step, so find max)
-    for (let i = 1; i < entries.length - 1; i++) {
-      const prev = entries[i - 1]!;
-      const curr = entries[i]!;
-      const next = entries[i + 1]!;
-      if (
-        curr.elongation > prev.elongation &&
-        curr.elongation > next.elongation &&
-        curr.elongation > 170
-      ) {
-        events.push({
-          name: planet.name,
-          date: curr.date,
-          type: 'opposition',
-          elongation: curr.elongation,
-        });
-      }
+    for (const entry of findOppositions(entries)) {
+      events.push({ name: planet.name, date: entry.date, type: 'opposition', elongation: entry.elongation });
     }
   }
 
   for (const planet of INNER_PLANETS) {
     const entries = await fetchElongation(planet.id, year);
-    // Greatest elongation = local maximum above the minimum threshold
-    for (let i = 1; i < entries.length - 1; i++) {
-      const prev = entries[i - 1]!;
-      const curr = entries[i]!;
-      const next = entries[i + 1]!;
-      if (
-        curr.elongation > prev.elongation &&
-        curr.elongation > next.elongation &&
-        curr.elongation >= planet.minElongation
-      ) {
-        events.push({
-          name: planet.name,
-          date: curr.date,
-          type: curr.direction === 'T' ? 'greatest-elongation-east' : 'greatest-elongation-west',
-          elongation: curr.elongation,
-        });
-      }
+    for (const entry of findGreatestElongations(entries, planet.minElongation)) {
+      events.push({
+        name: planet.name,
+        date: entry.date,
+        type: entry.direction === 'T' ? 'greatest-elongation-east' : 'greatest-elongation-west',
+        elongation: entry.elongation,
+      });
     }
   }
 

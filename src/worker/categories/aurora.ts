@@ -7,8 +7,8 @@ export const auroraCategory: Category = {
   slug: 'aurora',
 
   async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
-    const lat = params.lat;
-    if (lat === undefined) return [];
+    if (params.lat === undefined) return [];
+    const lat = Math.round(params.lat);
 
     const kvKey = `aurora:${lat}`;
     const cached = await env.CALENDAR_KV.get(kvKey);

@@ -121,7 +121,7 @@ export function eclipseVisibility(geoLng: number): string {
     return lo <= hi ? l >= lo && l <= hi : l >= lo || l <= hi;
   };
 
-  if (covers(280) || covers(300) || covers(320)) regions.push('Americas');
+  if (covers(260) || covers(290) || covers(310)) regions.push('Americas');
   if (covers(10) || covers(20) || covers(30)) regions.push('Europe & Africa');
   if (covers(80) || covers(100) || covers(120)) regions.push('Asia');
   if (covers(140) || covers(150)) regions.push('Australia');
