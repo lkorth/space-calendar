@@ -1,0 +1,62 @@
+[
+  {
+    "uid": "asteroid-2026-bx4-2026-02-16T15:37:00.000Z@space-calendar",
+    "title": "Asteroid 2026 BX4 — Close Earth Flyby",
+    "start": "2026-02-16T15:37:00.000Z",
+    "end": "2026-02-16T15:37:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 2026 BX4 makes its closest approach to Earth, passing at 7.7 lunar distances (2,941,487 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 7.7× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 21.0, suggesting a diameter of roughly 228 m and a flyby velocity of 10.5 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  },
+  {
+    "uid": "asteroid-2026-bk2-2026-04-22T12:36:00.000Z@space-calendar",
+    "title": "Asteroid 2026 BK2 — Close Earth Flyby",
+    "start": "2026-04-22T12:36:00.000Z",
+    "end": "2026-04-22T12:36:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 2026 BK2 makes its closest approach to Earth, passing at 10.0 lunar distances (3,843,491 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 10.0× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 21.1, suggesting a diameter of roughly 219 m and a flyby velocity of 8.1 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  },
+  {
+    "uid": "asteroid-152637-2026-06-27T11:16:00.000Z@space-calendar",
+    "title": "Asteroid 152637 — Close Earth Flyby",
+    "start": "2026-06-27T11:16:00.000Z",
+    "end": "2026-06-27T11:16:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 152637 makes its closest approach to Earth, passing at 6.7 lunar distances (2,565,839 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 6.7× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 17.9, suggesting a diameter of roughly 947 m and a flyby velocity of 8.9 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  },
+  {
+    "uid": "asteroid-523808-2026-07-04T19:53:00.000Z@space-calendar",
+    "title": "Asteroid 523808 — Close Earth Flyby",
+    "start": "2026-07-04T19:53:00.000Z",
+    "end": "2026-07-04T19:53:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 523808 makes its closest approach to Earth, passing at 9.0 lunar distances (3,476,894 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 9.0× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 19.4, suggesting a diameter of roughly 479 m and a flyby velocity of 16.8 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  },
+  {
+    "uid": "asteroid-2019-ny2-2026-08-10T00:20:00.000Z@space-calendar",
+    "title": "Asteroid 2019 NY2 — Close Earth Flyby",
+    "start": "2026-08-10T00:20:00.000Z",
+    "end": "2026-08-10T00:20:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 2019 NY2 makes its closest approach to Earth, passing at 6.5 lunar distances (2,515,606 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 6.5× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 21.2, suggesting a diameter of roughly 204 m and a flyby velocity of 9.6 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  },
+  {
+    "uid": "asteroid-221455-2026-08-28T15:47:00.000Z@space-calendar",
+    "title": "Asteroid 221455 — Close Earth Flyby",
+    "start": "2026-08-28T15:47:00.000Z",
+    "end": "2026-08-28T15:47:00.000Z",
+    "allDay": false,
+    "description": "Asteroid 221455 makes its closest approach to Earth, passing at 9.3 lunar distances (3,584,833 km). For reference, the Moon is 1 lunar distance away — this asteroid will pass 9.3× farther than the Moon. There is no impact risk.\n\nThe asteroid has an absolute magnitude (H) of 19.5, suggesting a diameter of roughly 443 m and a flyby velocity of 19.0 km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.",
+    "url": "https://cneos.jpl.nasa.gov/ca/",
+    "category": "asteroids"
+  }
+]
