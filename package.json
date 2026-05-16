@@ -18,10 +18,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240405.0",
     "fflate": "^0.8.2",
-    "vitest": "^2.0.0",
+    "vitest": "^4.1.6",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "yaml": "^2.4.0",
-    "wrangler": "^3.50.0"
+    "wrangler": "^4.92.0"
   }
 }
