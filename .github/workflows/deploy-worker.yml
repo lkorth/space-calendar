@@ -9,6 +9,7 @@ on:
       - 'wrangler.toml'
       - 'package.json'
       - 'package-lock.json'
+  workflow_dispatch:
 
 jobs:
   deploy:
