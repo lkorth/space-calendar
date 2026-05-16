@@ -2,6 +2,10 @@ name = "space-calendar"
 main = "src/worker/index.ts"
 compatibility_date = "2024-04-05"
 
+routes = [
+  { pattern = "space-calendar.lukekorth.com", custom_domain = true }
+]
+
 [[kv_namespaces]]
 binding = "CALENDAR_KV"
 id = "759d32e9e73443319985fbf1078cf70b"
