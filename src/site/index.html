@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Space Calendar — Configure Your Feed</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e0e0e8; min-height: 100vh; padding: 2rem 1rem; }
+    .container { max-width: 640px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .subtitle { color: #9090a8; margin-bottom: 2rem; line-height: 1.5; }
+    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin: 1.5rem 0 0.75rem; }
+    .category { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #1a1a2e; }
+    .category:last-child { border-bottom: none; }
+    .category input[type="checkbox"] { margin-top: 3px; accent-color: #7060ff; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+    .category label { cursor: pointer; }
+    .category-name { font-weight: 500; }
+    .category-desc { font-size: 0.85rem; color: #8080a0; margin-top: 2px; }
+    .aurora-location { display: none; margin-top: 0.75rem; padding: 0.75rem; background: #12122a; border-radius: 6px; border: 1px solid #2a2a4a; }
+    .aurora-location input { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
+    .aurora-location input:focus { outline: none; border-color: #7060ff; }
+    .aurora-note { font-size: 0.78rem; color: #6060a0; margin-top: 0.5rem; line-height: 1.4; }
+    .aurora-note a { color: #9080ff; }
+    .output { margin-top: 2rem; padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; }
+    .output-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin-bottom: 0.5rem; }
+    .url-display { font-family: monospace; font-size: 0.8rem; color: #a0a0c0; word-break: break-all; background: #08081a; padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; min-height: 2.5rem; }
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button { padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; font-weight: 500; }
+    .btn-copy { background: #7060ff; color: white; }
+    .btn-copy:hover { background: #8070ff; }
+    .btn-google { background: #1a1a2e; color: #e0e0e8; border: 1px solid #3a3a6a; }
+    .btn-google:hover { background: #2a2a4e; }
+    .empty-msg { color: #6060a0; font-size: 0.9rem; }
+    .copied { background: #306030 !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Space Calendar</h1>
+    <p class="subtitle">Select the categories you want and subscribe in any calendar app that supports ICS feeds — Google Calendar, Apple Calendar, Outlook, and more.</p>
+
+    <div class="section-label">Sky Events</div>
+    <div class="category"><input type="checkbox" id="moon-phases" value="moon-phases" /><label for="moon-phases"><div class="category-name">Moon Phases</div><div class="category-desc">New moon, full moon, and quarter moons</div></label></div>
+    <div class="category"><input type="checkbox" id="meteor-showers" value="meteor-showers" /><label for="meteor-showers"><div class="category-name">Meteor Showers</div><div class="category-desc">Peak activity nights for annual showers</div></label></div>
+    <div class="category"><input type="checkbox" id="eclipses-solar" value="eclipses-solar" /><label for="eclipses-solar"><div class="category-name">Solar Eclipses</div><div class="category-desc">Total, annular, and partial solar eclipses worldwide</div></label></div>
+    <div class="category"><input type="checkbox" id="eclipses-lunar" value="eclipses-lunar" /><label for="eclipses-lunar"><div class="category-name">Lunar Eclipses</div><div class="category-desc">Total, partial, and penumbral lunar eclipses worldwide</div></label></div>
+    <div class="category"><input type="checkbox" id="solstices-equinoxes" value="solstices-equinoxes" /><label for="solstices-equinoxes"><div class="category-name">Solstices & Equinoxes</div><div class="category-desc">The four astronomical seasons</div></label></div>
+
+    <div class="section-label">Planetary Events</div>
+    <div class="category"><input type="checkbox" id="oppositions" value="oppositions" /><label for="oppositions"><div class="category-name">Planetary Oppositions</div><div class="category-desc">Best nights to view Mars, Jupiter, Saturn, and more</div></label></div>
+    <div class="category"><input type="checkbox" id="elongations" value="elongations" /><label for="elongations"><div class="category-name">Mercury & Venus Elongations</div><div class="category-desc">Best windows to spot inner planets</div></label></div>
+    <div class="category"><input type="checkbox" id="asteroids" value="asteroids" /><label for="asteroids"><div class="category-name">Asteroid Close Approaches</div><div class="category-desc">Significant Earth flybys worth tracking</div></label></div>
+    <div class="category"><input type="checkbox" id="comets" value="comets" /><label for="comets"><div class="category-name">Comets</div><div class="category-desc">Perihelion, closest approach, and naked-eye visibility windows</div></label></div>
+
+    <div class="section-label">Launches & History</div>
+    <div class="category"><input type="checkbox" id="launches" value="launches" /><label for="launches"><div class="category-name">Rocket Launches</div><div class="category-desc">Crewed missions, maiden flights, heavy-lift vehicles, and flagship science payloads — no routine launches</div></label></div>
+    <div class="category"><input type="checkbox" id="history" value="history" /><label for="history"><div class="category-name">Space History Milestones</div><div class="category-desc">20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight</div></label></div>
+
+    <div class="section-label">Location-Aware</div>
+    <div class="category">
+      <input type="checkbox" id="aurora" value="aurora" onchange="toggleAuroraLocation(this.checked)" />
+      <label for="aurora" style="flex:1">
+        <div class="category-name">Aurora Borealis Forecasts</div>
+        <div class="category-desc">Events when a storm is forecasted to be visible at your latitude, based on NOAA's 3-day Kp forecast</div>
+        <div class="aurora-location" id="aurora-location">
+          <input type="text" id="zip-input" placeholder="US zip code or Canadian postal code (e.g. 80301 or T2P)" maxlength="7" oninput="onZipInput(this.value)" />
+          <div class="aurora-note">
+            ⚠️ Calendar apps sync every few hours — aurora events 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with <a href="https://www.spaceweatherlive.com/" target="_blank">SpaceWeatherLive</a>.
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <div class="output">
+      <div class="output-label">Your Subscription URL</div>
+      <div class="url-display" id="url-display"><span class="empty-msg">Select at least one category above</span></div>
+      <div class="actions">
+        <button class="btn-copy" id="btn-copy" onclick="copyUrl()" disabled>Copy URL</button>
+        <button class="btn-google" id="btn-google" onclick="addToGoogle()" disabled>Add to Google Calendar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WORKER_BASE = 'https://space-calendar.workers.dev';
+    let resolvedLat = null;
+
+    function toggleAuroraLocation(checked) {
+      document.getElementById('aurora-location').style.display = checked ? 'block' : 'none';
+      update();
+    }
+
+    async function onZipInput(value) {
+      value = value.trim().toUpperCase();
+      if (!value) { resolvedLat = null; update(); return; }
+      const lat = await lookupLatitude(value);
+      resolvedLat = lat !== null ? Math.round(lat) : null;
+      update();
+    }
+
+    async function lookupLatitude(zip) {
+      try {
+        const res = await fetch('zip-latitudes.json');
+        const db = await res.json();
+        const key = zip.replace(/\s+/g, '').toUpperCase().slice(0, zip.length >= 5 && /^\d/.test(zip) ? 5 : 3);
+        return db[key] ?? null;
+      } catch { return null; }
+    }
+
+    function getSelectedCategories() {
+      return Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(el => el.value);
+    }
+
+    function buildUrl(categories, lat) {
+      const url = new URL('/feed.ics', WORKER_BASE);
+      url.searchParams.set('c', categories.join(','));
+      if (categories.includes('aurora') && lat !== null) url.searchParams.set('lat', lat);
+      return url.toString();
+    }
+
+    function update() {
+      const categories = getSelectedCategories();
+      const auroraSelected = categories.includes('aurora');
+      const auroraReady = !auroraSelected || resolvedLat !== null;
+      const ready = categories.length > 0 && auroraReady;
+
+      const display = document.getElementById('url-display');
+      const btnCopy = document.getElementById('btn-copy');
+      const btnGoogle = document.getElementById('btn-google');
+
+      if (categories.length === 0) {
+        display.innerHTML = '<span class="empty-msg">Select at least one category above</span>';
+      } else if (auroraSelected && resolvedLat === null) {
+        display.innerHTML = '<span class="empty-msg">Enter a valid zip or postal code for aurora</span>';
+      } else {
+        display.textContent = buildUrl(categories, resolvedLat);
+      }
+
+      btnCopy.disabled = !ready;
+      btnGoogle.disabled = !ready;
+    }
+
+    function copyUrl() {
+      const url = buildUrl(getSelectedCategories(), resolvedLat);
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById('btn-copy');
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy URL'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function addToGoogle() {
+      const url = buildUrl(getSelectedCategories(), resolvedLat);
+      const googleUrl = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(url);
+      window.open(googleUrl, '_blank');
+    }
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (el.id !== 'aurora') el.addEventListener('change', update);
+    });
+  </script>
+</body>
+</html>

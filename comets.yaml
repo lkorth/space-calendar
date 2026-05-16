@@ -1,0 +1,21 @@
+# Notable comets for the calendar.
+# Add entries here when a comet is discovered or confirmed as naked-eye visible.
+# The weekly generator will fetch updated JPL data for each listed comet.
+#
+# Fields:
+#   designation:     JPL designation (e.g. "C/2023 A3")
+#   name:            Common display name
+#   perihelion:      ISO 8601 datetime of perihelion (UTC), e.g. "2024-10-07T00:00"
+#   closestApproach: ISO 8601 datetime of closest Earth approach (UTC) — optional
+#   visibilityStart: ISO 8601 date when naked-eye visibility begins — optional
+#   visibilityEnd:   ISO 8601 date when naked-eye visibility ends — optional
+#   url:             Link to authoritative info page
+
+# Example (remove or replace when adding real entries):
+# - designation: "C/2023 A3"
+#   name: "C/2023 A3 (Tsuchinshan-ATLAS)"
+#   perihelion: "2024-09-27T00:00"
+#   closestApproach: "2024-10-12T00:00"
+#   visibilityStart: "2024-10-08"
+#   visibilityEnd: "2024-10-25"
+#   url: "https://cneos.jpl.nasa.gov/comets/"

@@ -1,0 +1,163 @@
+# Space history events for milestone anniversary generation.
+# The pipeline computes which entries fall on a 20/25/50/75/100-year anniversary
+# in the current year and adds them to the calendar.
+#
+# Date format: YYYY-MM-DD (the original event date)
+# Disasters (Apollo 1, Challenger, Columbia) are intentionally excluded per CATEGORIES.md.
+
+- date: "1957-10-04"
+  title: "Sputnik 1 — First Artificial Satellite"
+  description: >
+    The Soviet Union launched Sputnik 1, the first artificial satellite to orbit Earth, on October 4, 1957.
+    The basketball-sized sphere transmitted a simple radio beep that amateur operators around the world
+    could receive — proof that humanity had reached space. The Sputnik shock triggered the Space Race
+    and led directly to the creation of NASA, DARPA, and the rapid expansion of science education worldwide.
+    Nearly every satellite in orbit today — from GPS to weather satellites to the ISS — traces its lineage
+    to this moment.
+  url: "https://history.nasa.gov/sputnik.html"
+
+- date: "1961-04-12"
+  title: "Vostok 1 — Yuri Gagarin Becomes First Human in Space"
+  description: >
+    Soviet cosmonaut Yuri Gagarin became the first human to travel to space and orbit Earth aboard Vostok 1
+    on April 12, 1961. His 108-minute flight — a single orbit at speeds exceeding 27,000 km/h — proved that
+    humans could survive in space. Gagarin returned a global hero. April 12 is now celebrated as Yuri's Night
+    worldwide, and the date was later chosen for the first Space Shuttle flight in 1981.
+  url: "https://www.nasa.gov/history/april-12-1961-the-dawn-of-the-human-space-age/"
+
+- date: "1962-02-20"
+  title: "Friendship 7 — John Glenn First American to Orbit Earth"
+  description: >
+    Astronaut John Glenn became the first American to orbit Earth aboard Friendship 7 on February 20, 1962,
+    completing three orbits in just under five hours. The mission was a pivotal moment in the Space Race
+    and made Glenn a national hero. He later returned to space at age 77 aboard the Space Shuttle Discovery
+    in 1998, becoming the oldest person to fly in space.
+  url: "https://www.nasa.gov/history/friendship-7/"
+
+- date: "1965-03-18"
+  title: "Voskhod 2 — Alexei Leonov Conducts First Spacewalk"
+  description: >
+    Soviet cosmonaut Alexei Leonov performed the first extravehicular activity (EVA) — or spacewalk —
+    on March 18, 1965, spending 12 minutes outside Voskhod 2. His spacesuit swelled so severely from
+    internal pressure that he had to bleed air from it to fit back through the airlock, nearly costing
+    him his life. Spacewalks are now routine and essential for station maintenance and assembly, from
+    Hubble servicing missions to ISS construction.
+  url: "https://www.nasa.gov/history/first-spacewalk/"
+
+- date: "1969-07-20"
+  title: "Apollo 11 — First Humans on the Moon"
+  description: >
+    On July 20, 1969, Neil Armstrong became the first human to set foot on the Moon, followed by Buzz Aldrin,
+    while Michael Collins orbited above in the Command Module. Armstrong's words — "That's one small step for
+    man, one giant leap for mankind" — were broadcast live to roughly 600 million people worldwide. Apollo 11
+    fulfilled President Kennedy's 1961 challenge and remains one of the greatest achievements in human history.
+    The mission returned 21.5 kg of lunar samples and proved that human beings could travel to another world.
+  url: "https://www.nasa.gov/mission/apollo-11/"
+
+- date: "1972-12-11"
+  title: "Apollo 17 — Last Humans to Walk on the Moon (to Date)"
+  description: >
+    Apollo 17, crewed by Gene Cernan, Harrison Schmitt, and Ron Evans, landed in the Taurus-Littrow valley
+    on December 11, 1972. Cernan and Schmitt spent more time on the lunar surface than any previous mission —
+    over 22 hours in three moonwalks — and collected 110 kg of samples. When Cernan stepped back into the
+    lunar module on December 14, he became the last human to stand on the Moon. No humans have returned since.
+  url: "https://www.nasa.gov/mission/apollo-17/"
+
+- date: "1977-08-20"
+  title: "Voyager 2 Launch — Grand Tour of the Outer Planets"
+  description: >
+    NASA launched Voyager 2 on August 20, 1977, on a trajectory that would take advantage of a rare
+    planetary alignment to visit Jupiter, Saturn, Uranus, and Neptune in a single mission. It remains the
+    only spacecraft to have visited Uranus and Neptune. Now over 20 billion km from Earth, Voyager 2 crossed
+    into interstellar space in 2018 and continues to transmit data. Its golden record — containing sounds and
+    images of Earth — was designed to be found by another civilization.
+  url: "https://voyager.jpl.nasa.gov/"
+
+- date: "1977-09-05"
+  title: "Voyager 1 Launch — Now the Most Distant Human-Made Object"
+  description: >
+    Voyager 1 launched on September 5, 1977, just 16 days after its twin. Though launched second, it flew
+    a faster trajectory and overtook Voyager 2 in 1998. It crossed into interstellar space in 2012 and is
+    now the most distant human-made object ever built — over 23 billion km from the Sun and still operating.
+    Its famous "Pale Blue Dot" photograph of Earth, taken in 1990 at Carl Sagan's request, remains one of
+    the most profound images ever made.
+  url: "https://voyager.jpl.nasa.gov/"
+
+- date: "1981-04-12"
+  title: "STS-1 — First Space Shuttle Flight"
+  description: >
+    Space Shuttle Columbia launched on April 12, 1981 — exactly 20 years after Gagarin's flight — carrying
+    astronauts John Young and Bob Crippen on the first orbital test flight of the Space Shuttle system.
+    It was the first American crewed spacecraft to launch without an uncrewed test flight first. The Shuttle
+    flew 135 missions over 30 years, deploying the Hubble Space Telescope, building the ISS, and carrying
+    833 individuals to space.
+  url: "https://www.nasa.gov/history/sts-1/"
+
+- date: "1990-04-24"
+  title: "Hubble Space Telescope — Launch"
+  description: >
+    The Hubble Space Telescope was launched aboard Space Shuttle Discovery on April 24, 1990. After a
+    famously flawed mirror was corrected by astronauts in 1993, Hubble revolutionized astronomy —
+    precisely measuring the expansion of the universe, discovering that expansion is accelerating (dark energy),
+    imaging the deep universe, and producing some of the most iconic scientific images ever captured.
+    More than 1.5 million observations later, Hubble continues to operate and produce discoveries.
+  url: "https://science.nasa.gov/mission/hubble/"
+
+- date: "1998-11-20"
+  title: "International Space Station — First Module Launched (Zarya)"
+  description: >
+    The first module of the International Space Station, Zarya (Russian for "Dawn"), launched on November 20,
+    1998 on a Russian Proton rocket. A product of post-Cold War cooperation between the US, Russia, Europe,
+    Japan, and Canada, the ISS grew into a 420,000 kg laboratory orbiting 400 km above Earth. It has been
+    continuously crewed since November 2000, hosting over 270 people from 21 countries and producing
+    thousands of scientific research papers.
+  url: "https://www.nasa.gov/international-space-station/"
+
+- date: "2004-01-03"
+  title: "Spirit Rover — Landing on Mars"
+  description: >
+    NASA's Spirit rover bounced to a landing in Gusev Crater on Mars on January 3, 2004, beginning what
+    was planned as a 90-day mission. Spirit operated for over six years, travelling 7.73 km and returning
+    more than 124,000 images. Its twin, Opportunity, landed three weeks later and drove over 45 km before
+    going silent in 2018. Together they transformed our understanding of Mars's watery past and paved the
+    way for Curiosity and Perseverance.
+  url: "https://www.nasa.gov/mars-exploration-rover-spirit/"
+
+- date: "2004-01-25"
+  title: "Opportunity Rover — Landing on Mars"
+  description: >
+    NASA's Opportunity rover landed in Meridiani Planum on January 25, 2004. Over 14+ years it drove
+    45.16 km — a planetary distance record — and found compelling evidence of ancient liquid water on Mars,
+    including hematite "blueberries" and layered sedimentary rocks. Its last communication came on June 10,
+    2018, during a global dust storm. Mission controllers sent Opportunity one final message: Billie Holiday's
+    "I'll Be Seeing You."
+  url: "https://www.nasa.gov/mars-exploration-rover-opportunity/"
+
+- date: "2012-08-06"
+  title: "Curiosity Rover — Landing on Mars"
+  description: >
+    NASA's Curiosity rover touched down in Gale Crater on August 6, 2012, using a never-before-tried
+    "sky crane" landing system. A car-sized nuclear-powered rover, Curiosity confirmed that ancient Mars
+    had the chemistry and conditions suitable for microbial life. Still operating after more than a decade,
+    it has climbed Mount Sharp and continues to analyze Martian geology in unprecedented detail.
+  url: "https://mars.nasa.gov/msl/"
+
+- date: "2015-07-14"
+  title: "New Horizons — First Flyby of Pluto"
+  description: >
+    NASA's New Horizons spacecraft made the first-ever close flyby of Pluto on July 14, 2015, after a
+    nine-year, 4.8 billion km journey. The images it returned revealed a world far more complex than imagined:
+    towering nitrogen ice mountains, a vast frozen plain named Tombaugh Regio (the "heart"), and evidence of
+    ongoing geological activity. New Horizons later flew past the Kuiper Belt object Arrokoth in 2019,
+    the most distant object ever explored by a spacecraft.
+  url: "https://www.nasa.gov/mission/new-horizons/"
+
+- date: "2021-12-25"
+  title: "James Webb Space Telescope — Launch"
+  description: >
+    The James Webb Space Telescope launched on December 25, 2021 aboard an Ariane 5 rocket from French Guiana.
+    Twenty years in development and 100 times more powerful than Hubble in infrared light, JWST observes the
+    universe from a point 1.5 million km from Earth. Its first science images, released in July 2022, showed
+    the deepest infrared view of the universe ever captured. JWST is transforming our understanding of galaxy
+    formation, exoplanet atmospheres, and the early universe.
+  url: "https://science.nasa.gov/mission/webb/"

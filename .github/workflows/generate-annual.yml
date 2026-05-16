@@ -1,0 +1,43 @@
+name: Generate Annual Data
+
+on:
+  schedule:
+    - cron: '0 6 1 1 *'  # January 1 at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to generate (defaults to current year)'
+        required: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run annual generators
+        run: npm run pipeline:annual ${{ inputs.year && format('-- --year {0}', inputs.year) || '' }}
+
+      - name: Push to Cloudflare KV
+        run: |
+          for file in data/*.json; do
+            key="static:$(basename "$file" .json)"
+            npx wrangler kv key put --binding CALENDAR_KV "$key" --path "$file"
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Commit generated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: regenerate annual calendar data $(date -u +%Y)"
+          git push
