@@ -1,7 +1,7 @@
 const BASE = 'https://aa.usno.navy.mil/api';
 
 export interface MoonPhase {
-  phaseday: number;
+  day: number;
   phase: string;
   time: string;
   month: number;
@@ -17,9 +17,6 @@ export interface EclipseEvent {
   year: number;
   month: number;
   day: number;
-  time: string;
-  /** Visibility region description */
-  region?: string;
 }
 
 export interface EclipsesResponse {
@@ -63,13 +60,7 @@ export const usno = {
   solarEclipses: (year: number) =>
     get<EclipsesResponse>(`/eclipses/solar/year?year=${year}`),
 
-  lunarEclipses: (year: number) =>
-    get<EclipsesResponse>(`/eclipses/lunar/year?year=${year}`),
-
   seasons: (year: number) =>
     get<SeasonsResponse>(`/seasons?year=${year}`),
 
-  /** Returns oppositions, elongations, and other planetary phenomena */
-  planetaryPhenomena: (year: number) =>
-    get<PlanetaryResponse>(`/planets/phenomena?year=${year}`),
 };

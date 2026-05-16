@@ -16,7 +16,7 @@ export const moonPhasesGenerator: Generator = {
     const data = await usno.moonPhases(year);
     return data.phasedata.map((phase) => {
       const label = PHASE_LABELS[phase.phase] ?? phase.phase;
-      const dt = new Date(`${phase.year}-${String(phase.month).padStart(2, '0')}-${String(phase.phaseday).padStart(2, '0')}T${phase.time}:00Z`);
+      const dt = new Date(`${phase.year}-${String(phase.month).padStart(2, '0')}-${String(phase.day).padStart(2, '0')}T${phase.time}:00Z`);
       return {
         uid: `moon-phase-${dt.toISOString()}@space-calendar`,
         title: label,

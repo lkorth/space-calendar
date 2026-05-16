@@ -1,5 +1,137 @@
 const CAD_BASE = 'https://ssd-api.jpl.nasa.gov/cad.api';
 const SBDB_BASE = 'https://ssd-api.jpl.nasa.gov/sbdb.api';
+const HORIZONS_BASE = 'https://ssd.jpl.nasa.gov/api/horizons.api';
+
+// ---------------------------------------------------------------------------
+// JPL Horizons — planetary elongation ephemeris
+// Used to find oppositions (outer planets) and greatest elongations (inner)
+// ---------------------------------------------------------------------------
+
+export interface EphemerisEntry {
+  /** ISO 8601 date string */
+  date: string;
+  /** Sun-Observer-Target elongation in degrees */
+  elongation: number;
+  /** T = trailing (east of Sun, evening), L = leading (west of Sun, morning) */
+  direction: 'T' | 'L';
+}
+
+async function fetchElongation(
+  bodyId: string,
+  year: number,
+): Promise<EphemerisEntry[]> {
+  const params = new URLSearchParams({
+    format: 'json',
+    COMMAND: bodyId,
+    EPHEM_TYPE: 'OBSERVER',
+    CENTER: '500@399',
+    START_TIME: `${year}-Jan-01`,
+    STOP_TIME: `${year}-Dec-31`,
+    STEP_SIZE: '1d',
+    QUANTITIES: '23',
+    OBJ_DATA: 'NO',
+    MAKE_EPHEM: 'YES',
+  });
+
+  const res = await fetch(`${HORIZONS_BASE}?${params}`);
+  if (!res.ok) throw new Error(`JPL Horizons error ${res.status} for body ${bodyId}`);
+  const json = (await res.json()) as { result: string };
+
+  const lines = json.result.split('\n');
+  const soe = lines.findIndex((l) => l.includes('$$SOE'));
+  const eoe = lines.findIndex((l) => l.includes('$$EOE'));
+  if (soe === -1 || eoe === -1) throw new Error(`No ephemeris data for body ${bodyId}`);
+
+  const entries: EphemerisEntry[] = [];
+  for (const line of lines.slice(soe + 1, eoe)) {
+    // Format: " 2026-Jan-10 00:00     179.5072 /L"
+    const match = line.match(/(\d{4}-\w{3}-\d{2})\s+\d{2}:\d{2}\s+([\d.]+)\s+\/([TL])/);
+    if (!match) continue;
+    const [, rawDate, elong, dir] = match;
+    // Convert "2026-Jan-10" to "2026-01-10"
+    const date = rawDate!.replace(
+      /(\d{4})-(\w{3})-(\d{2})/,
+      (_, y, m, d) => `${y}-${String(MONTH_NUM[m] ?? 1).padStart(2, '0')}-${d}`,
+    );
+    entries.push({ date, elongation: parseFloat(elong!), direction: dir as 'T' | 'L' });
+  }
+  return entries;
+}
+
+const MONTH_NUM: Record<string, number> = {
+  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+  Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+};
+
+export interface PlanetaryEvent {
+  name: string;
+  date: string;
+  type: 'opposition' | 'greatest-elongation-east' | 'greatest-elongation-west';
+  elongation: number;
+}
+
+const OUTER_PLANETS = [
+  { id: '499', name: 'Mars' },
+  { id: '599', name: 'Jupiter' },
+  { id: '699', name: 'Saturn' },
+  { id: '799', name: 'Uranus' },
+  { id: '899', name: 'Neptune' },
+];
+
+const INNER_PLANETS = [
+  { id: '199', name: 'Mercury', minElongation: 18 },
+  { id: '299', name: 'Venus', minElongation: 40 },
+];
+
+export async function fetchPlanetaryEvents(year: number): Promise<PlanetaryEvent[]> {
+  const events: PlanetaryEvent[] = [];
+
+  for (const planet of OUTER_PLANETS) {
+    const entries = await fetchElongation(planet.id, year);
+    // Opposition = elongation peaks above 170° (daily step, so find max)
+    for (let i = 1; i < entries.length - 1; i++) {
+      const prev = entries[i - 1]!;
+      const curr = entries[i]!;
+      const next = entries[i + 1]!;
+      if (
+        curr.elongation > prev.elongation &&
+        curr.elongation > next.elongation &&
+        curr.elongation > 170
+      ) {
+        events.push({
+          name: planet.name,
+          date: curr.date,
+          type: 'opposition',
+          elongation: curr.elongation,
+        });
+      }
+    }
+  }
+
+  for (const planet of INNER_PLANETS) {
+    const entries = await fetchElongation(planet.id, year);
+    // Greatest elongation = local maximum above the minimum threshold
+    for (let i = 1; i < entries.length - 1; i++) {
+      const prev = entries[i - 1]!;
+      const curr = entries[i]!;
+      const next = entries[i + 1]!;
+      if (
+        curr.elongation > prev.elongation &&
+        curr.elongation > next.elongation &&
+        curr.elongation >= planet.minElongation
+      ) {
+        events.push({
+          name: planet.name,
+          date: curr.date,
+          type: curr.direction === 'T' ? 'greatest-elongation-east' : 'greatest-elongation-west',
+          elongation: curr.elongation,
+        });
+      }
+    }
+  }
+
+  return events;
+}
 
 // ---------------------------------------------------------------------------
 // Close Approach Data (asteroids)
