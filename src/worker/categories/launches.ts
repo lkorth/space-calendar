@@ -1,4 +1,5 @@
 import { fetchUpcomingLaunches } from '../clients/launch-library.ts';
+import type { LL2Launch } from '../clients/launch-library.ts';
 import type { CalendarEvent, Category, Env, RequestParams } from '../../shared/models.ts';
 
 const KV_KEY = 'launches';
