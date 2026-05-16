@@ -2,7 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "lib": ["ES2022"],
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
-  "include": ["src/worker/**/*", "src/shared/**/*"]
+  "include": ["src/worker/**/*", "src/shared/**/*"],
+  "exclude": ["src/worker/**/*.test.ts"]
 }

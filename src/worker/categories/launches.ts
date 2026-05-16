@@ -42,10 +42,7 @@ export const launchesCategory: Category = {
   },
 };
 
-function buildDescription(
-  launch: Parameters<typeof fetchUpcomingLaunches>[0] extends Promise<(infer T)[]> ? T : never,
-  webcast?: string,
-): string {
+function buildDescription(launch: LL2Launch, webcast?: string): string {
   const parts: string[] = [];
   if (launch.mission?.description) {
     parts.push(launch.mission.description);
