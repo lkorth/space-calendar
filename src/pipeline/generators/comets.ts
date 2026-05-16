@@ -23,7 +23,7 @@ export const cometsGenerator: Generator = {
 
   async generate(_year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('comets.yaml', 'utf-8');
-    const entries = parse(raw) as CometEntry[];
+    const entries = (parse(raw) as CometEntry[] | null) ?? [];
     const events: CalendarEvent[] = [];
 
     for (const comet of entries) {

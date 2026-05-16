@@ -17,7 +17,7 @@ export const historyGenerator: Generator = {
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('history.yaml', 'utf-8');
-    const entries = parse(raw) as HistoryEntry[];
+    const entries = (parse(raw) as HistoryEntry[] | null) ?? [];
     const events: CalendarEvent[] = [];
 
     for (const entry of entries) {
