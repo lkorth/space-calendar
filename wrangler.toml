@@ -4,5 +4,4 @@ compatibility_date = "2024-04-05"
 
 [[kv_namespaces]]
 binding = "CALENDAR_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
-preview_id = "REPLACE_WITH_KV_PREVIEW_NAMESPACE_ID"
+id = "759d32e9e73443319985fbf1078cf70b"
