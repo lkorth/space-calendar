@@ -1,5 +1,9 @@
 import { usno } from '../clients/usno.ts';
+import { fetchMoonDistances } from '../clients/jpl.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
+
+/** Full moons closer than this threshold (km from Earth center) are supermoons */
+const SUPERMOON_THRESHOLD_KM = 362_000;
 
 const FULL_MOON_NAMES: Record<number, string> = {
   1: 'Wolf Moon',
@@ -37,9 +41,10 @@ export const moonPhasesGenerator: Generator = {
   schedule: 'annual',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const [phasesData, seasonsData] = await Promise.all([
+    const [phasesData, seasonsData, moonDistances] = await Promise.all([
       usno.moonPhases(year),
       usno.seasons(year),
+      fetchMoonDistances(year),
     ]);
 
     const fullMoonPhases = phasesData.phasedata.filter((p) => p.phase === 'Full Moon');
@@ -95,7 +100,13 @@ export const moonPhasesGenerator: Generator = {
       }
 
       const blueMoon = isBlueMoon[i]!;
-      const title = blueMoon ? `Full Moon — ${name} — Blue Moon` : `Full Moon — ${name}`;
+      const dateKey = dt.toISOString().slice(0, 10);
+      const distKm = moonDistances[dateKey];
+      const superMoon = distKm !== undefined && distKm <= SUPERMOON_THRESHOLD_KM;
+
+      let title = `Full Moon — ${name}`;
+      if (blueMoon) title += ' — Blue Moon';
+      if (superMoon) title += ' (Supermoon)';
 
       events.push({
         uid: `moon-phase-${dt.toISOString()}@space-calendar`,
@@ -103,7 +114,7 @@ export const moonPhasesGenerator: Generator = {
         start: dt.toISOString(),
         end: dt.toISOString(),
         allDay: false,
-        description: describeFullMoon(name, blueMoon),
+        description: describeFullMoon(name, blueMoon, superMoon),
         url: 'https://aa.usno.navy.mil/data/MoonPhases',
         category: 'moon-phases',
       });
@@ -133,12 +144,16 @@ export const moonPhasesGenerator: Generator = {
 const BLUE_MOON_NOTE =
   'This is a Blue Moon — the second full moon in a single calendar month. Because a lunar cycle is approximately 29.5 days, roughly every 2.5 years a month will contain two full moons. The phrase "once in a blue moon" reflects just how rarely this happens.';
 
-function describeFullMoon(name: string, blueMoon = false): string {
+const SUPERMOON_NOTE =
+  'This is a Supermoon — the Moon is closer to Earth than usual, making it appear slightly larger and brighter than a typical full moon (up to about 14% larger and 30% brighter at its closest). The Moon follows an elliptical orbit, so its distance from Earth varies by roughly 50,000 km between perigee (closest) and apogee (farthest).';
+
+function describeFullMoon(name: string, blueMoon = false, superMoon = false): string {
   const origin = FULL_MOON_NAME_ORIGINS[name];
   const base =
     'The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.';
   const parts = [base];
   if (origin) parts.push(origin);
   if (blueMoon) parts.push(BLUE_MOON_NOTE);
+  if (superMoon) parts.push(SUPERMOON_NOTE);
   return parts.join('\n\n');
 }

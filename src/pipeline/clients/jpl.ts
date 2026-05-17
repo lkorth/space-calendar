@@ -63,6 +63,51 @@ const MONTH_NUM: Record<string, number> = {
   Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
 };
 
+// ---------------------------------------------------------------------------
+// Moon geocentric distance — used for supermoon detection
+// ---------------------------------------------------------------------------
+
+const AU_TO_KM = 149_597_870.7;
+
+/** Geocentric distance of the Moon in km, keyed by ISO date string (YYYY-MM-DD) */
+export async function fetchMoonDistances(year: number): Promise<Record<string, number>> {
+  const params = new URLSearchParams({
+    format: 'json',
+    COMMAND: '301',          // Moon
+    EPHEM_TYPE: 'OBSERVER',
+    CENTER: '500@399',       // geocentric Earth
+    START_TIME: `${year}-Jan-01`,
+    STOP_TIME: `${year}-Dec-31`,
+    STEP_SIZE: '1d',
+    QUANTITIES: '20',        // observer range & range-rate (AU)
+    OBJ_DATA: 'NO',
+    MAKE_EPHEM: 'YES',
+  });
+
+  const res = await fetch(`${HORIZONS_BASE}?${params}`);
+  if (!res.ok) throw new Error(`JPL Horizons error ${res.status} fetching Moon distances`);
+  const json = (await res.json()) as { result: string };
+
+  const lines = json.result.split('\n');
+  const soe = lines.findIndex((l) => l.includes('$$SOE'));
+  const eoe = lines.findIndex((l) => l.includes('$$EOE'));
+  if (soe === -1 || eoe === -1) throw new Error('No Moon distance data in Horizons response');
+
+  const distances: Record<string, number> = {};
+  for (const line of lines.slice(soe + 1, eoe)) {
+    // Format: " 2026-Jan-03 00:00      0.00238532  ..."
+    const match = line.match(/(\d{4}-\w{3}-\d{2})\s+\d{2}:\d{2}\s+([\d.]+)/);
+    if (!match) continue;
+    const [, rawDate, distAU] = match;
+    const date = rawDate!.replace(
+      /(\d{4})-(\w{3})-(\d{2})/,
+      (_, y, m, d) => `${y}-${String(MONTH_NUM[m] ?? 1).padStart(2, '0')}-${d}`,
+    );
+    distances[date] = parseFloat(distAU!) * AU_TO_KM;
+  }
+  return distances;
+}
+
 export interface PlanetaryEvent {
   name: string;
   date: string;

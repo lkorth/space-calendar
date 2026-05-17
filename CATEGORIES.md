@@ -9,7 +9,7 @@ Events visible to the naked eye that require no special equipment and are broadl
 
 | Category | Description |
 |----------|-------------|
-| Moon phases | New moon, full moon — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.) and Blue Moon notation when a month contains two full moons |
+| Moon phases | New moon, full moon — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.), Blue Moon notation when a month contains two full moons, and Supermoon notation when the Moon is within 362,000 km of Earth |
 | Meteor showers | Peak activity nights for annual showers |
 | Solstices & equinoxes | The four seasonal turning points |
 | Solar eclipses | Worldwide |
