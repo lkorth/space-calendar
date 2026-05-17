@@ -63,6 +63,11 @@ To add a **live category**: add slug to `CategorySlug` and `LIVE_CATEGORIES` in 
 - Run `npm test` and verify all tests pass before committing.
 - Test files live alongside the code they test (`foo.ts` → `foo.test.ts`).
 
+## Commit message style
+
+- Do **not** mention test counts in commit messages (e.g. "Adds 7 tests", "200 tests passing"). Tests are an implementation detail — the commit message should describe what changed and why, not how many tests verify it.
+- Focus on the what and why: what behavior was added/changed, and why it matters.
+
 ## Key conventions
 
 - All times are UTC in the ICS file. Calendar clients convert to local time automatically.
