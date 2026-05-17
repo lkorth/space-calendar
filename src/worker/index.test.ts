@@ -112,6 +112,28 @@ describe('worker request routing', () => {
     expect(body).toContain('END:VCALENDAR');
   });
 
+  it('returns 400 when latitude and hemisphere contradict each other', async () => {
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const env = makeEnv();
+    const [res1, res2] = await Promise.all([
+      worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&lat=-45&hemi=north'), env, ctx),
+      worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&lat=45&hemi=south'), env, ctx),
+    ]);
+    expect(res1.status).toBe(400);
+    expect(res2.status).toBe(400);
+  });
+
+  it('allows lat=0 with either hemisphere', async () => {
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const [res1, res2] = await Promise.all([
+      worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&lat=0&hemi=north'), env, ctx),
+      worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&lat=0&hemi=south'), env, ctx),
+    ]);
+    expect(res1.status).toBe(200);
+    expect(res2.status).toBe(200);
+  });
+
   it('ignores unknown category slugs gracefully', async () => {
     const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
     const res = await worker.fetch(

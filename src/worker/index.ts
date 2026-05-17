@@ -29,6 +29,12 @@ export default {
     if (params.categories.length === 0) {
       return new Response('Provide at least one category via ?c=', { status: 400 });
     }
+    if (params.lat !== undefined && params.lat !== 0) {
+      const latIsNorth = params.lat > 0;
+      if (latIsNorth !== (params.hemisphere === 'northern')) {
+        return new Response('Hemisphere and latitude do not match', { status: 400 });
+      }
+    }
 
     const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
     const cached = await caches.default.match(cacheKey);
