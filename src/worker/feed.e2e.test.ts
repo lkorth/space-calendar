@@ -34,9 +34,14 @@ describe('Worker feed — response', () => {
     expect(res.headers.get('content-type')).toContain('text/calendar');
   });
 
-  it('sets a Cache-Control header', async () => {
+  it('sets Cache-Control with max-age of 1 hour', async () => {
     const { res } = await getFeed('?c=moon-phases');
-    expect(res.headers.get('cache-control')).toBeTruthy();
+    const cc = res.headers.get('cache-control') ?? '';
+    expect(cc).toContain('public');
+    const match = cc.match(/max-age=(\d+)/);
+    expect(match).not.toBeNull();
+    const maxAge = parseInt(match![1]!);
+    expect(maxAge).toBeLessThanOrEqual(3600);
   });
 });
 
