@@ -220,11 +220,13 @@ export interface ParsedCloseApproach {
 
 export async function fetchCloseApproaches(
   year: number,
+  options: { distMaxAu?: number; hMax?: number } = { distMaxAu: 0.05, hMax: 22 },
 ): Promise<ParsedCloseApproach[]> {
+  const { distMaxAu = 0.05, hMax } = options;
   const dateMin = `${year}-01-01`;
   const dateMax = `${year}-12-31`;
-  // Filter: dist < 0.05 au (~19.5 LD), H < 22 (roughly > 140m diameter)
-  const url = `${CAD_BASE}?date-min=${dateMin}&date-max=${dateMax}&dist-max=0.05&h-max=22&sort=date`;
+  let url = `${CAD_BASE}?date-min=${dateMin}&date-max=${dateMax}&dist-max=${distMaxAu}&sort=date`;
+  if (hMax !== undefined) url += `&h-max=${hMax}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`JPL CAD API error ${res.status}`);
   const raw = (await res.json()) as CloseApproachResponse;
