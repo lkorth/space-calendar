@@ -20,10 +20,14 @@
     .category label { cursor: pointer; }
     .category-name { font-weight: 500; }
     .category-desc { font-size: 0.85rem; color: #8080a0; margin-top: 2px; }
+    .category-desc a { color: #9080ff; }
     .expandable { display: none; margin-top: 0.75rem; padding: 0.75rem; background: #12122a; border-radius: 6px; border: 1px solid #2a2a4a; }
-    .expandable input[type="text"], .expandable input[type="number"], .expandable select { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
-    .expandable input[type="text"]:focus, .expandable input[type="number"]:focus, .expandable select:focus { outline: none; border-color: #7060ff; }
+    .expandable select { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
+    .expandable select:focus { outline: none; border-color: #7060ff; }
     .expandable select option { background: #0a0a1f; }
+    .location-section { padding: 0.75rem; background: #0d0d20; border-radius: 6px; border: 1px solid #252545; }
+    .location-section input[type="text"], .location-section input[type="number"] { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
+    .location-section input[type="text"]:focus, .location-section input[type="number"]:focus { outline: none; border-color: #7060ff; }
     .hemi-radios { display: flex; gap: 1.25rem; margin-bottom: 0.75rem; }
     .hemi-radios label { font-size: 0.85rem; color: #9090a8; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; }
     .hemi-radios input[type="radio"] { accent-color: #7060ff; cursor: pointer; }
@@ -33,13 +37,9 @@
     .btn-location { background: #1a1a2e; color: #9090c0; border: 1px solid #3a3a6a; padding: 0.4rem 0.85rem; font-size: 0.85rem; border-radius: 4px; cursor: pointer; flex-shrink: 0; font-weight: 500; }
     .btn-location:hover { background: #2a2a4e; color: #c0c0e8; }
     .geo-or { font-size: 0.8rem; color: #5050a0; flex-shrink: 0; }
-    .geo-lat { flex: 1; min-width: 80px; }
     .geo-note { font-size: 0.78rem; color: #6060a0; margin-top: 0.5rem; line-height: 1.4; display: none; }
     .location-note { font-size: 0.78rem; color: #6060a0; margin-top: 0.5rem; line-height: 1.4; }
     .location-note a { color: #9080ff; }
-    .solstices-hemi { display: none; margin-top: 0.5rem; }
-    .solstices-hemi label { font-size: 0.85rem; color: #9090a8; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; margin-right: 1.25rem; }
-    .solstices-hemi input[type="radio"] { accent-color: #7060ff; cursor: pointer; }
     .output { margin-top: 2rem; padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; }
     .output-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin-bottom: 0.5rem; }
     .url-display { font-family: monospace; font-size: 0.8rem; color: #a0a0c0; word-break: break-all; background: #08081a; padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; min-height: 2.5rem; }
@@ -51,6 +51,7 @@
     .btn-google:hover { background: #2a2a4e; }
     .empty-msg { color: #6060a0; font-size: 0.9rem; }
     .copied { background: #306030 !important; }
+    .needs-location { font-size: 0.75rem; color: #5858a0; margin-top: 0.3rem; }
   </style>
 </head>
 <body>
@@ -63,20 +64,40 @@
     </div>
     <p class="subtitle">Select the categories you want and subscribe in any calendar app that supports ICS feeds — Google Calendar, Apple Calendar, Outlook, and more.</p>
 
+    <div class="section-label">Your Location</div>
+    <div class="location-section">
+      <div class="geo-row" style="margin-bottom:0.75rem">
+        <button class="btn-location" type="button" onclick="useGeolocation()">Detect my location</button>
+        <span class="geo-or">or select your hemisphere</span>
+      </div>
+      <div class="geo-note" id="geo-note"></div>
+      <div class="hemi-radios">
+        <label><input type="radio" name="hemi" value="north" checked onchange="onHemiChange('north')"> Northern Hemisphere</label>
+        <label><input type="radio" name="hemi" value="south" onchange="onHemiChange('south')"> Southern Hemisphere</label>
+      </div>
+      <div class="hemi-inputs">
+        <div id="loc-north" class="active">
+          <input type="text" id="zip-input" placeholder="US zip code or Canadian postal code (e.g. 80301 or T2P)" maxlength="7" oninput="onZipInput(this.value)" />
+        </div>
+        <div id="loc-south">
+          <input type="number" id="lat-input" placeholder="Latitude in degrees (e.g. -45 for New Zealand)" min="-90" max="90" step="1" oninput="onLatInput(this.value)" />
+          <div class="location-note" style="margin-top:0.4rem">To find your latitude, search <a href="https://www.google.com/search?q=my+latitude" target="_blank">my latitude</a> in Google, or open Google Maps, long-press your location, and read the first number.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="section-label">Sky Events</div>
     <div class="category"><input type="checkbox" id="moon-phases" value="moon-phases" /><label for="moon-phases"><div class="category-name">Moon Phases</div><div class="category-desc">New moon and full moon</div></label></div>
     <div class="category"><input type="checkbox" id="meteor-showers" value="meteor-showers" /><label for="meteor-showers"><div class="category-name">Meteor Showers</div><div class="category-desc">Peak activity nights for annual showers</div></label></div>
     <div class="category"><input type="checkbox" id="eclipses-solar" value="eclipses-solar" /><label for="eclipses-solar"><div class="category-name">Solar Eclipses</div><div class="category-desc">Total, annular, and partial solar eclipses worldwide</div></label></div>
     <div class="category"><input type="checkbox" id="eclipses-lunar" value="eclipses-lunar" /><label for="eclipses-lunar"><div class="category-name">Lunar Eclipses</div><div class="category-desc">Total, partial, and penumbral lunar eclipses worldwide</div></label></div>
+    <div class="category"><input type="checkbox" id="solstices-equinoxes" value="solstices-equinoxes" /><label for="solstices-equinoxes"><div class="category-name">Solstices & Equinoxes</div><div class="category-desc">The four astronomical seasons</div></label></div>
     <div class="category">
-      <input type="checkbox" id="solstices-equinoxes" value="solstices-equinoxes" onchange="toggleSolsticesHemi(this.checked)" />
-      <label for="solstices-equinoxes" style="flex:1">
-        <div class="category-name">Solstices & Equinoxes</div>
-        <div class="category-desc">The four astronomical seasons</div>
-        <div class="solstices-hemi" id="solstices-hemi">
-          <label><input type="radio" name="solstices-hemi" value="north" checked onchange="update()"> Northern Hemisphere</label>
-          <label><input type="radio" name="solstices-hemi" value="south" onchange="update()"> Southern Hemisphere</label>
-        </div>
+      <input type="checkbox" id="aurora" onchange="update()" />
+      <label for="aurora">
+        <div class="category-name">Aurora Forecasts</div>
+        <div class="category-desc">Events when a storm is forecasted to be visible at your latitude, based on NOAA's 3-day Kp forecast. ⚠️ Calendar apps sync every few hours — aurora events 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with <a href="https://www.spaceweatherlive.com/" target="_blank">SpaceWeatherLive</a>.</div>
+        <div class="needs-location">Requires location</div>
       </label>
     </div>
 
@@ -90,8 +111,8 @@
     <div class="category"><input type="checkbox" id="launches" value="launches" /><label for="launches"><div class="category-name">Rocket Launches</div><div class="category-desc">Crewed missions, maiden flights, heavy-lift vehicles, and flagship science payloads — no routine launches</div></label></div>
     <div class="category"><input type="checkbox" id="history" value="history" /><label for="history"><div class="category-name">Space History Milestones</div><div class="category-desc">20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight</div></label></div>
 
-    <div class="section-label">Deep Sky</div>
-    <div class="category"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night</div></label></div>
+    <div class="section-label" id="deep-sky-label">Deep Sky</div>
+    <div class="category" id="deep-sky-row"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night — best from mid-northern latitudes</div></label></div>
 
     <div class="section-label">Local Clubs</div>
     <div class="category">
@@ -111,38 +132,6 @@
       </label>
     </div>
 
-    <div class="section-label">Location-Aware</div>
-    <div class="category">
-      <input type="checkbox" id="aurora" onchange="toggleAuroraSection(this.checked)" />
-      <label for="aurora" style="flex:1">
-        <div class="category-name">Aurora Forecasts</div>
-        <div class="category-desc">Events when a storm is forecasted to be visible at your latitude, based on NOAA's 3-day Kp forecast</div>
-        <div class="expandable" id="aurora-section">
-          <div class="geo-row" style="margin-bottom:0.75rem">
-            <button class="btn-location" type="button" onclick="useGeolocation()">Use my location</button>
-            <span class="geo-or">— detects hemisphere automatically</span>
-          </div>
-          <div class="geo-note" id="geo-note"></div>
-          <div class="hemi-radios">
-            <label><input type="radio" name="aurora-hemi" value="north" checked onchange="onAuroraHemiChange('north')"> Northern Hemisphere</label>
-            <label><input type="radio" name="aurora-hemi" value="south" onchange="onAuroraHemiChange('south')"> Southern Hemisphere</label>
-          </div>
-          <div class="hemi-inputs">
-            <div id="aurora-north" class="active">
-              <input type="text" id="zip-input" placeholder="US zip code or Canadian postal code (e.g. 80301 or T2P)" maxlength="7" oninput="onZipInput(this.value)" />
-            </div>
-            <div id="aurora-south">
-              <input type="number" id="australis-lat-input" placeholder="Latitude in degrees (e.g. -45 for New Zealand)" min="-90" max="90" step="1" oninput="onAustralisLatInput(this.value)" />
-              <div class="location-note" style="margin-top:0.4rem">To find your latitude, search <a href="https://www.google.com/search?q=my+latitude" target="_blank">my latitude</a> in Google, or open Google Maps, long-press your location, and read the first number.</div>
-            </div>
-          </div>
-          <div class="location-note">
-            ⚠️ Calendar apps sync every few hours — aurora events 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with <a href="https://www.spaceweatherlive.com/" target="_blank">SpaceWeatherLive</a>.
-          </div>
-        </div>
-      </label>
-    </div>
-
     <div class="output">
       <div class="output-label">Your Subscription URL</div>
       <div class="url-display" id="url-display"><span class="empty-msg">Select at least one category above</span></div>
@@ -155,8 +144,7 @@
 
   <script>
     const WORKER_BASE = 'https://space-calendar.lukekorth.com';
-    let resolvedLat = null;  // northern aurora: from zip lookup
-    let australisLat = null; // southern aurora: from geolocation or manual input
+    let globalLat = null;
     const detectedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     function toggleClubsSection(checked) {
@@ -169,27 +157,18 @@
       return document.getElementById('club-select').value || null;
     }
 
-    function toggleAuroraSection(checked) {
-      document.getElementById('aurora-section').style.display = checked ? 'block' : 'none';
-      update();
-    }
-
-    function onAuroraHemiChange(hemi) {
-      document.getElementById('aurora-north').classList.toggle('active', hemi === 'north');
-      document.getElementById('aurora-south').classList.toggle('active', hemi === 'south');
-      update();
-    }
-
-    function toggleSolsticesHemi(checked) {
-      document.getElementById('solstices-hemi').style.display = checked ? 'block' : 'none';
+    function onHemiChange(hemi) {
+      document.getElementById('loc-north').classList.toggle('active', hemi === 'north');
+      document.getElementById('loc-south').classList.toggle('active', hemi === 'south');
+      globalLat = null;
       update();
     }
 
     async function onZipInput(value) {
       value = value.trim().toUpperCase();
-      if (!value) { resolvedLat = null; update(); return; }
+      if (!value) { globalLat = null; update(); return; }
       const lat = await lookupLatitude(value);
-      resolvedLat = lat !== null ? Math.round(lat) : null;
+      globalLat = lat !== null ? Math.round(lat) : null;
       update();
     }
 
@@ -202,9 +181,9 @@
       } catch { return null; }
     }
 
-    function onAustralisLatInput(value) {
+    function onLatInput(value) {
       const parsed = parseInt(value.trim());
-      australisLat = (!isNaN(parsed) && parsed >= -90 && parsed <= 90) ? parsed : null;
+      globalLat = (!isNaN(parsed) && parsed >= -90 && parsed <= 90) ? parsed : null;
       update();
     }
 
@@ -217,16 +196,10 @@
         (pos) => {
           const lat = Math.round(pos.coords.latitude);
           const hemi = lat >= 0 ? 'north' : 'south';
-          // Auto-select hemisphere radio
-          const radio = document.querySelector(`input[name="aurora-hemi"][value="${hemi}"]`);
-          if (radio) { radio.checked = true; onAuroraHemiChange(hemi); }
-          // Populate the right input
-          if (hemi === 'north') {
-            resolvedLat = lat;
-          } else {
-            australisLat = lat;
-            document.getElementById('australis-lat-input').value = lat;
-          }
+          const radio = document.querySelector(`input[name="hemi"][value="${hemi}"]`);
+          if (radio) { radio.checked = true; onHemiChange(hemi); }
+          globalLat = lat;
+          if (hemi === 'south') document.getElementById('lat-input').value = lat;
           const dir = lat >= 0 ? 'N' : 'S';
           showGeoNote(`Detected: ${Math.abs(lat)}°${dir} — ${hemi === 'north' ? 'Northern' : 'Southern'} Hemisphere`);
           update();
@@ -243,21 +216,19 @@
       el.style.display = 'block';
     }
 
+    function getHemi() {
+      return document.querySelector('input[name="hemi"]:checked')?.value ?? 'north';
+    }
+
+    function shouldShowMessier() {
+      if (getHemi() === 'south') return false;
+      if (globalLat !== null && globalLat < 25) return false;
+      return true;
+    }
+
     function getAuroraSlug() {
       if (!document.getElementById('aurora').checked) return null;
-      const hemi = document.querySelector('input[name="aurora-hemi"]:checked')?.value ?? 'north';
-      return hemi === 'south' ? 'aurora-australis' : 'aurora';
-    }
-
-    function getAuroraLat() {
-      const slug = getAuroraSlug();
-      if (slug === 'aurora') return resolvedLat;
-      if (slug === 'aurora-australis') return australisLat;
-      return null;
-    }
-
-    function getSolsticesHemi() {
-      return document.querySelector('input[name="solstices-hemi"]:checked')?.value ?? 'north';
+      return getHemi() === 'south' ? 'aurora-australis' : 'aurora';
     }
 
     function getSelectedCategories() {
@@ -269,23 +240,31 @@
       return cats;
     }
 
-    function buildUrl(categories, auroraLat, solsticesHemi, clubId) {
+    function buildUrl(categories, lat, hemi, clubId) {
       const url = new URL('/feed.ics', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
-      if (hasAurora && auroraLat !== null) url.searchParams.set('lat', auroraLat);
-      if (solsticesHemi === 'south') url.searchParams.set('hemi', 'south');
+      if (hasAurora && lat !== null) url.searchParams.set('lat', lat);
+      if (hemi === 'south') url.searchParams.set('hemi', 'south');
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
       return url.toString();
     }
 
     function update() {
+      const messierVisible = shouldShowMessier();
+      const messierRow = document.getElementById('deep-sky-row');
+      const messierLabel = document.getElementById('deep-sky-label');
+      messierRow.style.display = messierVisible ? '' : 'none';
+      messierLabel.style.display = messierVisible ? '' : 'none';
+      if (!messierVisible && document.getElementById('deep-sky').checked) {
+        document.getElementById('deep-sky').checked = false;
+      }
+
       const categories = getSelectedCategories();
       const auroraSlug = getAuroraSlug();
-      const auroraLat = getAuroraLat();
-      const auroraReady = !auroraSlug || auroraLat !== null;
-      const solsticesHemi = getSolsticesHemi();
+      const hemi = getHemi();
+      const auroraReady = !auroraSlug || globalLat !== null;
       const clubId = getClubId();
       const clubsSelected = categories.includes('astronomy-clubs');
       const clubReady = !clubsSelected || clubId !== null;
@@ -297,14 +276,14 @@
 
       if (categories.length === 0) {
         display.innerHTML = '<span class="empty-msg">Select at least one category above</span>';
-      } else if (auroraSlug === 'aurora' && resolvedLat === null) {
-        display.innerHTML = '<span class="empty-msg">Enter a valid zip or postal code for aurora</span>';
-      } else if (auroraSlug === 'aurora-australis' && australisLat === null) {
-        display.innerHTML = '<span class="empty-msg">Enter your location for Aurora Australis</span>';
+      } else if (auroraSlug === 'aurora' && globalLat === null) {
+        display.innerHTML = '<span class="empty-msg">Enter a US zip or Canadian postal code above for aurora</span>';
+      } else if (auroraSlug === 'aurora-australis' && globalLat === null) {
+        display.innerHTML = '<span class="empty-msg">Enter your latitude above for Aurora Australis</span>';
       } else if (clubsSelected && clubId === null) {
         display.innerHTML = '<span class="empty-msg">Select an astronomy club above</span>';
       } else {
-        display.textContent = buildUrl(categories, auroraLat, solsticesHemi, clubId);
+        display.textContent = buildUrl(categories, globalLat, hemi, clubId);
       }
 
       btnCopy.disabled = !ready;
@@ -312,7 +291,7 @@
     }
 
     function copyUrl() {
-      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi(), getClubId());
+      const url = buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId());
       navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById('btn-copy');
         btn.textContent = 'Copied!';
@@ -322,13 +301,13 @@
     }
 
     function addToGoogle() {
-      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi(), getClubId()).replace(/^https:\/\//, 'webcal://');
+      const url = buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId()).replace(/^https:\/\//, 'webcal://');
       const googleUrl = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(url);
       window.open(googleUrl, '_blank');
     }
 
     document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-      if (el.id !== 'aurora' && el.id !== 'solstices-equinoxes' && el.id !== 'astronomy-clubs') {
+      if (el.id !== 'aurora' && el.id !== 'astronomy-clubs') {
         el.addEventListener('change', update);
       }
     });
