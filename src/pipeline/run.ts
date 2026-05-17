@@ -20,6 +20,7 @@ import { asteroidsGenerator } from './generators/asteroids.ts';
 import { historyGenerator } from './generators/history.ts';
 import { cometsGenerator } from './generators/comets.ts';
 import { occultationsGenerator } from './generators/occultations.ts';
+import { conjunctionsGenerator } from './generators/conjunctions.ts';
 
 const ALL_GENERATORS: Generator[] = [
   moonPhasesGenerator,
@@ -33,6 +34,7 @@ const ALL_GENERATORS: Generator[] = [
   historyGenerator,
   cometsGenerator,
   occultationsGenerator,
+  conjunctionsGenerator,
 ];
 
 function parseArgs(): { schedule?: string; generator?: string; year: number } {

@@ -44,6 +44,7 @@ export type CategorySlug =
   | 'asteroids'
   | 'comets'
   | 'occultations'
+  | 'conjunctions'
   | 'launches'
   | 'history'
   | 'aurora'
@@ -63,6 +64,7 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
   'asteroids',
   'comets',
   'occultations',
+  'conjunctions',
   'history',
 ];
 

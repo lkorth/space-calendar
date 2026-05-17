@@ -1,0 +1,93 @@
+# Notable planetary conjunctions between naked-eye planets (Mercury–Saturn).
+# Only includes events with angular separation ≤ 5°. Uranus and Neptune are
+# excluded — they require dark skies and optical aid to identify.
+#
+# Fields:
+#   date:        ISO 8601 date of closest approach (UTC)
+#   bodies:      [planet1, planet2] — in order of prominence or alphabetical
+#   separation:  Angular separation in degrees at closest approach
+#   sky:         "evening" | "morning" — when to look
+#   look:        Direction and rough time to look (e.g. "west 45 min after sunset")
+#   mag1:        Approximate visual magnitude of bodies[0]
+#   mag2:        Approximate visual magnitude of bodies[1]
+#   description: Context about the event and viewing conditions
+#   url:         Authoritative source
+
+# ── 2026 ────────────────────────────────────────────────────────────────────
+
+- date: "2026-03-08"
+  bodies: ["Venus", "Saturn"]
+  separation: 0.9
+  sky: "evening"
+  look: "Look west 45 minutes after sunset"
+  mag1: -4.1
+  mag2: 1.2
+  description: >
+    Brilliant Venus passes just 0.9° from Saturn in the evening sky, with Saturn
+    appearing as a golden dot just to Venus's lower left. The pair will be
+    visible low in the west for about 45 minutes after sunset — binoculars will
+    reveal Saturn's disk and hint at its rings. Saturn will move into the Sun's
+    glare within days of this conjunction, making this a brief observing window.
+  url: "https://science.nasa.gov/solar-system/skywatching/"
+
+- date: "2026-06-09"
+  bodies: ["Venus", "Jupiter"]
+  separation: 1.6
+  sky: "evening"
+  look: "Look west-northwest 45 minutes after sunset"
+  mag1: -4.5
+  mag2: -2.0
+  description: >
+    The two brightest planets in the sky — Venus and Jupiter — come within 1.6°
+    of each other, fitting within the field of view of most binoculars. Venus
+    blazes at magnitude −4.5 while Jupiter shines at −2.0. The pair is
+    unmissable in the western sky after sunset, outshining everything except
+    the Moon. This is one of the year's most spectacular naked-eye events.
+  url: "https://science.nasa.gov/solar-system/skywatching/"
+
+- date: "2026-10-05"
+  bodies: ["Venus", "Mercury"]
+  separation: 2.0
+  sky: "evening"
+  look: "Look west just after sunset"
+  mag1: -4.2
+  mag2: 0.5
+  description: >
+    Venus and Mercury appear close together in the evening twilight. Brilliant
+    Venus at magnitude −4.2 acts as a guidepost for spotting elusive Mercury,
+    which is rarely easy to observe. Look low in the west shortly after sunset;
+    binoculars will show both planets in the same field of view against the
+    twilight glow.
+  url: "https://science.nasa.gov/solar-system/skywatching/"
+
+- date: "2026-11-15"
+  bodies: ["Jupiter", "Mars"]
+  separation: 1.2
+  sky: "morning"
+  look: "Look east before dawn"
+  mag1: -2.3
+  mag2: 1.1
+  description: >
+    Jupiter and Mars converge to within 1.2° of each other in the pre-dawn sky,
+    rising around midnight and climbing high by dawn. The color contrast is
+    striking — Jupiter shines as a brilliant white-yellow beacon while Mars
+    glows distinctly reddish-orange. Both planets fit easily within a binocular
+    field of view, and a small telescope will show Jupiter's cloud bands and
+    four Galilean moons alongside Mars's reddish disk.
+  url: "https://in-the-sky.org/news.php?id=20261115_20_100"
+
+# ── 2027 ────────────────────────────────────────────────────────────────────
+
+- date: "2027-07-01"
+  bodies: ["Venus", "Jupiter"]
+  separation: 3.5
+  sky: "morning"
+  look: "Look east before dawn"
+  mag1: -4.0
+  mag2: -2.1
+  description: >
+    Venus and Jupiter appear together in the morning sky, separated by about
+    3.5°. Both planets rise well before the Sun, making this an easy naked-eye
+    event from a clear eastern horizon. The two brightest planets make a
+    striking pair against the pre-dawn sky.
+  url: "https://science.nasa.gov/solar-system/skywatching/"

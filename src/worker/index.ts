@@ -95,6 +95,7 @@ function buildCalName(categories: CategorySlug[]): string {
     asteroids: 'Asteroid Flybys',
     comets: 'Comets',
     occultations: 'Lunar Occultations',
+    conjunctions: 'Planetary Conjunctions',
     launches: 'Rocket Launches',
     history: 'Space History',
     aurora: 'Aurora Borealis',

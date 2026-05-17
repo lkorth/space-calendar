@@ -76,7 +76,14 @@ Covers events such as:
 ## Excluded Categories
 
 ### Planetary Conjunctions
-When two planets appear close together in the sky. Excluded because they occur frequently (sometimes monthly) and most are not visually striking enough to be calendar-worthy. The signal-to-noise ratio is too low.
+Close approaches between naked-eye planets (Mercury, Venus, Mars, Jupiter, Saturn). Only events with ≤ 5° separation are included. Uranus and Neptune are excluded — they require dark skies and optical aid to identify.
+
+Events are curated in `conjunctions.yaml` and updated annually. Criteria for inclusion:
+- Both planets visible to the naked eye from a dark site
+- Angular separation ≤ 5° (most included events are ≤ 2°)
+- At least one planet brighter than magnitude +2
+
+**Previously excluded** on signal-to-noise grounds; re-added as an opt-in category with tight filtering to ensure only genuinely notable events appear.
 
 ### Routine Rocket Launches
 High-cadence, low-public-interest launches are excluded:
