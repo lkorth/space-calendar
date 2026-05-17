@@ -33,7 +33,7 @@ jobs:
           for slug in history comets; do
             file="data/${slug}.json"
             if [ -f "$file" ]; then
-              npx wrangler kv key put --binding CALENDAR_KV "static:${slug}" --path "$file"
+              npx wrangler kv key put --binding CALENDAR_KV "static:${slug}" --path "$file" --remote
             fi
           done
         env:

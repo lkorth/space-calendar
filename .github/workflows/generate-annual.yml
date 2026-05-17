@@ -29,7 +29,7 @@ jobs:
         run: |
           for file in data/*.json; do
             key="static:$(basename "$file" .json)"
-            npx wrangler kv key put --binding CALENDAR_KV "$key" --path "$file"
+            npx wrangler kv key put --binding CALENDAR_KV "$key" --path "$file" --remote
           done
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
