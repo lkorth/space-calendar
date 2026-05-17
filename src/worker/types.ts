@@ -10,6 +10,8 @@ export interface RequestParams {
   tz?: string;
   /** Hemisphere for season labeling and aurora selection. Defaults to northern. */
   hemisphere?: Hemisphere;
+  /** Astronomy club ID for the astronomy-clubs category, e.g. "jgap" */
+  club?: string;
 }
 
 export interface Env {

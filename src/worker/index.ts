@@ -3,6 +3,7 @@ import { makeStaticCategory, makeSolsticesCategory } from './categories/static.t
 import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { milkyWayCategory } from './categories/milky-way.ts';
+import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, Env, RequestParams } from './types.ts';
@@ -81,6 +82,7 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CalendarEve
     ['aurora', auroraCategory],
     ['aurora-australis', auroraAustralisCategory],
     ['milky-way', milkyWayCategory],
+    ['astronomy-clubs', astronomyClubsCategory],
   ]);
 
   return (
@@ -114,7 +116,9 @@ function parseParams(url: URL): RequestParams {
   const rawHemi = url.searchParams.get('hemi');
   const hemisphere = rawHemi === 'south' ? 'southern' : 'northern';
 
-  return { categories: rawCategories, lat, tz, hemisphere };
+  const club = url.searchParams.get('club') ?? undefined;
+
+  return { categories: rawCategories, lat, tz, hemisphere, club };
 }
 
 function buildCalName(categories: CategorySlug[]): string {
@@ -138,6 +142,7 @@ function buildCalName(categories: CategorySlug[]): string {
     'aurora-australis': 'Aurora Australis',
     'milky-way': 'Milky Way',
     'deep-sky': 'Deep Sky',
+    'astronomy-clubs': 'Astronomy Club',
   };
   return categories.map((s) => labels[s] ?? s).join(', ');
 }

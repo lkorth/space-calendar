@@ -51,7 +51,8 @@ export type CategorySlug =
   | 'aurora'
   | 'aurora-australis'
   | 'milky-way'
-  | 'deep-sky';
+  | 'deep-sky'
+  | 'astronomy-clubs';
 
 export type Schedule = 'monthly' | 'weekly' | 'on-change';
 
@@ -74,7 +75,7 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
 ];
 
 /** Categories fetched live by the worker on each request */
-export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'aurora', 'aurora-australis', 'milky-way'];
+export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'aurora', 'aurora-australis', 'milky-way', 'astronomy-clubs'];
 
 // ---------------------------------------------------------------------------
 // Pipeline interfaces

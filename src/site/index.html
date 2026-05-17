@@ -21,8 +21,9 @@
     .category-name { font-weight: 500; }
     .category-desc { font-size: 0.85rem; color: #8080a0; margin-top: 2px; }
     .expandable { display: none; margin-top: 0.75rem; padding: 0.75rem; background: #12122a; border-radius: 6px; border: 1px solid #2a2a4a; }
-    .expandable input[type="text"], .expandable input[type="number"] { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
-    .expandable input[type="text"]:focus, .expandable input[type="number"]:focus { outline: none; border-color: #7060ff; }
+    .expandable input[type="text"], .expandable input[type="number"], .expandable select { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
+    .expandable input[type="text"]:focus, .expandable input[type="number"]:focus, .expandable select:focus { outline: none; border-color: #7060ff; }
+    .expandable select option { background: #0a0a1f; }
     .hemi-radios { display: flex; gap: 1.25rem; margin-bottom: 0.75rem; }
     .hemi-radios label { font-size: 0.85rem; color: #9090a8; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; }
     .hemi-radios input[type="radio"] { accent-color: #7060ff; cursor: pointer; }
@@ -92,6 +93,24 @@
     <div class="section-label">Deep Sky</div>
     <div class="category"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night</div></label></div>
 
+    <div class="section-label">Local Clubs</div>
+    <div class="category">
+      <input type="checkbox" id="astronomy-clubs" value="astronomy-clubs" onchange="toggleClubsSection(this.checked)" />
+      <label for="astronomy-clubs" style="flex:1">
+        <div class="category-name">Local Astronomy Club Programs</div>
+        <div class="category-desc">Public observing programs and events from your local astronomy club</div>
+        <div class="expandable" id="clubs-section">
+          <select id="club-select" onchange="update()">
+            <option value="">— select a club —</option>
+            <option value="jgap">John Glenn Astronomy Park — New Concord, OH</option>
+          </select>
+          <div class="location-note" style="margin-top:0.5rem">
+            Don't see your club? <a href="https://github.com/lkorth/space-calendar/issues" target="_blank">Open an issue</a> or <a href="https://github.com/lkorth/space-calendar/pulls" target="_blank">submit a PR</a> to add it.
+          </div>
+        </div>
+      </label>
+    </div>
+
     <div class="section-label">Location-Aware</div>
     <div class="category">
       <input type="checkbox" id="aurora" onchange="toggleAuroraSection(this.checked)" />
@@ -139,6 +158,16 @@
     let resolvedLat = null;  // northern aurora: from zip lookup
     let australisLat = null; // southern aurora: from geolocation or manual input
     const detectedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    function toggleClubsSection(checked) {
+      document.getElementById('clubs-section').style.display = checked ? 'block' : 'none';
+      update();
+    }
+
+    function getClubId() {
+      if (!document.getElementById('astronomy-clubs').checked) return null;
+      return document.getElementById('club-select').value || null;
+    }
 
     function toggleAuroraSection(checked) {
       document.getElementById('aurora-section').style.display = checked ? 'block' : 'none';
@@ -240,12 +269,13 @@
       return cats;
     }
 
-    function buildUrl(categories, auroraLat, solsticesHemi) {
+    function buildUrl(categories, auroraLat, solsticesHemi, clubId) {
       const url = new URL('/feed.ics', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
       if (hasAurora && auroraLat !== null) url.searchParams.set('lat', auroraLat);
       if (solsticesHemi === 'south') url.searchParams.set('hemi', 'south');
+      if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
       return url.toString();
     }
@@ -256,7 +286,10 @@
       const auroraLat = getAuroraLat();
       const auroraReady = !auroraSlug || auroraLat !== null;
       const solsticesHemi = getSolsticesHemi();
-      const ready = categories.length > 0 && auroraReady;
+      const clubId = getClubId();
+      const clubsSelected = categories.includes('astronomy-clubs');
+      const clubReady = !clubsSelected || clubId !== null;
+      const ready = categories.length > 0 && auroraReady && clubReady;
 
       const display = document.getElementById('url-display');
       const btnCopy = document.getElementById('btn-copy');
@@ -268,8 +301,10 @@
         display.innerHTML = '<span class="empty-msg">Enter a valid zip or postal code for aurora</span>';
       } else if (auroraSlug === 'aurora-australis' && australisLat === null) {
         display.innerHTML = '<span class="empty-msg">Enter your location for Aurora Australis</span>';
+      } else if (clubsSelected && clubId === null) {
+        display.innerHTML = '<span class="empty-msg">Select an astronomy club above</span>';
       } else {
-        display.textContent = buildUrl(categories, auroraLat, solsticesHemi);
+        display.textContent = buildUrl(categories, auroraLat, solsticesHemi, clubId);
       }
 
       btnCopy.disabled = !ready;
@@ -277,7 +312,7 @@
     }
 
     function copyUrl() {
-      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi());
+      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi(), getClubId());
       navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById('btn-copy');
         btn.textContent = 'Copied!';
@@ -287,13 +322,13 @@
     }
 
     function addToGoogle() {
-      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi()).replace(/^https:\/\//, 'webcal://');
+      const url = buildUrl(getSelectedCategories(), getAuroraLat(), getSolsticesHemi(), getClubId()).replace(/^https:\/\//, 'webcal://');
       const googleUrl = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(url);
       window.open(googleUrl, '_blank');
     }
 
     document.querySelectorAll('input[type="checkbox"]').forEach(el => {
-      if (el.id !== 'aurora' && el.id !== 'solstices-equinoxes') {
+      if (el.id !== 'aurora' && el.id !== 'solstices-equinoxes' && el.id !== 'astronomy-clubs') {
         el.addEventListener('change', update);
       }
     });
