@@ -49,7 +49,8 @@ export type CategorySlug =
   | 'launches'
   | 'history'
   | 'aurora'
-  | 'aurora-australis';
+  | 'aurora-australis'
+  | 'milky-way';
 
 export type Schedule = 'monthly' | 'weekly' | 'on-change';
 
@@ -71,7 +72,7 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
 ];
 
 /** Categories fetched live by the worker on each request */
-export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'aurora', 'aurora-australis'];
+export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'aurora', 'aurora-australis', 'milky-way'];
 
 // ---------------------------------------------------------------------------
 // Pipeline interfaces

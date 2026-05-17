@@ -2,6 +2,7 @@ import { buildICS } from './ics.ts';
 import { makeStaticCategory, makeSolsticesCategory } from './categories/static.ts';
 import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
+import { milkyWayCategory } from './categories/milky-way.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CategorySlug } from '../shared/models.ts';
 import type { Category, Env, RequestParams } from './types.ts';
@@ -41,6 +42,7 @@ export default {
         ['launches', launchesCategory],
         ['aurora', auroraCategory],
         ['aurora-australis', auroraAustralisCategory],
+        ['milky-way', milkyWayCategory],
       ]);
 
       const events = (
@@ -114,6 +116,7 @@ function buildCalName(categories: CategorySlug[]): string {
     history: 'Space History',
     aurora: 'Aurora Borealis',
     'aurora-australis': 'Aurora Australis',
+    'milky-way': 'Milky Way',
   };
   return categories.map((s) => labels[s] ?? s).join(', ');
 }
