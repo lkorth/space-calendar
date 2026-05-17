@@ -1,0 +1,22 @@
+[
+  {
+    "uid": "alignment-mars-launch-window-2026-11-01@space-calendar",
+    "title": "Mars Launch Window \u2014 Optimal Transfer Orbit to Mars",
+    "start": "2026-11-01",
+    "end": "2026-12-16",
+    "allDay": true,
+    "description": "Earth and Mars are in the orbital geometry that allows a spacecraft to reach Mars on a minimum-energy trajectory \u2014 a Hohmann transfer orbit taking roughly 7 months. This alignment occurs approximately every 26 months (one Martian synodic period). Every major Mars mission has launched during one of these windows: NASA's Perseverance rover (2020), Mars Science Laboratory / Curiosity (2011), the Mars Exploration Rovers Spirit and Opportunity (2003), and Mars Odyssey (2001).\n\nA spacecraft launched outside this window would require far more fuel to reach Mars \u2014 often prohibitively so. The next window after this one opens in early 2029.\n\nNo confirmed Mars missions are currently scheduled for this window, but it is the window most likely to be targeted by future crewed Mars mission planning.",
+    "url": "https://mars.nasa.gov/mars-exploration/missions/",
+    "category": "alignments"
+  },
+  {
+    "uid": "alignment-planet-parade-2026-04-15@space-calendar",
+    "title": "Planet Parade \u2014 Four Planets Visible in the Evening Sky",
+    "start": "2026-04-15",
+    "end": "2026-05-11",
+    "allDay": true,
+    "description": "Venus, Mars, Jupiter, and Saturn are all visible in the evening sky during this period, spread across a wide arc. Venus blazes brilliantly in the west, while Jupiter and Saturn can be spotted lower in the dawn sky and Mars is visible in Gemini. All four can be observed on the same night from a dark site, offering a rare opportunity to see most of the solar system's bright planets in one sweep.",
+    "url": "https://science.nasa.gov/solar-system/skywatching/",
+    "category": "alignments"
+  }
+]

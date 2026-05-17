@@ -1,0 +1,70 @@
+# Planetary alignment events: Mars transfer windows and notable planet parades.
+#
+# Mars launch windows occur every ~26 months (one Martian synodic period).
+# The optimal Hohmann transfer window is when Earth and Mars are in the right
+# orbital geometry — roughly 8 weeks before Mars opposition. Missions launched
+# during this window take ~7 months to reach Mars.
+#
+# Planet parades are when multiple naked-eye planets cluster in the same part
+# of the sky simultaneously.
+#
+# Fields:
+#   start:       ISO 8601 start date of the window/event (YYYY-MM-DD)
+#   end:         ISO 8601 end date (YYYY-MM-DD)
+#   type:        "mars-launch-window" | "planet-parade"
+#   title:       Event title
+#   description: Full explanation
+#   url:         Authoritative source
+
+# ── Mars Launch Windows ─────────────────────────────────────────────────────
+# Every ~26 months, Earth and Mars align such that a spacecraft launched from
+# Earth can reach Mars on a minimum-energy (Hohmann transfer) trajectory.
+# The window is approximately 30 days wide, centered on the optimal departure
+# date (about 8 weeks before Mars opposition).
+
+- start: "2026-11-01"
+  end: "2026-12-15"
+  type: "mars-launch-window"
+  title: "Mars Launch Window — Optimal Transfer Orbit to Mars"
+  description: >
+    Earth and Mars are in the orbital geometry that allows a spacecraft to reach
+    Mars on a minimum-energy trajectory — a Hohmann transfer orbit taking roughly
+    7 months. This alignment occurs approximately every 26 months (one Martian
+    synodic period). Every major Mars mission has launched during one of these
+    windows: NASA's Perseverance rover (2020), Mars Science Laboratory / Curiosity
+    (2011), the Mars Exploration Rovers Spirit and Opportunity (2003), and Mars
+    Odyssey (2001).
+
+    A spacecraft launched outside this window would require far more fuel to reach
+    Mars — often prohibitively so. The next window after this one opens in early 2029.
+
+    No confirmed Mars missions are currently scheduled for this window, but it is
+    the window most likely to be targeted by future crewed Mars mission planning.
+  url: "https://mars.nasa.gov/mars-exploration/missions/"
+
+- start: "2029-01-01"
+  end: "2029-02-15"
+  type: "mars-launch-window"
+  title: "Mars Launch Window — Optimal Transfer Orbit to Mars"
+  description: >
+    Earth and Mars align for the next minimum-energy transfer opportunity — the
+    second Mars launch window after the 2026–2027 window. A spacecraft launched
+    now would arrive at Mars approximately 7 months later. Mars launch windows
+    occur every ~26 months; the previous one was in late 2026.
+  url: "https://mars.nasa.gov/mars-exploration/missions/"
+
+# ── Planet Parades ──────────────────────────────────────────────────────────
+# Periods when multiple naked-eye planets are simultaneously visible in the sky.
+
+- start: "2026-04-15"
+  end: "2026-05-10"
+  type: "planet-parade"
+  title: "Planet Parade — Four Planets Visible in the Evening Sky"
+  description: >
+    Venus, Mars, Jupiter, and Saturn are all visible in the evening sky during
+    this period, spread across a wide arc. Venus blazes brilliantly in the west,
+    while Jupiter and Saturn can be spotted lower in the dawn sky and Mars is
+    visible in Gemini. All four can be observed on the same night from a dark site,
+    offering a rare opportunity to see most of the solar system's bright planets
+    in one sweep.
+  url: "https://science.nasa.gov/solar-system/skywatching/"
