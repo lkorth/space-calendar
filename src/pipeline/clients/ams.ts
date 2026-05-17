@@ -23,6 +23,8 @@ export interface MeteorShower {
   url: string;
 }
 
+const AMS_CALENDAR = 'https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/';
+
 export const ANNUAL_SHOWERS: MeteorShower[] = [
   {
     name: 'Quadrantids',
@@ -31,7 +33,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Asteroid 2003 EH1',
     zhr: 120,
     radiant: 'Boötes',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/quadrantids/',
+    url: `${AMS_CALENDAR}#Quadrantids`,
   },
   {
     name: 'Lyrids',
@@ -40,7 +42,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Comet C/1861 G1 (Thatcher)',
     zhr: 20,
     radiant: 'Lyra',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/lyrids/',
+    url: `${AMS_CALENDAR}#Lyrids`,
   },
   {
     name: 'Eta Aquariids',
@@ -49,7 +51,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: "Comet 1P/Halley",
     zhr: 50,
     radiant: 'Aquarius',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/eta-aquariids/',
+    url: `${AMS_CALENDAR}#eta+Aquariids`,
   },
   {
     name: 'Delta Aquariids',
@@ -58,7 +60,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Comet 96P/Machholz',
     zhr: 25,
     radiant: 'Aquarius',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/delta-aquariids/',
+    url: `${AMS_CALENDAR}#Southern+delta+Aquariids`,
   },
   {
     name: 'Perseids',
@@ -67,7 +69,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Comet 109P/Swift-Tuttle',
     zhr: 100,
     radiant: 'Perseus',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/perseids/',
+    url: `${AMS_CALENDAR}#Perseids`,
   },
   {
     name: 'Orionids',
@@ -76,7 +78,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: "Comet 1P/Halley",
     zhr: 20,
     radiant: 'Orion',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/orionids/',
+    url: `${AMS_CALENDAR}#Orionids`,
   },
   {
     name: 'Leonids',
@@ -85,7 +87,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Comet 55P/Tempel-Tuttle',
     zhr: 15,
     radiant: 'Leo',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/leonids/',
+    url: `${AMS_CALENDAR}#Leonids`,
   },
   {
     name: 'Geminids',
@@ -94,7 +96,7 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Asteroid 3200 Phaethon',
     zhr: 150,
     radiant: 'Gemini',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/geminids/',
+    url: `${AMS_CALENDAR}#Geminids`,
   },
   {
     name: 'Ursids',
@@ -103,6 +105,6 @@ export const ANNUAL_SHOWERS: MeteorShower[] = [
     parentBody: 'Comet 8P/Tuttle',
     zhr: 10,
     radiant: 'Ursa Minor',
-    url: 'https://www.amsmeteors.org/meteor-showers/meteor-shower-database/ursids/',
+    url: `${AMS_CALENDAR}#Ursids`,
   },
 ];
