@@ -74,6 +74,10 @@ export async function fetchUpcomingLaunches(apiKey?: string): Promise<LL2Launch[
 
   while (url) {
     const res = await fetch(url, { headers });
+    if (res.status === 429) {
+      console.warn('Launch Library 2 rate limited (429) — returning empty launch list');
+      return [];
+    }
     if (!res.ok) throw new Error(`Launch Library 2 error ${res.status}`);
     const data = (await res.json()) as LL2Response;
     results.push(...data.results);

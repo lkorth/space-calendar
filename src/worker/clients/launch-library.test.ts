@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { isNotable } from './launch-library.ts';
+import { describe, it, expect, vi } from 'vitest';
+import { isNotable, fetchUpcomingLaunches } from './launch-library.ts';
 import type { LL2Launch } from './launch-library.ts';
 
 function makeLaunch(overrides: Partial<LL2Launch> = {}): LL2Launch {
@@ -77,5 +77,18 @@ describe('isNotable', () => {
       name: 'Falcon 9 | CRS-32',
       mission: { name: 'CRS-32', description: 'Commercial resupply services mission to the ISS.', type: 'Resupply' },
     }))).toBe(false);
+  });
+});
+
+describe('fetchUpcomingLaunches', () => {
+  it('returns empty array on 429 instead of throwing', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
+    const result = await fetchUpcomingLaunches();
+    expect(result).toEqual([]);
+  });
+
+  it('throws on other non-ok status codes', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+    await expect(fetchUpcomingLaunches()).rejects.toThrow('Launch Library 2 error 503');
   });
 });
