@@ -46,13 +46,14 @@ A single subscribable ICS feed where users select which event categories they wa
 │  │  Worker          │        │  KV Store              │     │
 │  │                  │◄──────►│                        │     │
 │  │  GET /feed.ics   │        │  static:moon-phases    │     │
-│  │  ?c=launches,    │        │  static:eclipses       │     │
-│  │    eclipses,     │        │  static:meteor-showers │     │
-│  │    moon-phases   │        │  static:oppositions    │     │
-│  │                  │        │  static:elongations    │     │
-│  │  merges selected │        │  static:asteroids      │     │
-│  │  categories into │        │  static:history        │     │
-│  │  one ICS feed    │        │  static:comets         │     │
+│  │  GET /feed.json  │        │  static:eclipses       │     │
+│  │  ?c=launches,    │        │  static:meteor-showers │     │
+│  │    eclipses,     │        │  static:oppositions    │     │
+│  │    moon-phases   │        │  static:elongations    │     │
+│  │                  │        │  static:asteroids      │     │
+│  │  merges selected │        │  static:history        │     │
+│  │  categories into │        │  static:comets         │     │
+│  │  ICS or JSON     │        │                        │     │
 │  │                  │        │                        │     │
 │  │                  │        │  launches (TTL: 1hr)   │     │
 │  │                  │        │  aurora:<lat>          │     │
@@ -118,14 +119,16 @@ Aurora keys are keyed by whole-number latitude (e.g., `aurora:45`, `aurora:52`),
 
 ### 3. Cloudflare Worker
 
-Handles `GET /feed.ics?c=<categories>&lat=<latitude>`.
+Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with identical parameters.
 
 - Parses the `c` query parameter as a comma-separated list of category slugs
 - Reads each requested static category from KV
 - If `launches` is requested: reads from KV; on cache miss, fetches from Launch Library 2, filters to notable launches, writes to KV with 1-hour TTL
 - If `aurora` is requested: rounds `lat` to the nearest integer, reads `aurora:<lat>` from KV; on cache miss, fetches NOAA SWPC 3-day Kp forecast, computes visibility windows for that latitude, writes to KV with 3–4 hour TTL
-- Merges all events into a single ICS document and streams it to the client
-- Sets `Content-Type: text/calendar` and `Cache-Control: max-age=3600`
+- Merges all events, then either:
+  - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
+  - `/feed.json` — returns `{ name, events }` as JSON (`Content-Type: application/json`)
+- Sets `Cache-Control: max-age=3600` on both endpoints
 
 **Category slugs:**
 
@@ -140,9 +143,14 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>`.
 | `elongations` | Mercury & Venus elongations |
 | `asteroids` | Notable close approaches |
 | `comets` | Perihelion, closest approach, visibility windows |
+| `conjunctions` | Planetary conjunctions |
+| `alignments` | Planetary alignments |
+| `occultations` | Lunar occultations |
 | `launches` | Notable rocket launches (live data) |
 | `history` | Space history milestone anniversaries |
 | `aurora` | Aurora borealis forecasts — requires `&lat=<whole_degree>` |
+| `aurora-australis` | Aurora australis forecasts — requires `&lat=<negative_whole_degree>` |
+| `milky-way` | Milky Way viewing windows |
 
 ### 4. Configurator UI (GitHub Pages)
 
@@ -201,4 +209,4 @@ webcal://space-calendar.workers.dev/feed.ics?c=moon-phases,launches,eclipses-sol
 webcal://space-calendar.workers.dev/feed.ics?c=moon-phases,aurora,launches&lat=45
 ```
 
-Users generate this URL from the configurator page. The URL is stable and re-subscribable — changing categories means getting a new URL from the configurator.
+Users generate this URL from the configurator page. The URL is stable and re-subscribable — changing categories means getting a new URL from the configurator. For the full API parameter reference (including `/feed.json`), see the README.

@@ -28,9 +28,26 @@ You pick which categories you want. Everything appears in a single calendar subs
 
 Visit the [configurator](https://lkorth.github.io/space-calendar/), select your categories, and copy the subscription URL into your calendar app.
 
+## JSON API
+
+The same data is also available as JSON if you want to use it outside of a calendar app:
+
+```
+GET https://space-calendar.lukekorth.com/feed.json?c=moon-phases,meteor-showers
+```
+
+Returns `{ "name": "...", "events": [...] }` where each event is a `CalendarEvent` object. Accepts the same query parameters as the ICS feed:
+
+| Parameter | Description |
+|-----------|-------------|
+| `c` | Comma-separated category slugs (required). Same slugs as the ICS feed. |
+| `lat` | Whole-degree latitude. Required for `aurora` and `aurora-australis`. Use a negative value for southern hemisphere. |
+| `hemi` | `north` (default) or `south`. Affects solstice/equinox event titles and descriptions. |
+| `tz` | IANA timezone string (e.g. `America/New_York`). Used for contact times in event descriptions. |
+
 ## How it works
 
-Static astronomical data (eclipses, moon phases, meteor showers, planetary events, history milestones) is generated once a year from USNO and JPL data via GitHub Actions and stored in this repo. Rocket launch data is fetched live from [The Space Devs Launch Library 2](https://thespacedevs.com/llapi) and cached hourly. Aurora forecasts are fetched from [NOAA SWPC](https://www.swpc.noaa.gov/) and cached every few hours. A Cloudflare Worker merges the requested categories into a single ICS feed at request time.
+Static astronomical data (eclipses, moon phases, meteor showers, planetary events, history milestones) is generated once a year from USNO and JPL data via GitHub Actions and stored in this repo. Rocket launch data is fetched live from [The Space Devs Launch Library 2](https://thespacedevs.com/llapi) and cached hourly. Aurora forecasts are fetched from [NOAA SWPC](https://www.swpc.noaa.gov/) and cached every few hours. A Cloudflare Worker merges the requested categories into a single ICS or JSON response at request time.
 
 ## Documentation
 

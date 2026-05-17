@@ -4,7 +4,7 @@ import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { milkyWayCategory } from './categories/milky-way.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
-import type { CategorySlug } from '../shared/models.ts';
+import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, Env, RequestParams } from './types.ts';
 
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
@@ -21,7 +21,7 @@ export default {
       return Response.redirect('https://space-calendar.pages.dev', 301);
     }
 
-    if (url.pathname !== '/feed.ics') {
+    if (url.pathname !== '/feed.ics' && url.pathname !== '/feed.json') {
       return new Response('Not found', { status: 404 });
     }
 
@@ -41,37 +41,28 @@ export default {
     if (cached) return cached;
 
     try {
-      // Build the category map per-request so hemisphere-aware categories get the right params
-      const CATEGORIES: Map<CategorySlug, Category> = new Map([
-        ...STATIC_CATEGORY_MAP,
-        ['solstices-equinoxes', makeSolsticesCategory(params.hemisphere)],
-        ['launches', launchesCategory],
-        ['aurora', auroraCategory],
-        ['aurora-australis', auroraAustralisCategory],
-        ['milky-way', milkyWayCategory],
-      ]);
-
-      const events = (
-        await Promise.all(
-          params.categories.map((slug) => {
-            const category = CATEGORIES.get(slug);
-            return category ? category.fetch(env, params) : Promise.resolve([]);
-          }),
-        )
-      )
-        .flat()
-        .sort((a, b) => a.start.localeCompare(b.start));
-
+      const events = await fetchEvents(params, env);
       const calName = buildCalName(params.categories);
-      const ics = buildICS(events, calName, params.tz);
 
-      const response = new Response(ics, {
-        headers: {
-          'Content-Type': 'text/calendar; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600',
-          'Content-Disposition': 'attachment; filename="space-calendar.ics"',
-        },
-      });
+      let response: Response;
+      if (url.pathname === '/feed.json') {
+        response = new Response(JSON.stringify({ name: calName, events }), {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600',
+          },
+        });
+      } else {
+        const ics = buildICS(events, calName, params.tz);
+        response = new Response(ics, {
+          headers: {
+            'Content-Type': 'text/calendar; charset=utf-8',
+            'Cache-Control': 'public, max-age=3600',
+            'Content-Disposition': 'attachment; filename="space-calendar.ics"',
+          },
+        });
+      }
+
       ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
       return response;
     } catch (err) {
@@ -80,6 +71,29 @@ export default {
     }
   },
 };
+
+async function fetchEvents(params: RequestParams, env: Env): Promise<CalendarEvent[]> {
+  // Build the category map per-request so hemisphere-aware categories get the right params
+  const CATEGORIES: Map<CategorySlug, Category> = new Map([
+    ...STATIC_CATEGORY_MAP,
+    ['solstices-equinoxes', makeSolsticesCategory(params.hemisphere)],
+    ['launches', launchesCategory],
+    ['aurora', auroraCategory],
+    ['aurora-australis', auroraAustralisCategory],
+    ['milky-way', milkyWayCategory],
+  ]);
+
+  return (
+    await Promise.all(
+      params.categories.map((slug) => {
+        const category = CATEGORIES.get(slug);
+        return category ? category.fetch(env, params) : Promise.resolve([]);
+      }),
+    )
+  )
+    .flat()
+    .sort((a, b) => a.start.localeCompare(b.start));
+}
 
 function buildCacheKey(request: Request, deployId?: string): Request {
   const url = new URL(request.url);

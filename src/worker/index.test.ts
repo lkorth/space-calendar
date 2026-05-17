@@ -185,3 +185,64 @@ describe('worker request routing', () => {
     expect(caches.default.put).toHaveBeenCalledOnce();
   });
 });
+
+describe('JSON feed (/feed.json)', () => {
+  it('returns 200 with application/json content type', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.json?c=moon-phases'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('application/json');
+  });
+
+  it('returns events as JSON with name and events fields', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.json?c=moon-phases'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    const body = await res.json() as { name: string; events: CalendarEvent[] };
+    expect(body.name).toBe('Moon Phases');
+    expect(body.events).toHaveLength(1);
+    expect(body.events[0]!.uid).toBe(moonEvent.uid);
+    expect(body.events[0]!.title).toBe(moonEvent.title);
+  });
+
+  it('returns 400 when no categories are specified', async () => {
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.json'),
+      makeEnv(),
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when latitude and hemisphere contradict', async () => {
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.json?c=moon-phases&lat=-45&hemi=north'),
+      makeEnv(),
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it('merges and sorts events from multiple categories', async () => {
+    const env = makeEnv({
+      'static:moon-phases': JSON.stringify([moonEvent]),
+      'static:eclipses-lunar': JSON.stringify([eclipseEvent]),
+    });
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.json?c=moon-phases,eclipses-lunar'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    const body = await res.json() as { name: string; events: CalendarEvent[] };
+    expect(body.events).toHaveLength(2);
+    expect(body.events[0]!.uid).toBe(moonEvent.uid);
+    expect(body.events[1]!.uid).toBe(eclipseEvent.uid);
+  });
+});
