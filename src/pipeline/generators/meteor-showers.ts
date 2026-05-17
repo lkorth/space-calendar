@@ -1,15 +1,40 @@
+import { usno } from '../clients/usno.ts';
+import type { MoonPhase } from '../clients/usno.ts';
 import { ANNUAL_SHOWERS } from '../clients/ams.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
-// J2000.0 reference new moon — Julian Date 2451550.1 = 2000-01-06T14:20:00Z
-const REFERENCE_NEW_MOON_MS = new Date('2000-01-06T14:20:00Z').getTime();
-const LUNAR_CYCLE_MS = 29.530589 * 24 * 60 * 60 * 1000;
+export function moonPhaseOnDate(dateStr: string, phases: MoonPhase[]): { illumination: number; isWaxing: boolean } {
+  const targetMs = new Date(dateStr + 'T12:00:00Z').getTime();
+  const newMoonMs = phases
+    .filter((p) => p.phase === 'New Moon')
+    .map((p) => Date.UTC(p.year, p.month - 1, p.day))
+    .sort((a, b) => a - b);
 
-export function moonPhaseOnDate(dateStr: string): { illumination: number; isWaxing: boolean } {
-  const t = new Date(dateStr + 'T12:00:00Z').getTime();
-  const elapsed = t - REFERENCE_NEW_MOON_MS;
-  const cyclePos = ((elapsed % LUNAR_CYCLE_MS) + LUNAR_CYCLE_MS) % LUNAR_CYCLE_MS;
-  const fraction = cyclePos / LUNAR_CYCLE_MS; // 0 = new moon, 0.5 = full moon
+  let prevNewMoon: number | undefined;
+  let nextNewMoon: number | undefined;
+  for (const t of newMoonMs) {
+    if (t <= targetMs) prevNewMoon = t;
+    else if (nextNewMoon === undefined) nextNewMoon = t;
+  }
+
+  let daysSinceNew: number;
+  let cycleLength: number;
+
+  if (prevNewMoon !== undefined && nextNewMoon !== undefined) {
+    cycleLength = (nextNewMoon - prevNewMoon) / 86400000;
+    daysSinceNew = (targetMs - prevNewMoon) / 86400000;
+  } else if (prevNewMoon !== undefined) {
+    cycleLength = 29.530589;
+    daysSinceNew = (targetMs - prevNewMoon) / 86400000;
+  } else if (nextNewMoon !== undefined) {
+    // Before the first new moon of the year — count back from it
+    cycleLength = 29.530589;
+    daysSinceNew = cycleLength - (nextNewMoon - targetMs) / 86400000;
+  } else {
+    return { illumination: 0, isWaxing: true };
+  }
+
+  const fraction = Math.max(0, Math.min(1, daysSinceNew / cycleLength));
   const illumination = Math.round((1 - Math.cos(fraction * 2 * Math.PI)) / 2 * 100);
   return { illumination, isWaxing: fraction < 0.5 };
 }
@@ -45,6 +70,8 @@ export const meteorShowersGenerator: Generator = {
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
+    const { phasedata } = await usno.moonPhases(year);
+
     return ANNUAL_SHOWERS.map((shower) => {
       const date = new Date(Date.UTC(year, shower.peakMonth - 1, shower.peakDay));
       const dateStr = date.toISOString().split('T')[0]!;
@@ -52,7 +79,7 @@ export const meteorShowersGenerator: Generator = {
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       const nextDayStr = nextDay.toISOString().split('T')[0]!;
 
-      const { illumination, isWaxing } = moonPhaseOnDate(dateStr);
+      const { illumination, isWaxing } = moonPhaseOnDate(dateStr, phasedata);
 
       return {
         uid: `meteor-shower-${shower.name.toLowerCase().replace(/\s+/g, '-')}-${year}@space-calendar`,
