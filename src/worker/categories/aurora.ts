@@ -1,5 +1,6 @@
 import { fetchKpForecast, kpThresholdForLatitude } from '../clients/noaa.ts';
-import type { CalendarEvent, Category, Env, RequestParams } from '../../shared/models.ts';
+import type { CalendarEvent } from '../../shared/models.ts';
+import type { Category, Env, RequestParams } from '../types.ts';
 
 const TTL_SECONDS = 60 * 60 * 4; // 4 hours
 

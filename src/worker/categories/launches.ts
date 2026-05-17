@@ -1,6 +1,7 @@
 import { fetchUpcomingLaunches } from '../clients/launch-library.ts';
 import type { LL2Launch } from '../clients/launch-library.ts';
-import type { CalendarEvent, Category, Env, RequestParams } from '../../shared/models.ts';
+import type { CalendarEvent } from '../../shared/models.ts';
+import type { Category, Env, RequestParams } from '../types.ts';
 
 const KV_KEY = 'launches';
 const TTL_SECONDS = 60 * 60; // 1 hour

@@ -89,35 +89,3 @@ export interface Generator {
   generate(year: number): Promise<CalendarEvent[]>;
 }
 
-// ---------------------------------------------------------------------------
-// Worker interfaces
-// ---------------------------------------------------------------------------
-
-export interface Env {
-  CALENDAR_KV: KVNamespace;
-  /** Optional API key for Launch Library 2 higher rate limits */
-  LL2_API_KEY?: string;
-}
-
-export type Hemisphere = 'northern' | 'southern';
-
-export interface RequestParams {
-  categories: CategorySlug[];
-  /** Whole-number latitude for aurora visibility, e.g. 45 */
-  lat?: number;
-  /** IANA timezone for formatting contact times, e.g. "America/Denver" */
-  tz?: string;
-  /** Hemisphere for season labeling and aurora selection. Defaults to northern. */
-  hemisphere?: Hemisphere;
-}
-
-/** A worker category knows how to produce CalendarEvents, from KV or live */
-export interface Category {
-  readonly slug: CategorySlug;
-  fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]>;
-}
-
-/** A typed client for a live data source used by the worker */
-export interface WorkerClient<TResponse> {
-  fetch(params?: Record<string, string>): Promise<TResponse>;
-}

@@ -21,7 +21,7 @@ describe('USNO moon phases API (real)', () => {
     const data = await usno.moonPhases(YEAR);
     const entry = data.phasedata[0]!;
     expect(typeof entry.day).toBe('number');
-    expect((entry as Record<string, unknown>)['phaseday']).toBeUndefined();
+    expect((entry as unknown as Record<string, unknown>)['phaseday']).toBeUndefined();
   });
 
   it('each phase entry has month, year, phase, time fields', async () => {
@@ -72,7 +72,7 @@ describe('USNO solar eclipses API (real)', () => {
     expect(typeof entry.month).toBe('number');
     expect(typeof entry.year).toBe('number');
     expect(typeof entry.event).toBe('string');
-    expect((entry as Record<string, unknown>)['time']).toBeUndefined();
-    expect((entry as Record<string, unknown>)['region']).toBeUndefined();
+    expect((entry as unknown as Record<string, unknown>)['time']).toBeUndefined();
+    expect((entry as unknown as Record<string, unknown>)['region']).toBeUndefined();
   });
 });

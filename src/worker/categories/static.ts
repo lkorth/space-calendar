@@ -1,4 +1,5 @@
-import type { CalendarEvent, Category, CategorySlug, Env, Hemisphere, RequestParams } from '../../shared/models.ts';
+import type { CalendarEvent, CategorySlug } from '../../shared/models.ts';
+import type { Category, Env, Hemisphere, RequestParams } from '../types.ts';
 
 export function makeStaticCategory(slug: CategorySlug): Category {
   return {

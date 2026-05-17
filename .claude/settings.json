@@ -7,9 +7,9 @@
           {
             "type": "command",
             "if": "Bash(git commit*)",
-            "command": "npm test 1>&2 || echo '{\"continue\": false, \"stopReason\": \"Tests failed — fix failing tests before committing.\"}'",
-            "timeout": 120,
-            "statusMessage": "Running tests before commit..."
+            "command": "npm test 1>&2 && npm run typecheck 1>&2 || echo '{\"continue\": false, \"stopReason\": \"Tests or typecheck failed — fix before committing.\"}'",
+            "timeout": 180,
+            "statusMessage": "Running tests and typecheck before commit..."
           }
         ]
       }

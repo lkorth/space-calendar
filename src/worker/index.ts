@@ -3,7 +3,8 @@ import { makeStaticCategory, makeSolsticesCategory } from './categories/static.t
 import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
-import type { Category, CategorySlug, Env, RequestParams } from '../shared/models.ts';
+import type { CategorySlug } from '../shared/models.ts';
+import type { Category, Env, RequestParams } from './types.ts';
 
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
   ...STATIC_CATEGORIES

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { auroraCategory, auroraAustralisCategory } from './aurora.ts';
-import type { Env } from '../../shared/models.ts';
+import type { Env } from '../types.ts';
 
 function makeKV(store: Record<string, string> = {}) {
   return {
