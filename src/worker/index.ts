@@ -72,7 +72,7 @@ function parseParams(url: URL): RequestParams {
 }
 
 function buildCalName(categories: CategorySlug[]): string {
-  if (categories.length >= 5) return 'Space Calendar';
+  if (categories.length > 2) return 'Space Calendar';
   const labels: Record<CategorySlug, string> = {
     'moon-phases': 'Moon Phases',
     'meteor-showers': 'Meteor Showers',
