@@ -1,7 +1,7 @@
 [
   {
     "uid": "opposition-jupiter-2026-01-10@space-calendar",
-    "title": "\ud83e\ude90 Jupiter at Opposition \u2014 Closest & Brightest",
+    "title": "🔭 Jupiter at Opposition — Closest & Brightest",
     "start": "2026-01-10",
     "end": "2026-01-11",
     "allDay": true,
@@ -11,17 +11,17 @@
   },
   {
     "uid": "opposition-saturn-2026-10-05@space-calendar",
-    "title": "\ud83e\ude90 Saturn at Opposition \u2014 Closest & Brightest",
+    "title": "🔭 Saturn at Opposition — Closest & Brightest",
     "start": "2026-10-05",
     "end": "2026-10-06",
     "allDay": true,
-    "description": "Saturn reaches opposition \u2014 its closest and brightest point of the year. The ringed planet rises at sunset and is visible all night. A small telescope at 30\u00d7 or more will clearly show Saturn's rings and the moon Titan.",
+    "description": "Saturn reaches opposition — its closest and brightest point of the year. The ringed planet rises at sunset and is visible all night. A small telescope at 30× or more will clearly show Saturn's rings and the moon Titan.",
     "url": "https://solarsystem.nasa.gov/planets/saturn/overview/",
     "category": "oppositions"
   },
   {
     "uid": "opposition-uranus-2026-11-26@space-calendar",
-    "title": "\ud83d\udd35 Uranus at Opposition \u2014 Closest & Brightest",
+    "title": "🔭 Uranus at Opposition — Closest & Brightest",
     "start": "2026-11-26",
     "end": "2026-11-27",
     "allDay": true,
@@ -31,11 +31,11 @@
   },
   {
     "uid": "opposition-neptune-2026-09-26@space-calendar",
-    "title": "\ud83d\udd35 Neptune at Opposition \u2014 Closest & Brightest",
+    "title": "🔭 Neptune at Opposition — Closest & Brightest",
     "start": "2026-09-26",
     "end": "2026-09-27",
     "allDay": true,
-    "description": "Neptune reaches opposition, its closest approach to Earth this year. At magnitude ~7.8 it requires binoculars at minimum \u2014 a small telescope will show its distinctive blue-grey disk. It is the most distant planet in our solar system.",
+    "description": "Neptune reaches opposition, its closest approach to Earth this year. At magnitude ~7.8 it requires binoculars at minimum — a small telescope will show its distinctive blue-grey disk. It is the most distant planet in our solar system.",
     "url": "https://solarsystem.nasa.gov/planets/neptune/overview/",
     "category": "oppositions"
   }
