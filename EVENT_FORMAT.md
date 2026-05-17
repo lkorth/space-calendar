@@ -175,6 +175,33 @@ Visible from: [broad regions — e.g., Americas, Europe, Africa, Asia]
 
 ---
 
+### Lunar Occultations
+
+| Field | Value |
+|-------|-------|
+| Timing | Timed event — the moment the target disappears behind the Moon's limb |
+| Duration | From disappearance to reappearance |
+| All-day | No |
+
+**Title format:**
+```
+Lunar Occultation — Moon covers Venus
+Lunar Occultation — Moon covers Regulus
+```
+
+**Body:**
+- What an occultation is (Moon covering a planet or star) and why it's dramatic (instantaneous disappearance)
+- Target: name, type (planet/star), visual magnitude with context
+- Visibility region: which countries/continents can see it
+- Disappearance and reappearance times in UTC
+- Whether it's a daytime or nighttime event, and viewing tips (binoculars, naked eye)
+
+**Authoritative source:** [NASA Eclipse/Occultation page](https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html) or Sky & Telescope
+
+**Data source:** Curated in `occultations.yaml` — add entries manually when notable occultations are identified.
+
+---
+
 ### Planetary Oppositions
 
 | Field | Value |

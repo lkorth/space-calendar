@@ -19,6 +19,7 @@ import { oppositionsGenerator, elongationsGenerator } from './generators/planeta
 import { asteroidsGenerator } from './generators/asteroids.ts';
 import { historyGenerator } from './generators/history.ts';
 import { cometsGenerator } from './generators/comets.ts';
+import { occultationsGenerator } from './generators/occultations.ts';
 
 const ALL_GENERATORS: Generator[] = [
   moonPhasesGenerator,
@@ -31,6 +32,7 @@ const ALL_GENERATORS: Generator[] = [
   asteroidsGenerator,
   historyGenerator,
   cometsGenerator,
+  occultationsGenerator,
 ];
 
 function parseArgs(): { schedule?: string; generator?: string; year: number } {

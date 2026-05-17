@@ -1,0 +1,103 @@
+# Lunar occultations of bright planets and stars.
+# Includes events visible from a significant land area (not just polar or oceanic regions).
+# Only naked-eye planets (Mercury–Saturn) and 1st/2nd magnitude stars are listed.
+#
+# Fields:
+#   date:       ISO 8601 date of the occultation (UTC)
+#   target:     The object being occulted (planet name or star name)
+#   type:       "planet" or "star"
+#   magnitude:  Approximate visual magnitude of the target
+#   visibility: Plain-language description of the visibility region
+#   disappear:  Approximate UTC time the target disappears behind the Moon's limb (HH:MM)
+#   reappear:   Approximate UTC time the target reappears (HH:MM) — omit if not widely visible
+#   description: Additional context (sky conditions, brightness contrast, daytime vs. night, etc.)
+#   url:        Authoritative source link
+
+# ── 2026 ────────────────────────────────────────────────────────────────────
+
+- date: "2026-02-02"
+  target: "Regulus"
+  type: "star"
+  magnitude: 1.4
+  visibility: "Eastern North America, including the eastern United States and eastern Canada"
+  disappear: "08:45"
+  reappear: "09:40"
+  description: >
+    The just-past-full Moon (98% illuminated) passes in front of Regulus, the brightest
+    star in Leo. The event occurs in daylight for much of the eastern US — use binoculars
+    to find the Moon in the blue sky and watch Regulus blink out at the Moon's dark limb.
+  url: "https://www.skyandtelescope.com/observing/sky-at-a-glance/"
+
+- date: "2026-04-25"
+  target: "Regulus"
+  type: "star"
+  magnitude: 1.4
+  visibility: "Central and eastern North America, parts of Europe"
+  disappear: "05:10"
+  reappear: "06:05"
+  description: >
+    The waning gibbous Moon (67% illuminated) occults Regulus in the pre-dawn sky.
+    Regulus vanishes behind the Moon's bright limb and reappears from the dark limb,
+    making the reappearance sudden and dramatic. Best viewed from a dark site before
+    morning twilight brightens the sky.
+  url: "https://www.skyandtelescope.com/observing/sky-at-a-glance/"
+
+- date: "2026-06-17"
+  target: "Venus"
+  type: "planet"
+  magnitude: -4.5
+  visibility: "Contiguous United States, Canada, Brazil, and Venezuela"
+  disappear: "20:10"
+  reappear: "21:05"
+  description: >
+    One of the year's most striking events: the crescent Moon (14% illuminated) covers
+    brilliant Venus in the evening sky. Venus shines at magnitude −4.5, making it
+    visible even in twilight. Watch for Venus to disappear behind the Moon's dark limb
+    and reappear dramatically from the bright limb. This is a naked-eye event — no
+    equipment needed, though binoculars enhance the view considerably.
+  url: "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html"
+
+- date: "2026-09-14"
+  target: "Venus"
+  type: "planet"
+  magnitude: -4.2
+  visibility: "Europe, North Africa, and the Middle East"
+  disappear: "14:30"
+  reappear: "15:25"
+  description: >
+    A daytime occultation of Venus by the crescent Moon, visible from Europe, North
+    Africa, and the Middle East. Venus at magnitude −4.2 is bright enough to spot with
+    binoculars in a blue sky near the Moon. The event occurs in the afternoon, so the
+    Moon and Venus will be well above the horizon for the visibility region.
+  url: "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html"
+
+- date: "2026-10-06"
+  target: "Jupiter"
+  type: "planet"
+  magnitude: -2.9
+  visibility: "Most of North America (excluding the far western US), northern Cuba"
+  disappear: "05:15"
+  reappear: "06:20"
+  description: >
+    The waning gibbous Moon (96% illuminated) covers Jupiter in the pre-dawn sky.
+    Jupiter shines at magnitude −2.9 near opposition, making it one of the brightest
+    objects in the sky. Disappearance occurs at the Moon's bright limb and reappearance
+    at the dark limb — the sudden reappearance is particularly dramatic. Observers with
+    small telescopes can watch Jupiter's moons emerge one by one as the planet reappears.
+  url: "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html"
+
+# ── 2027 ────────────────────────────────────────────────────────────────────
+
+- date: "2027-01-13"
+  target: "Mars"
+  type: "planet"
+  magnitude: -1.1
+  visibility: "Europe, North Africa"
+  disappear: "22:50"
+  reappear: "23:45"
+  description: >
+    The waxing crescent Moon occults Mars in the evening sky for observers across
+    Europe and North Africa. Mars is near opposition and shining at magnitude −1.1,
+    making it an unmistakably bright reddish-orange object. The dark-limb disappearance
+    is visible to the naked eye.
+  url: "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html"

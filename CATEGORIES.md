@@ -15,6 +15,16 @@ Events visible to the naked eye that require no special equipment and are broadl
 | Solar eclipses | Worldwide |
 | Lunar eclipses | Worldwide |
 
+### Lunar Occultations
+When the Moon passes directly in front of a naked-eye planet or 1st/2nd magnitude star, briefly hiding it from view. Occultations are among the most dramatic naked-eye events — the target disappears almost instantaneously and reappears just as suddenly. Only events visible from a significant land area (not just polar or oceanic regions) are included.
+
+| Target type | Threshold |
+|-------------|-----------|
+| Planets | Mercury, Venus, Mars, Jupiter, Saturn |
+| Stars | 1st and 2nd magnitude (e.g. Regulus, Antares) |
+
+Events are curated in `occultations.yaml` and include approximate disappearance/reappearance times in UTC and visibility region.
+
 ### Celestial — Planetary
 Significant planetary viewing events. Conjunctions are excluded (see below).
 
