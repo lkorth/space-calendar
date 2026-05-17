@@ -1,6 +1,45 @@
 import { ANNUAL_SHOWERS } from '../clients/ams.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
+// J2000.0 reference new moon — Julian Date 2451550.1 = 2000-01-06T14:20:00Z
+const REFERENCE_NEW_MOON_MS = new Date('2000-01-06T14:20:00Z').getTime();
+const LUNAR_CYCLE_MS = 29.530589 * 24 * 60 * 60 * 1000;
+
+export function moonPhaseOnDate(dateStr: string): { illumination: number; isWaxing: boolean } {
+  const t = new Date(dateStr + 'T12:00:00Z').getTime();
+  const elapsed = t - REFERENCE_NEW_MOON_MS;
+  const cyclePos = ((elapsed % LUNAR_CYCLE_MS) + LUNAR_CYCLE_MS) % LUNAR_CYCLE_MS;
+  const fraction = cyclePos / LUNAR_CYCLE_MS; // 0 = new moon, 0.5 = full moon
+  const illumination = Math.round((1 - Math.cos(fraction * 2 * Math.PI)) / 2 * 100);
+  return { illumination, isWaxing: fraction < 0.5 };
+}
+
+export function moonViewingNote(illumination: number, isWaxing: boolean): string {
+  if (illumination >= 90) {
+    return `MOON CONDITIONS: ${illumination}% illuminated — near full moon. Bright moonlight will significantly reduce visible meteor counts. Look for bright fireballs that cut through the glare.`;
+  }
+  if (illumination <= 10) {
+    return `MOON CONDITIONS: ${illumination}% illuminated — near new moon. Dark skies all night make this an excellent year for this shower.`;
+  }
+  if (isWaxing) {
+    if (illumination <= 40) {
+      return `MOON CONDITIONS: ${illumination}% illuminated (waxing crescent) — sets a few hours after dark. The post-midnight viewing window is dark, right when the radiant is highest.`;
+    }
+    if (illumination <= 65) {
+      return `MOON CONDITIONS: ${illumination}% illuminated (near first quarter) — sets around midnight. Conditions improve significantly in the second half of the night.`;
+    }
+    return `MOON CONDITIONS: ${illumination}% illuminated (waxing gibbous) — bright for most of the night. The pre-dawn hours offer the best window as the moon descends toward the horizon.`;
+  } else {
+    if (illumination >= 65) {
+      return `MOON CONDITIONS: ${illumination}% illuminated (waning gibbous) — rises in the late evening. The first hours after dark offer the best viewing before moonrise.`;
+    }
+    if (illumination >= 40) {
+      return `MOON CONDITIONS: ${illumination}% illuminated (near last quarter) — rises around midnight. Evening hours are best before the moon climbs.`;
+    }
+    return `MOON CONDITIONS: ${illumination}% illuminated (waning crescent) — rises a few hours before dawn. Good viewing from dusk until moonrise.`;
+  }
+}
+
 export const meteorShowersGenerator: Generator = {
   slug: 'meteor-showers',
   schedule: 'monthly',
@@ -13,6 +52,8 @@ export const meteorShowersGenerator: Generator = {
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       const nextDayStr = nextDay.toISOString().split('T')[0]!;
 
+      const { illumination, isWaxing } = moonPhaseOnDate(dateStr);
+
       return {
         uid: `meteor-shower-${shower.name.toLowerCase().replace(/\s+/g, '-')}-${year}@space-calendar`,
         title: `🌠 ${shower.name} Meteor Shower — Peak Night`,
@@ -22,6 +63,7 @@ export const meteorShowersGenerator: Generator = {
         description: [
           `The ${shower.name} meteor shower reaches its peak tonight, produced by debris left behind by ${shower.parentBody} as Earth passes through its orbital trail.`,
           `Under ideal dark-sky conditions, observers can expect up to ${shower.zhr} meteors per hour (ZHR). Meteors radiate from the constellation ${shower.radiant} but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.`,
+          moonViewingNote(illumination, isWaxing),
         ].join('\n\n'),
         url: shower.url,
         category: 'meteor-showers',
