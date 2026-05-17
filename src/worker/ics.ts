@@ -28,8 +28,9 @@ export function buildICS(events: CalendarEvent[], calName: string): string {
       lines.push(`DTEND:${formatDateTime(new Date(event.end))}`);
     }
 
-    if (event.description) {
-      lines.push(`DESCRIPTION:${escapeText(event.description)}`);
+    const descParts = [event.description, event.url].filter(Boolean);
+    if (descParts.length > 0) {
+      lines.push(`DESCRIPTION:${escapeText(descParts.join('\n\n'))}`);
     }
     if (event.url) {
       lines.push(`URL:${event.url}`);
