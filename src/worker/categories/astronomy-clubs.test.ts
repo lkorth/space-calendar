@@ -159,6 +159,91 @@ describe('parseJgapEvents', () => {
   });
 });
 
+// Actual format served by registration.jgap.org: time embedded in title, date on its own line
+const ACTUAL_PAGE_TEXT = `
+Jupiter and Venus in the West: 8:45 PM EDT
+(30 spots left)
+Friday May 22nd 2026
+With Jupiter setting in the west, this week is a good time to get a last look before it is lost in the evening twilight.
+Reserve
+LINK:https://registration.jgap.org/?event=abc1
+Jupiter and Venus in the West: 8:45 PM EDT
+(11 spots left)
+Saturday May 23rd 2026
+With Jupiter setting in the west, this week is a good time to get a last look before it is lost in the evening twilight.
+Reserve
+LINK:https://registration.jgap.org/?event=abc2
+The Bright Moon: 8:45 PM EDT
+(45 spots left)
+Friday May 29th 2026
+The nearly full moon lights up our plaza. Come learn how moonlight reveals the true colors of the world.
+Reserve
+LINK:https://registration.jgap.org/?event=abc3
+How Far Are the Galaxies: 9:00 PM EDT
+(65 spots left)
+Saturday July 4th 2026
+Celebrating Henrietta Swann Leavitt's birthday with telescope views of galaxies.
+Reserve
+LINK:https://registration.jgap.org/?event=abc4
+`.trim();
+
+describe('parseJgapEvents — actual page format (time in title, date on own line)', () => {
+  it('parses all events', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    expect(events).toHaveLength(4);
+  });
+
+  it('extracts title without time suffix', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    expect(events[0]!.title).toBe('Jupiter and Venus in the West');
+    expect(events[2]!.title).toBe('The Bright Moon');
+    expect(events[3]!.title).toBe('How Far Are the Galaxies');
+  });
+
+  it('converts EDT (UTC-4) to UTC correctly', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    // 8:45 PM EDT = 00:45 UTC next day
+    expect(events[0]!.startUtc.toISOString()).toBe('2026-05-23T00:45:00.000Z');
+  });
+
+  it('handles 9:00 PM time correctly', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    // 9:00 PM EDT = 01:00 UTC next day
+    expect(events[3]!.startUtc.toISOString()).toBe('2026-07-05T01:00:00.000Z');
+  });
+
+  it('sets event end 2 hours after start', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    const start = events[0]!.startUtc.getTime();
+    const end = events[0]!.endUtc.getTime();
+    expect(end - start).toBe(2 * 60 * 60 * 1000);
+  });
+
+  it('captures spots from (N spots left) format', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    expect(events[0]!.spotsLeft).toBe(30);
+    expect(events[1]!.spotsLeft).toBe(11);
+    expect(events[2]!.spotsLeft).toBe(45);
+    expect(events[3]!.spotsLeft).toBe(65);
+  });
+
+  it('captures per-event registration URLs', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    expect(events[0]!.registrationUrl).toBe('https://registration.jgap.org/?event=abc1');
+    expect(events[3]!.registrationUrl).toBe('https://registration.jgap.org/?event=abc4');
+  });
+
+  it('captures description text after the date line', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT);
+    expect(events[0]!.description).toBe(
+      'With Jupiter setting in the west, this week is a good time to get a last look before it is lost in the evening twilight.',
+    );
+    expect(events[2]!.description).toBe(
+      'The nearly full moon lights up our plaza. Come learn how moonlight reveals the true colors of the world.',
+    );
+  });
+});
+
 describe('CLUBS registry', () => {
   it('includes JGAP', () => {
     const jgap = CLUBS.find((c) => c.id === 'jgap');
