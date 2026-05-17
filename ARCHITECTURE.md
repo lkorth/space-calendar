@@ -131,7 +131,7 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>`.
 
 | Slug | Description |
 |------|-------------|
-| `moon-phases` | New, full, and quarter moons |
+| `moon-phases` | New and full moons |
 | `meteor-showers` | Peak nights |
 | `eclipses-solar` | Solar eclipses |
 | `eclipses-lunar` | Lunar eclipses |

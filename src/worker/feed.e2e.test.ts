@@ -136,7 +136,7 @@ describe('Worker feed — events', () => {
 
   it('multiple categories merge into one feed', async () => {
     const { body } = await getFeed('?c=moon-phases,meteor-showers');
-    const moonCount = (body.match(/Full Moon|New Moon|Quarter Moon/g) ?? []).length;
+    const moonCount = (body.match(/Full Moon|New Moon/g) ?? []).length;
     const showerCount = (body.match(/Meteor Shower/g) ?? []).length;
     expect(moonCount).toBeGreaterThan(0);
     expect(showerCount).toBeGreaterThan(0);
