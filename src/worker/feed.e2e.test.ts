@@ -8,8 +8,10 @@ import { describe, it, expect } from 'vitest';
 
 const BASE = 'https://space-calendar.lukekorth.com';
 
-async function getFeed(params: string): Promise<{ res: Response; body: string }> {
-  const res = await fetch(`${BASE}/feed.ics${params}`);
+async function getFeed(params: string, { bypassCache = true } = {}): Promise<{ res: Response; body: string }> {
+  const sep = params.includes('?') ? '&' : '?';
+  const url = bypassCache ? `${BASE}/feed.ics${params}${sep}_bust=${Date.now()}` : `${BASE}/feed.ics${params}`;
+  const res = await fetch(url);
   const body = await res.text();
   return { res, body };
 }
@@ -35,7 +37,7 @@ describe('Worker feed — response', () => {
   });
 
   it('sets Cache-Control with max-age of 1 hour', async () => {
-    const { res } = await getFeed('?c=moon-phases');
+    const { res } = await getFeed('?c=moon-phases', { bypassCache: false });
     const cc = res.headers.get('cache-control') ?? '';
     expect(cc).toContain('public');
     const match = cc.match(/max-age=(\d+)/);
@@ -182,6 +184,13 @@ describe('Worker feed — events', () => {
   it('returns 400 when lat and hemi contradict each other', async () => {
     const { res } = await getFeed('?c=moon-phases&lat=-45&hemi=north');
     expect(res.status).toBe(400);
+  });
+
+  it('astronomy-clubs jgap returns at least one event', async () => {
+    const { res, body } = await getFeed('?c=astronomy-clubs&club=jgap');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VEVENT');
+    expect(body).toContain('🔭');
   });
 });
 
