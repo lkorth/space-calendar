@@ -17,6 +17,7 @@ export function buildICS(events: CalendarEvent[], calName: string): string {
   for (const event of events) {
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${event.uid}`);
+    lines.push('TRANSP:TRANSPARENT');
     lines.push(`DTSTAMP:${formatDateTime(new Date())}`);
     lines.push(`SUMMARY:${escapeText(event.title)}`);
 
