@@ -153,6 +153,31 @@ describe('Worker feed — events', () => {
     expect(res.status).toBe(200);
     expect(body).toContain('BEGIN:VCALENDAR');
   });
+
+  it('milky-way without lat returns 200 with empty event list', async () => {
+    const { res, body } = await getFeed('?c=milky-way');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VCALENDAR');
+    expect(body).not.toContain('BEGIN:VEVENT');
+  });
+
+  it('milky-way with mid-latitude returns viewing window events', async () => {
+    const { res, body } = await getFeed('?c=milky-way&lat=38&hemi=north&tz=America/Denver');
+    expect(res.status).toBe(200);
+    expect(body).toContain('Milky Way Window');
+    expect(body).toContain('DTSTART;VALUE=DATE:');
+  });
+
+  it('milky-way with high northern latitude returns 200 with no events (core never rises)', async () => {
+    const { res, body } = await getFeed('?c=milky-way&lat=60&hemi=north');
+    expect(res.status).toBe(200);
+    expect(body).not.toContain('BEGIN:VEVENT');
+  });
+
+  it('returns 400 when lat and hemi contradict each other', async () => {
+    const { res } = await getFeed('?c=moon-phases&lat=-45&hemi=north');
+    expect(res.status).toBe(400);
+  });
 });
 
 // ---------------------------------------------------------------------------
