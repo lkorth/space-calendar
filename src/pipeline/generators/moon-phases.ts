@@ -82,7 +82,7 @@ export function buildFullMoonTitle(name: string, blueMoon: boolean, superMoon: b
 
 export const moonPhasesGenerator: Generator = {
   slug: 'moon-phases',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const [phasesData, seasonsData, moonDistances] = await Promise.all([

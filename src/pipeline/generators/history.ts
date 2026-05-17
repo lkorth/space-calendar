@@ -13,7 +13,7 @@ const MILESTONE_INTERVALS = [20, 25, 50, 75, 100];
 
 export const historyGenerator: Generator = {
   slug: 'history',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('history.yaml', 'utf-8');

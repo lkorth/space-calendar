@@ -23,7 +23,7 @@ function parseSolarType(event: string): string {
 
 export const solarEclipsesGenerator: Generator = {
   slug: 'eclipses-solar',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const data = await usno.solarEclipses(year);
@@ -51,7 +51,7 @@ export const solarEclipsesGenerator: Generator = {
 
 export const lunarEclipsesGenerator: Generator = {
   slug: 'eclipses-lunar',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const eclipses = await fetchLunarEclipses(year);

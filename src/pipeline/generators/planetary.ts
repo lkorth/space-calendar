@@ -9,7 +9,7 @@ function nextDayStr(dateStr: string): string {
 
 export const oppositionsGenerator: Generator = {
   slug: 'oppositions',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const events = await fetchPlanetaryEvents(year);
@@ -30,7 +30,7 @@ export const oppositionsGenerator: Generator = {
 
 export const elongationsGenerator: Generator = {
   slug: 'elongations',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const events = await fetchPlanetaryEvents(year);

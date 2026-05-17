@@ -3,7 +3,7 @@ import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
 export const meteorShowersGenerator: Generator = {
   slug: 'meteor-showers',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     return ANNUAL_SHOWERS.map((shower) => {

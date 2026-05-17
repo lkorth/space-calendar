@@ -16,7 +16,7 @@ interface OccultationEntry {
 
 export const occultationsGenerator: Generator = {
   slug: 'occultations',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('occultations.yaml', 'utf-8');

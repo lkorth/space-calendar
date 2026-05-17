@@ -22,7 +22,7 @@ export function filterByYear(entries: AlignmentEntry[], year: number): Alignment
 
 export const alignmentsGenerator: Generator = {
   slug: 'alignments',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('alignments.yaml', 'utf-8');

@@ -51,7 +51,7 @@ export type CategorySlug =
   | 'aurora'
   | 'aurora-australis';
 
-export type Schedule = 'annual' | 'monthly' | 'weekly' | 'on-change';
+export type Schedule = 'monthly' | 'weekly' | 'on-change';
 
 /** Categories whose events are pre-generated and stored in KV */
 export const STATIC_CATEGORIES: CategorySlug[] = [

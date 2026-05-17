@@ -25,7 +25,7 @@ function phenomMeta(phenom: string, month: number): { title: string; description
 
 export const solsticesEquinoxesGenerator: Generator = {
   slug: 'solstices-equinoxes',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const data = await usno.seasons(year);

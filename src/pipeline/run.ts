@@ -1,7 +1,6 @@
 /**
  * Pipeline orchestrator. Run via:
  *   npm run pipeline                  — all generators
- *   npm run pipeline:annual           — annual schedule only
  *   npm run pipeline:monthly          — monthly schedule only
  *   npm run pipeline:weekly           — weekly schedule only
  *   tsx src/pipeline/run.ts --generator moon-phases

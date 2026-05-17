@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '0 6 1 * *'  # 1st of each month at 06:00 UTC
   workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to generate (defaults to current year)'
+        required: false
 
 jobs:
   generate:
@@ -19,11 +23,11 @@ jobs:
       - run: npm ci
 
       - name: Run monthly generators
-        run: npm run pipeline:monthly
+        run: npm run pipeline:monthly ${{ inputs.year && format('-- --year {0}', inputs.year) || '' }}
 
       - name: Push to Cloudflare KV
         run: |
-          for file in data/asteroids.json; do
+          for file in data/*.json; do
             key="static:$(basename "$file" .json)"
             npx wrangler kv key put --binding CALENDAR_KV "$key" --path "$file" --remote
           done
@@ -35,6 +39,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/asteroids.json
-          git diff --staged --quiet || git commit -m "chore: update asteroid close approach data $(date -u +%Y-%m)"
+          git add data/
+          git diff --staged --quiet || git commit -m "chore: regenerate calendar data $(date -u +%Y-%m)"
           git push

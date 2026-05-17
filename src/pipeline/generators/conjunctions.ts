@@ -32,7 +32,7 @@ export function filterByYear(entries: ConjunctionEntry[], year: number): Conjunc
 
 export const conjunctionsGenerator: Generator = {
   slug: 'conjunctions',
-  schedule: 'annual',
+  schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('conjunctions.yaml', 'utf-8');

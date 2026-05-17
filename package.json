@@ -6,7 +6,6 @@
   "scripts": {
     "generate-zip-latitudes": "tsx scripts/generate-zip-latitudes.ts",
     "pipeline": "tsx src/pipeline/run.ts",
-    "pipeline:annual": "tsx src/pipeline/run.ts --schedule annual",
     "pipeline:monthly": "tsx src/pipeline/run.ts --schedule monthly",
     "pipeline:weekly": "tsx src/pipeline/run.ts --schedule weekly",
     "worker:dev": "wrangler dev",
@@ -20,10 +19,10 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240405.0",
     "fflate": "^0.8.2",
-    "vitest": "^4.1.6",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
-    "yaml": "^2.4.0",
-    "wrangler": "^4.92.0"
+    "vitest": "^4.1.6",
+    "wrangler": "^4.92.0",
+    "yaml": "^2.4.0"
   }
 }
