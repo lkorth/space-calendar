@@ -12,14 +12,17 @@ export interface KpForecastEntry {
 export async function fetchKpForecast(): Promise<KpForecastEntry[]> {
   const res = await fetch(FORECAST_URL);
   if (!res.ok) throw new Error(`NOAA SWPC error ${res.status}`);
-  const raw = (await res.json()) as Array<[string, string, string, string]>;
-
-  // First row is the header
-  return raw.slice(1).map(([time_tag, kp, observed, noaa_scale]) => ({
-    time_tag: time_tag ?? '',
-    kp: parseFloat(kp ?? '0'),
-    observed: (observed ?? 'predicted') as KpForecastEntry['observed'],
-    noaa_scale: noaa_scale ?? null,
+  const raw = (await res.json()) as Array<{
+    time_tag: string;
+    kp: number;
+    observed: string;
+    noaa_scale: string | null;
+  }>;
+  return raw.map((entry) => ({
+    time_tag: entry.time_tag,
+    kp: entry.kp,
+    observed: (entry.observed ?? 'predicted') as KpForecastEntry['observed'],
+    noaa_scale: entry.noaa_scale,
   }));
 }
 

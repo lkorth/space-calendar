@@ -10,19 +10,17 @@ function makeKV(store: Record<string, string> = {}) {
 }
 
 const STORM_FORECAST = [
-  ['time_tag', 'kp', 'observed', 'noaa_scale'],
-  ['2026-05-16 00:00:00', '4', 'observed', 'None'],
-  ['2026-05-16 03:00:00', '7', 'estimated', 'G3'],
-  ['2026-05-16 06:00:00', '7', 'predicted', 'G3'],
-  ['2026-05-16 09:00:00', '6', 'predicted', 'G2'],
-  ['2026-05-16 12:00:00', '3', 'predicted', 'None'],
+  { time_tag: '2026-05-16 00:00:00', kp: 4, observed: 'observed', noaa_scale: null },
+  { time_tag: '2026-05-16 03:00:00', kp: 7, observed: 'estimated', noaa_scale: 'G3' },
+  { time_tag: '2026-05-16 06:00:00', kp: 7, observed: 'predicted', noaa_scale: 'G3' },
+  { time_tag: '2026-05-16 09:00:00', kp: 6, observed: 'predicted', noaa_scale: 'G2' },
+  { time_tag: '2026-05-16 12:00:00', kp: 3, observed: 'predicted', noaa_scale: null },
 ];
 
 const QUIET_FORECAST = [
-  ['time_tag', 'kp', 'observed', 'noaa_scale'],
-  ['2026-05-16 00:00:00', '1', 'observed', 'None'],
-  ['2026-05-16 03:00:00', '2', 'estimated', 'None'],
-  ['2026-05-16 06:00:00', '1', 'predicted', 'None'],
+  { time_tag: '2026-05-16 00:00:00', kp: 1, observed: 'observed', noaa_scale: null },
+  { time_tag: '2026-05-16 03:00:00', kp: 2, observed: 'estimated', noaa_scale: null },
+  { time_tag: '2026-05-16 06:00:00', kp: 1, observed: 'predicted', noaa_scale: null },
 ];
 
 beforeEach(() => {

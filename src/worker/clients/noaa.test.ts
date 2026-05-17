@@ -33,15 +33,14 @@ describe('fetchKpForecast', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve([
-        ['time_tag', 'kp', 'observed', 'noaa_scale'],
-        ['2026-05-16 00:00:00', '3', 'observed', 'None'],
-        ['2026-05-16 03:00:00', '5', 'estimated', 'G1'],
-        ['2026-05-16 06:00:00', '7', 'predicted', 'G3'],
+        { time_tag: '2026-05-16 00:00:00', kp: 3, observed: 'observed', noaa_scale: null },
+        { time_tag: '2026-05-16 03:00:00', kp: 5, observed: 'estimated', noaa_scale: 'G1' },
+        { time_tag: '2026-05-16 06:00:00', kp: 7, observed: 'predicted', noaa_scale: 'G3' },
       ]),
     }));
   });
 
-  it('skips the header row', async () => {
+  it('returns all entries', async () => {
     const forecast = await fetchKpForecast();
     expect(forecast).toHaveLength(3);
   });
