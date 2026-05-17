@@ -1,55 +1,55 @@
 name: Deploy Worker
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Test"]
     branches: [main]
-    paths:
-      - 'src/worker/**'
-      - 'src/shared/**'
-      - 'wrangler.toml'
-      - 'package.json'
-      - 'package-lock.json'
+    types: [completed]
   workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - run: npm ci
-
-      - run: npm test
-
   deploy:
-    needs: test
+    # For workflow_run: only proceed if tests passed. workflow_dispatch always runs.
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if worker-related files changed
+        id: changes
+        run: |
+          if git diff --name-only HEAD^ HEAD | grep -qE '^(src/worker/|src/shared/|wrangler\.toml|package(-lock)?\.json)'; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - uses: actions/setup-node@v4
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         with:
           node-version: '22'
           cache: 'npm'
 
       - run: npm ci
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
 
       - name: Type check worker
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: npx tsc -p tsconfig.worker.json --noEmit
 
       - name: Deploy to Cloudflare Workers
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: npx wrangler deploy --var DEPLOY_ID:$(git rev-parse --short HEAD)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Wait for deployment to propagate
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: sleep 10
 
       - name: Run feed e2e tests
+        if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
         run: npm run test:e2e
