@@ -87,10 +87,12 @@ No astronomical calculations are performed — all data is consumed from public 
 | `generate-on-change.yml` | Push to main (YAML changed) | History (if `history.yaml` changed), Comets (if `comets.yaml` changed) |
 
 **API sources:**
-- [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar/lunar eclipses, solstices, equinoxes, planetary oppositions, elongations
+- [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar eclipses, solstices, equinoxes (lunar eclipse and planetary phenomena endpoints do not exist in USNO's API)
+- [NASA Five Millennium Lunar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCLE/5MKLEcatalog.txt) — lunar eclipses; parsed from the plain-text catalog file, P1/P4 computed from penumbral duration
+- [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api) — planetary oppositions and Mercury/Venus elongations; daily ephemeris queried per planet, local maxima in elongation angle used to find event dates
 - [JPL CNEOS close approach API](https://ssd-api.jpl.nasa.gov/cad.api) — notable asteroid close approaches
-- [JPL Small-Body Database](https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html) — comet data
-- American Meteor Society annual calendar — fetched and parsed (changes rarely)
+- [JPL Small-Body Database](https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html) — comet orbital data
+- American Meteor Society annual calendar — static curated data, updated manually when AMS revises it
 
 **Curated YAML files:**
 - `history.yaml` — spaceflight history events; generator computes which milestone anniversaries (20/25/50/75/100 years) fall in the current year
@@ -184,7 +186,9 @@ A single static HTML page served from `src/site/` via GitHub Pages.
 | Edge compute | Cloudflare Workers |
 | Key-value store | Cloudflare Workers KV |
 | Launch data | The Space Devs Launch Library 2 |
-| Astronomical data | USNO API |
+| Moon phases & solar eclipses | USNO API |
+| Lunar eclipses | NASA Five Millennium Catalog |
+| Planetary oppositions & elongations | JPL Horizons API |
 | Asteroid & comet data | JPL CNEOS + SBDB APIs |
 | Aurora forecast data | NOAA SWPC API |
 
