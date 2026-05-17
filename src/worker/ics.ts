@@ -3,7 +3,26 @@ import type { CalendarEvent } from '../shared/models.ts';
 const PRODID = '-//Space Calendar//EN';
 const CRLF = '\r\n';
 
-export function buildICS(events: CalendarEvent[], calName: string): string {
+function formatContactTime(utcISO: string, tz?: string): string {
+  if (!tz) return utcISO.slice(11, 16) + ' UTC';
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZoneName: 'short',
+    }).formatToParts(new Date(utcISO));
+    const time = (parts.find((p) => p.type === 'hour')?.value ?? '00') + ':' +
+                 (parts.find((p) => p.type === 'minute')?.value ?? '00');
+    const tzName = parts.find((p) => p.type === 'timeZoneName')?.value ?? 'UTC';
+    return `${time} ${tzName}`;
+  } catch {
+    return utcISO.slice(11, 16) + ' UTC';
+  }
+}
+
+export function buildICS(events: CalendarEvent[], calName: string, tz?: string): string {
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -29,7 +48,12 @@ export function buildICS(events: CalendarEvent[], calName: string): string {
       lines.push(`DTEND:${formatDateTime(new Date(event.end))}`);
     }
 
-    const descParts = [event.description, event.url].filter(Boolean);
+    const descParts: string[] = [];
+    if (event.description) descParts.push(event.description);
+    if (event.contactTimes && event.contactTimes.length > 0) {
+      descParts.push(event.contactTimes.map((ct) => `${ct.label}: ${formatContactTime(ct.utc, tz)}`).join('\n'));
+    }
+    if (event.url) descParts.push(event.url);
     if (descParts.length > 0) {
       lines.push(`DESCRIPTION:${escapeText(descParts.join('\n\n'))}`);
     }

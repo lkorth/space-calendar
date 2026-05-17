@@ -43,7 +43,7 @@ export default {
         .sort((a, b) => a.start.localeCompare(b.start));
 
       const calName = buildCalName(params.categories);
-      const ics = buildICS(events, calName);
+      const ics = buildICS(events, calName, params.tz);
 
       return new Response(ics, {
         headers: {
@@ -67,8 +67,9 @@ function parseParams(url: URL): RequestParams {
 
   const rawLat = url.searchParams.get('lat');
   const lat = rawLat ? Math.round(parseFloat(rawLat)) : undefined;
+  const tz = url.searchParams.get('tz') ?? undefined;
 
-  return { categories: rawCategories, lat };
+  return { categories: rawCategories, lat, tz };
 }
 
 function buildCalName(categories: CategorySlug[]): string {

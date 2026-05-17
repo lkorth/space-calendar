@@ -1,6 +1,6 @@
 import { usno } from '../clients/usno.ts';
 import { fetchLunarEclipses, eclipseVisibility } from '../clients/nasa.ts';
-import type { CalendarEvent, Generator } from '../../shared/models.ts';
+import type { CalendarEvent, ContactTime, Generator } from '../../shared/models.ts';
 
 function makeDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -52,13 +52,24 @@ export const lunarEclipsesGenerator: Generator = {
     return eclipses.map((eclipse) => {
       const suffix = eclipse.type === 'Total' ? ' — Blood Moon' : '';
       const visible = eclipseVisibility(eclipse.geoLng);
+      const datePrefix = `${eclipse.year}-${String(eclipse.month).padStart(2, '0')}-${String(eclipse.day).padStart(2, '0')}`;
+      const greatestISO = `${datePrefix}T${eclipse.greatest}:00Z`;
+      const contactTimes: ContactTime[] = [{ label: 'P1 — penumbral begins', utc: eclipse.p1 }];
+      if (eclipse.u1) contactTimes.push({ label: 'U1 — partial begins', utc: eclipse.u1 });
+      if (eclipse.u2) contactTimes.push({ label: 'U2 — totality begins', utc: eclipse.u2 });
+      contactTimes.push({ label: 'Greatest eclipse', utc: greatestISO });
+      if (eclipse.u3) contactTimes.push({ label: 'U3 — totality ends', utc: eclipse.u3 });
+      if (eclipse.u4) contactTimes.push({ label: 'U4 — partial ends', utc: eclipse.u4 });
+      contactTimes.push({ label: 'P4 — penumbral ends', utc: eclipse.p4 });
+
       return {
-        uid: `eclipse-lunar-${eclipse.year}-${String(eclipse.month).padStart(2, '0')}-${String(eclipse.day).padStart(2, '0')}@space-calendar`,
+        uid: `eclipse-lunar-${datePrefix}@space-calendar`,
         title: `${eclipse.type} Lunar Eclipse${suffix}`,
         start: eclipse.p1,
         end: eclipse.p4,
         allDay: false,
-        description: describeLunarEclipse(eclipse.type, visible, eclipse.greatest),
+        description: describeLunarEclipse(eclipse.type, visible),
+        contactTimes,
         url: 'https://science.nasa.gov/eclipses/',
         category: 'eclipses-lunar',
       };
@@ -88,22 +99,22 @@ function describeSolarEclipse(type: string): string {
   }
 }
 
-function describeLunarEclipse(type: string, visible: string, greatest: string): string {
+function describeLunarEclipse(type: string, visible: string): string {
   switch (type) {
     case 'Total':
       return [
         `During a total lunar eclipse, Earth passes directly between the Sun and Moon, casting its full shadow (umbra) across the lunar surface. The Moon turns a deep red or orange — a "Blood Moon" — caused by sunlight bending through Earth's atmosphere and scattering onto the Moon's surface.`,
-        `Greatest eclipse at ${greatest} UTC. Visible from: ${visible}. Safe to observe with the naked eye from anywhere on the night side of Earth.`,
+        `Visible from: ${visible}. Safe to observe with the naked eye from anywhere on the night side of Earth.`,
       ].join('\n\n');
     case 'Partial':
       return [
         `During a partial lunar eclipse, Earth's umbra covers only part of the Moon, creating a striking shadow across part of the lunar disk.`,
-        `Greatest eclipse at ${greatest} UTC. Visible from: ${visible}. Safe to observe with the naked eye — no equipment needed.`,
+        `Visible from: ${visible}. Safe to observe with the naked eye — no equipment needed.`,
       ].join('\n\n');
     default:
       return [
         `A penumbral lunar eclipse is subtle — the Moon passes through Earth's outer shadow (penumbra), causing a slight dimming that requires careful observation to notice.`,
-        `Greatest eclipse at ${greatest} UTC. Visible from: ${visible}.`,
+        `Visible from: ${visible}.`,
       ].join('\n\n');
   }
 }

@@ -1,3 +1,9 @@
+export interface ContactTime {
+  label: string;
+  /** ISO 8601 UTC string */
+  utc: string;
+}
+
 export interface CalendarEvent {
   uid: string;
   title: string;
@@ -7,6 +13,8 @@ export interface CalendarEvent {
   end: string;
   allDay: boolean;
   description: string;
+  /** Ordered phase contact times, formatted into the subscriber's timezone at request time */
+  contactTimes?: ContactTime[];
   url?: string;
   category: CategorySlug;
 }
@@ -74,6 +82,8 @@ export interface RequestParams {
   categories: CategorySlug[];
   /** Whole-number latitude for aurora visibility, e.g. 45 */
   lat?: number;
+  /** IANA timezone for formatting contact times, e.g. "America/Denver" */
+  tz?: string;
 }
 
 /** A worker category knows how to produce CalendarEvents, from KV or live */

@@ -85,6 +85,7 @@
   <script>
     const WORKER_BASE = 'https://space-calendar.lukekorth.com';
     let resolvedLat = null;
+    const detectedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     function toggleAuroraLocation(checked) {
       document.getElementById('aurora-location').style.display = checked ? 'block' : 'none';
@@ -116,6 +117,7 @@
       const url = new URL('/feed.ics', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       if (categories.includes('aurora') && lat !== null) url.searchParams.set('lat', lat);
+      if (detectedTZ) url.searchParams.set('tz', detectedTZ);
       return url.toString();
     }
 
