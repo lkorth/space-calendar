@@ -12,6 +12,7 @@
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
     "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:watch": "vitest",
     "typecheck": "tsc -p tsconfig.pipeline.json --noEmit && tsc -p tsconfig.worker.json --noEmit"
   },

@@ -70,7 +70,7 @@ export async function fetchUpcomingLaunches(apiKey?: string): Promise<LL2Launch[
 
   const results: LL2Launch[] = [];
   let url: string | null =
-    `${BASE}/launch/upcoming/?limit=100&ordering=net&status=1,2,3`;
+    `${BASE}/launch/upcoming/?limit=100&ordering=net&status=1&status=2&status=3`;
 
   while (url) {
     const res = await fetch(url, { headers });
