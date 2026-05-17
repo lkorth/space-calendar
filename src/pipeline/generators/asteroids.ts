@@ -6,8 +6,8 @@ import type { ParsedCloseApproach } from '../clients/jpl.ts';
 const H_MAX = 22;
 /** Maximum distance in lunar distances for standard-sized objects */
 const LD_MAX = 10;
-/** H ≤ 26 ≈ diameter ≥ ~22m — Chelyabinsk-class; notable when passing sub-lunar */
-const H_MAX_SUB_LUNAR = 26;
+/** H ≤ 26.5 ≈ diameter ≥ ~18m — Chelyabinsk-class; notable when passing sub-lunar */
+const H_MAX_SUB_LUNAR = 26.5;
 /** Sub-lunar threshold in AU (1 LD ≈ 384,400 km / 149,597,870.7 km/AU) */
 const SUB_LUNAR_AU = 0.00257;
 
@@ -18,7 +18,7 @@ export function isNotableApproach(a: ParsedCloseApproach): boolean {
 
 export const asteroidsGenerator: Generator = {
   slug: 'asteroids',
-  schedule: 'monthly',
+  schedule: 'weekly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const [standard, subLunar] = await Promise.all([

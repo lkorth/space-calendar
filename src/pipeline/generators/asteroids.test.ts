@@ -30,11 +30,15 @@ describe('isNotableApproach', () => {
       expect(isNotableApproach(approach(0.5, 26))).toBe(true);
     });
 
+    it('includes objects up to H 26.5 (~18m)', () => {
+      expect(isNotableApproach(approach(0.24, 26.318))).toBe(true);
+    });
+
     it('includes building-sized objects (H ~25, ~35m)', () => {
       expect(isNotableApproach(approach(0.23, 25))).toBe(true);
     });
 
-    it('excludes very small objects that burn up (H > 26)', () => {
+    it('excludes very small objects that burn up (H > 26.5)', () => {
       expect(isNotableApproach(approach(0.5, 27))).toBe(false);
     });
 
