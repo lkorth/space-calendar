@@ -2,13 +2,13 @@ name = "space-calendar"
 main = "src/worker/index.ts"
 compatibility_date = "2024-04-05"
 
-[observability.logs]
-enabled = true
-invocation_logs = true
-
 routes = [
   { pattern = "space-calendar.lukekorth.com", custom_domain = true }
 ]
+
+[observability.logs]
+enabled = true
+invocation_logs = true
 
 [[kv_namespaces]]
 binding = "CALENDAR_KV"
