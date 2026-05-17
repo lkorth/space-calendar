@@ -35,8 +35,11 @@ Significant planetary viewing events. Conjunctions are excluded (see below).
 | Notable asteroid close approaches | Significant Earth flybys worth tracking |
 | Comets | Naked-eye or binocular comets — perihelion passages, closest Earth approaches, and peak brightness windows |
 
-### Aurora Borealis Forecasts
-Location-aware — requires the user to provide a US zip code or Canadian postal code (first 3 characters). Events are generated only when NOAA's 3-day Kp forecast meets or exceeds the visibility threshold for the user's latitude. Updates every 3–4 hours.
+### Aurora Forecasts
+Location-aware — requires the user to provide a latitude (US zip code, Canadian postal code, or southern hemisphere location). Events are generated only when NOAA's 3-day Kp forecast meets or exceeds the visibility threshold for the user's latitude. Updates every 3–4 hours.
+
+- **Aurora Borealis** — shown when `&hemi=north` (default). Uses northern latitudes (positive).
+- **Aurora Australis** — shown when `&hemi=south`. Uses southern latitudes (negative). The Kp visibility thresholds mirror the northern hemisphere by absolute latitude.
 
 **Note shown in configurator:** Calendar apps sync every few hours at best. Aurora events forecasted 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with [SpaceWeatherLive](https://www.spaceweatherlive.com/) or [NOAA SWPC](https://www.swpc.noaa.gov/).
 

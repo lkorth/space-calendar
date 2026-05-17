@@ -1,7 +1,7 @@
 import { buildICS } from './ics.ts';
 import { makeStaticCategory, makeSolsticesCategory } from './categories/static.ts';
 import { launchesCategory } from './categories/launches.ts';
-import { auroraCategory } from './categories/aurora.ts';
+import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { Category, CategorySlug, Env, RequestParams } from '../shared/models.ts';
 
@@ -35,6 +35,7 @@ export default {
         ['solstices-equinoxes', makeSolsticesCategory(params.hemisphere)],
         ['launches', launchesCategory],
         ['aurora', auroraCategory],
+        ['aurora-australis', auroraAustralisCategory],
       ]);
 
       const events = (

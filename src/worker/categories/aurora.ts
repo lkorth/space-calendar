@@ -3,27 +3,38 @@ import type { CalendarEvent, Category, Env, RequestParams } from '../../shared/m
 
 const TTL_SECONDS = 60 * 60 * 4; // 4 hours
 
-export const auroraCategory: Category = {
-  slug: 'aurora',
+function makeAuroraCategory(hemisphere: 'northern' | 'southern'): Category {
+  const slug = hemisphere === 'southern' ? 'aurora-australis' : 'aurora';
+  const displayName = hemisphere === 'southern' ? 'Aurora Australis' : 'Aurora Borealis';
+  const direction = hemisphere === 'southern' ? 'south' : 'north';
 
-  async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
-    if (params.lat === undefined) return [];
-    const lat = Math.round(params.lat);
+  return {
+    slug: slug as Category['slug'],
 
-    const kvKey = `aurora:${lat}`;
-    const cached = await env.CALENDAR_KV.get(kvKey);
-    if (cached) return JSON.parse(cached) as CalendarEvent[];
+    async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
+      if (params.lat === undefined) return [];
+      const lat = Math.round(params.lat);
 
-    const threshold = kpThresholdForLatitude(lat);
-    const forecast = await fetchKpForecast();
-    const events = buildAuroraEvents(forecast, lat, threshold);
+      // For australis, the lat param will be a negative number (e.g. -45 for New Zealand).
+      // kpThresholdForLatitude uses the absolute value so the thresholds mirror each other.
+      const kvKey = `${slug}:${lat}`;
+      const cached = await env.CALENDAR_KV.get(kvKey);
+      if (cached) return JSON.parse(cached) as CalendarEvent[];
 
-    await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), {
-      expirationTtl: TTL_SECONDS,
-    });
-    return events;
-  },
-};
+      const threshold = kpThresholdForLatitude(Math.abs(lat));
+      const forecast = await fetchKpForecast();
+      const events = buildAuroraEvents(forecast, lat, threshold, displayName, direction);
+
+      await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), {
+        expirationTtl: TTL_SECONDS,
+      });
+      return events;
+    },
+  };
+}
+
+export const auroraCategory: Category = makeAuroraCategory('northern');
+export const auroraAustralisCategory: Category = makeAuroraCategory('southern');
 
 interface KpEntry { time_tag: string; kp: number }
 
@@ -31,10 +42,13 @@ function buildAuroraEvents(
   forecast: KpEntry[],
   lat: number,
   threshold: number,
+  displayName: string,
+  direction: string,
 ): CalendarEvent[] {
   const events: CalendarEvent[] = [];
+  const absLat = Math.abs(lat);
+  const slug = displayName === 'Aurora Australis' ? 'aurora-australis' : 'aurora';
 
-  // Group consecutive hours where Kp meets the threshold into single events
   let windowStart: Date | null = null;
   let peakKp = 0;
 
@@ -42,14 +56,14 @@ function buildAuroraEvents(
     if (!windowStart) return;
     const severity = kpSeverity(peakKp);
     events.push({
-      uid: `aurora-${lat}-${windowStart.toISOString()}@space-calendar`,
-      title: `Aurora Borealis — ${severity} Storm Likely`,
+      uid: `${slug}-${lat}-${windowStart.toISOString()}@space-calendar`,
+      title: `${displayName} — ${severity} Storm Likely`,
       start: windowStart.toISOString(),
       end: windowEnd.toISOString(),
       allDay: false,
-      description: buildDescription(lat, peakKp, threshold),
+      description: buildDescription(absLat, peakKp, threshold, displayName, direction),
       url: 'https://www.swpc.noaa.gov/products/aurora-30-minute-forecast',
-      category: 'aurora',
+      category: slug as 'aurora' | 'aurora-australis',
     });
     windowStart = null;
     peakKp = 0;
@@ -64,7 +78,6 @@ function buildAuroraEvents(
       flush(t);
     }
   }
-  // Close any open window
   if (windowStart && forecast.length > 0) {
     const last = new Date(forecast[forecast.length - 1]!.time_tag);
     flush(last);
@@ -81,9 +94,9 @@ function kpSeverity(kp: number): string {
   return 'Minor';
 }
 
-function buildDescription(lat: number, peakKp: number, threshold: number): string {
+function buildDescription(absLat: number, peakKp: number, threshold: number, displayName: string, direction: string): string {
   return [
-    `NOAA's 3-day Kp forecast predicts geomagnetic activity reaching Kp ${peakKp} — at or above the Kp ${threshold} threshold needed for aurora visibility at latitude ${lat}°N. Look north from a dark location away from city lights.`,
+    `NOAA's 3-day Kp forecast predicts geomagnetic activity reaching Kp ${peakKp} — at or above the Kp ${threshold} threshold needed for ${displayName} visibility at latitude ${absLat}°. Look ${direction} from a dark location away from city lights.`,
     `Forecasts beyond 24 hours carry significant uncertainty. For real-time conditions on the night of the event, check the NOAA aurora forecast map at swpc.noaa.gov before heading out.`,
   ].join('\n\n');
 }
