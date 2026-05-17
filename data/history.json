@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "uid": "history-19260316@space-calendar",
+    "title": "100 Years Ago: Goddard's Rocket — First Liquid-Fueled Rocket Launch (1926)",
+    "start": "2026-03-16",
+    "end": "2026-03-17",
+    "allDay": true,
+    "description": "On March 16, 1926, physicist Robert Goddard launched the world's first liquid-fueled rocket from a field in Auburn, Massachusetts. The crude device — fueled by liquid oxygen and gasoline — flew for 2.5 seconds and reached an altitude of 12 meters. It was derided at the time, but Goddard's work laid the engineering foundation for everything that followed: the V-2 rocket, the Saturn V, and every liquid-fueled launch vehicle in use today. He patented more than 200 rocket-related inventions in his lifetime.",
+    "url": "https://www.nasa.gov/history/dr-robert-h-goddard-american-rocketry-pioneer/",
+    "category": "history"
+  },
+  {
+    "uid": "history-19760720@space-calendar",
+    "title": "50 Years Ago: Viking 1 — First Successful Landing on Mars (1976)",
+    "start": "2026-07-20",
+    "end": "2026-07-21",
+    "allDay": true,
+    "description": "NASA's Viking 1 lander touched down in Chryse Planitia on July 20, 1976 — exactly seven years after Apollo 11 landed on the Moon. It was the first spacecraft to successfully land on Mars and operate on its surface. Viking 1 transmitted more than 4,500 photographs, sampled the Martian soil in a search for signs of life (results were ambiguous and debated to this day), and measured Martian weather. It operated for over six years, until 1982 — far outlasting its planned 90-day mission.",
+    "url": "https://www.nasa.gov/mission/viking/",
+    "category": "history"
+  },
+  {
+    "uid": "history-19760903@space-calendar",
+    "title": "50 Years Ago: Viking 2 — Second Mars Landing (1976)",
+    "start": "2026-09-03",
+    "end": "2026-09-04",
+    "allDay": true,
+    "description": "Viking 2 landed in Utopia Planitia on September 3, 1976, six weeks after Viking 1. Operating simultaneously with its twin, Viking 2 greatly expanded the geographic and scientific coverage of the Viking program. Together the two landers and their companion orbiters produced the most comprehensive study of Mars until the Mars Exploration Rovers arrived in 2004. The Viking program's life-detection experiment remains one of the most discussed (and disputed) results in planetary science history.",
+    "url": "https://www.nasa.gov/mission/viking/",
+    "category": "history"
+  },
+  {
+    "uid": "history-20010407@space-calendar",
+    "title": "25 Years Ago: Mars Odyssey — Longest-Operating Mars Spacecraft (2001)",
+    "start": "2026-04-07",
+    "end": "2026-04-08",
+    "allDay": true,
+    "description": "NASA's Mars Odyssey spacecraft launched on April 7, 2001 and entered Mars orbit on October 24, 2001. More than two decades later, Odyssey remains in operation — the longest-serving spacecraft ever at Mars. It discovered vast deposits of water ice just beneath the Martian surface, mapped the distribution of minerals, and served as the primary communications relay for the Spirit, Opportunity, Curiosity, and Perseverance rovers. Its thermal imaging has produced some of the highest-resolution maps of Mars ever made.",
+    "url": "https://science.nasa.gov/mission/odyssey/",
+    "category": "history"
+  },
+  {
+    "uid": "history-20010428@space-calendar",
+    "title": "25 Years Ago: Dennis Tito — First Space Tourist (2001)",
+    "start": "2026-04-28",
+    "end": "2026-04-29",
+    "allDay": true,
+    "description": "American businessman Dennis Tito became the first self-funded space tourist on April 28, 2001, paying approximately $20 million to fly to the International Space Station aboard a Russian Soyuz spacecraft. His eight-day stay opened an era of commercial spaceflight and demonstrated that the ISS could host non-professional astronauts. Space Adventures later facilitated six more tourist flights to the ISS. Commercial crewed spaceflight to orbit is now a growing industry, with multiple companies competing for private customers.",
+    "url": "https://www.space.com/19758-first-space-tourist-dennis-tito.html",
+    "category": "history"
+  },
+  {
+    "uid": "history-20060119@space-calendar",
+    "title": "20 Years Ago: New Horizons — Launch to Pluto (2006)",
+    "start": "2026-01-19",
+    "end": "2026-01-20",
+    "allDay": true,
+    "description": "NASA's New Horizons spacecraft launched on January 19, 2006 — the fastest spacecraft ever launched from Earth, reaching 58,000 km/h. After a 9.5-year, 4.8-billion-km journey, it made the first close flyby of Pluto in July 2015, revealing towering nitrogen-ice mountains, a vast heart-shaped frozen plain, and evidence of geological activity. New Horizons later explored Arrokoth in the Kuiper Belt — the most distant object ever visited by a spacecraft. It continues into the Kuiper Belt and will eventually leave the solar system.",
+    "url": "https://science.nasa.gov/mission/new-horizons/",
+    "category": "history"
+  },
+  {
+    "uid": "history-20060824@space-calendar",
+    "title": "20 Years Ago: Pluto Reclassified as a Dwarf Planet (2006)",
+    "start": "2026-08-24",
+    "end": "2026-08-25",
+    "allDay": true,
+    "description": "On August 24, 2006, the International Astronomical Union voted to reclassify Pluto as a \"dwarf planet\" — removing it from the list of eight official planets in the solar system. The decision introduced a new definition of \"planet\": an object that orbits the Sun, has sufficient mass to be roughly spherical, and has \"cleared the neighborhood\" around its orbit. Pluto fails the third criterion because it shares its orbital region with other Kuiper Belt objects. The vote was controversial and remains debated, but it clarified the taxonomy of our solar system as thousands of similar objects were discovered beyond Neptune.",
+    "url": "https://www.iau.org/public/themes/pluto/",
+    "category": "history"
+  }
+]

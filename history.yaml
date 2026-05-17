@@ -161,3 +161,222 @@
     the deepest infrared view of the universe ever captured. JWST is transforming our understanding of galaxy
     formation, exoplanet atmospheres, and the early universe.
   url: "https://science.nasa.gov/mission/webb/"
+
+- date: "1926-03-16"
+  title: "Goddard's Rocket — First Liquid-Fueled Rocket Launch"
+  description: >
+    On March 16, 1926, physicist Robert Goddard launched the world's first liquid-fueled rocket from a field
+    in Auburn, Massachusetts. The crude device — fueled by liquid oxygen and gasoline — flew for 2.5 seconds
+    and reached an altitude of 12 meters. It was derided at the time, but Goddard's work laid the engineering
+    foundation for everything that followed: the V-2 rocket, the Saturn V, and every liquid-fueled launch
+    vehicle in use today. He patented more than 200 rocket-related inventions in his lifetime.
+  url: "https://www.nasa.gov/history/dr-robert-h-goddard-american-rocketry-pioneer/"
+
+- date: "1957-11-03"
+  title: "Sputnik 2 — First Living Creature in Orbit (Laika)"
+  description: >
+    The Soviet Union launched Sputnik 2 on November 3, 1957, carrying Laika — a stray dog from Moscow's
+    streets — as the first living creature to orbit Earth. The mission proved that a living being could
+    survive launch and weightlessness. Laika did not survive the mission (the spacecraft had no reentry
+    system), but her flight demonstrated the feasibility of spaceflight for living organisms and set the
+    stage for crewed missions three years later. Laika is remembered as a pioneer of space exploration.
+  url: "https://www.nasa.gov/history/sputnik-2-the-first-animal-in-orbit/"
+
+- date: "1958-01-31"
+  title: "Explorer 1 — First United States Satellite"
+  description: >
+    Explorer 1 became the first successful United States satellite on January 31, 1958, launched by a
+    Jupiter-C rocket. Designed by James Van Allen's team, it carried a Geiger counter that discovered
+    the radiation belts now named after Van Allen — the first scientific discovery made from space. The
+    mission launched just four months after Sputnik 1 and marked the true beginning of the American space
+    program. NASA was formally established later that year on October 1, 1958.
+  url: "https://www.nasa.gov/history/explorer-1-overview/"
+
+- date: "1958-10-01"
+  title: "NASA Founded"
+  description: >
+    The National Aeronautics and Space Administration was formally established on October 1, 1958, absorbing
+    the existing National Advisory Committee for Aeronautics (NACA) and its 8,000 employees. Created in
+    response to the Soviet Sputnik launch, NASA was tasked with civilian space exploration. In the six decades
+    since, NASA has sent humans to the Moon, landed rovers on Mars, launched the Hubble and Webb telescopes,
+    and built and operated the International Space Station in partnership with 15 nations.
+  url: "https://www.nasa.gov/history/nasas-origins-and-the-dawn-of-the-space-age/"
+
+- date: "1959-01-02"
+  title: "Luna 1 — First Spacecraft to Escape Earth's Gravity"
+  description: >
+    The Soviet Union's Luna 1 became the first spacecraft to escape Earth's gravitational pull on January 2,
+    1959. Intended to impact the Moon, it missed due to a timing error and instead became the first artificial
+    object to enter heliocentric orbit — orbiting the Sun. Luna 1 also confirmed for the first time that the
+    Moon has no significant magnetic field. It was the opening shot in the race to the Moon and proved that
+    spacecraft could travel between worlds.
+  url: "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1959-012A"
+
+- date: "1963-06-16"
+  title: "Vostok 6 — Valentina Tereshkova Becomes First Woman in Space"
+  description: >
+    Soviet cosmonaut Valentina Tereshkova became the first woman to fly in space on June 16, 1963, orbiting
+    Earth 48 times over three days aboard Vostok 6. A former textile worker and amateur parachutist, she was
+    selected from more than 400 applicants. No woman would fly again until Sally Ride in 1983. Tereshkova
+    remains the only woman to have flown solo in space. She later served as a member of the Soviet parliament
+    and remains a national hero in Russia.
+  url: "https://www.nasa.gov/history/valentina-tereshkova-first-woman-in-space/"
+
+- date: "1968-12-21"
+  title: "Apollo 8 — First Humans to Leave Earth's Orbit and Orbit the Moon"
+  description: >
+    Apollo 8 — crewed by Frank Borman, Jim Lovell, and William Anders — launched on December 21, 1968 and
+    became the first crewed spacecraft to leave Earth's orbit, travel to the Moon, orbit it, and return safely.
+    The crew made 10 orbits and transmitted live television from lunar orbit on Christmas Eve. Anders's
+    "Earthrise" photograph — showing Earth rising above the lunar horizon — became one of the most influential
+    environmental images ever taken. The mission proved the lunar approach and paved the way for Apollo 11.
+  url: "https://www.nasa.gov/mission/apollo-8/"
+
+- date: "1976-07-20"
+  title: "Viking 1 — First Successful Landing on Mars"
+  description: >
+    NASA's Viking 1 lander touched down in Chryse Planitia on July 20, 1976 — exactly seven years after
+    Apollo 11 landed on the Moon. It was the first spacecraft to successfully land on Mars and operate on
+    its surface. Viking 1 transmitted more than 4,500 photographs, sampled the Martian soil in a search
+    for signs of life (results were ambiguous and debated to this day), and measured Martian weather.
+    It operated for over six years, until 1982 — far outlasting its planned 90-day mission.
+  url: "https://www.nasa.gov/mission/viking/"
+
+- date: "1976-09-03"
+  title: "Viking 2 — Second Mars Landing"
+  description: >
+    Viking 2 landed in Utopia Planitia on September 3, 1976, six weeks after Viking 1. Operating simultaneously
+    with its twin, Viking 2 greatly expanded the geographic and scientific coverage of the Viking program.
+    Together the two landers and their companion orbiters produced the most comprehensive study of Mars until
+    the Mars Exploration Rovers arrived in 2004. The Viking program's life-detection experiment remains one
+    of the most discussed (and disputed) results in planetary science history.
+  url: "https://www.nasa.gov/mission/viking/"
+
+- date: "1983-06-18"
+  title: "STS-7 — Sally Ride Becomes First American Woman in Space"
+  description: >
+    On June 18, 1983, Sally Ride became the first American woman to fly in space aboard Space Shuttle
+    Challenger's STS-7 mission. A Stanford physics PhD student who responded to a NASA newspaper ad,
+    Ride was selected from 8,000 applicants. She flew a second Shuttle mission in 1984 and later co-founded
+    Sally Ride Science to promote STEM education for young people. She remains an enduring symbol of what is
+    possible when institutions open their doors to the full range of human talent.
+  url: "https://www.nasa.gov/history/june-18-1983-sally-k-ride-becomes-first-american-woman-in-space/"
+
+- date: "1997-07-04"
+  title: "Mars Pathfinder — First Mars Rover (Sojourner)"
+  description: >
+    NASA's Mars Pathfinder landed in Ares Vallis on July 4, 1997, deploying Sojourner — the first rover
+    ever to operate on Mars. A technology demonstration the size of a microwave oven, Sojourner roamed for
+    83 days, analyzing rocks and demonstrating that a roving robot could be controlled from Earth.
+    Pathfinder's airbag landing system, later used by Spirit and Opportunity, and the concept of a rover
+    as scientific tool, defined Mars exploration for the next two decades.
+  url: "https://www.nasa.gov/mars-exploration/missions/mars-pathfinder/"
+
+- date: "2001-04-07"
+  title: "Mars Odyssey — Longest-Operating Mars Spacecraft"
+  description: >
+    NASA's Mars Odyssey spacecraft launched on April 7, 2001 and entered Mars orbit on October 24, 2001.
+    More than two decades later, Odyssey remains in operation — the longest-serving spacecraft ever at Mars.
+    It discovered vast deposits of water ice just beneath the Martian surface, mapped the distribution of
+    minerals, and served as the primary communications relay for the Spirit, Opportunity, Curiosity, and
+    Perseverance rovers. Its thermal imaging has produced some of the highest-resolution maps of Mars ever made.
+  url: "https://science.nasa.gov/mission/odyssey/"
+
+- date: "2001-04-28"
+  title: "Dennis Tito — First Space Tourist"
+  description: >
+    American businessman Dennis Tito became the first self-funded space tourist on April 28, 2001, paying
+    approximately $20 million to fly to the International Space Station aboard a Russian Soyuz spacecraft.
+    His eight-day stay opened an era of commercial spaceflight and demonstrated that the ISS could host
+    non-professional astronauts. Space Adventures later facilitated six more tourist flights to the ISS.
+    Commercial crewed spaceflight to orbit is now a growing industry, with multiple companies competing for
+    private customers.
+  url: "https://www.space.com/19758-first-space-tourist-dennis-tito.html"
+
+- date: "2003-06-02"
+  title: "Mars Express — ESA's First Mars Mission"
+  description: >
+    The European Space Agency launched Mars Express on June 2, 2003, marking Europe's first mission to another
+    planet. It entered Mars orbit on December 25, 2003 and continues operating today — one of the longest-lived
+    Mars missions ever. Mars Express confirmed the presence of water ice at the south polar cap, detected
+    methane in the Martian atmosphere (a potential biosignature still under investigation), and produced
+    detailed radar maps of subsurface ice. Its MARSIS radar instrument found evidence for a subglacial lake
+    beneath the south pole in 2018.
+  url: "https://www.esa.int/Science_Exploration/Space_Science/Mars_Express"
+
+- date: "2004-03-02"
+  title: "Rosetta — ESA's Comet Chaser Launches"
+  description: >
+    ESA's Rosetta spacecraft launched on March 2, 2004, beginning a 10-year, 6.4-billion-km journey to
+    comet 67P/Churyumov-Gerasimenko. In 2014 it became the first spacecraft to orbit a comet, and in
+    November 2014 its Philae lander made the first-ever soft landing on a comet nucleus. Rosetta's close
+    observations revealed that comets contain complex organic molecules and that 67P's water is chemically
+    different from Earth's oceans, constraining theories of how Earth got its water. The mission ended in
+    September 2016 when Rosetta was deliberately crash-landed on the comet's surface.
+  url: "https://www.esa.int/Science_Exploration/Space_Science/Rosetta"
+
+- date: "2005-01-14"
+  title: "Huygens Probe — First Landing on Titan"
+  description: >
+    ESA's Huygens probe — carried to Saturn by NASA's Cassini spacecraft — descended through the atmosphere
+    of Titan on January 14, 2005, becoming the first spacecraft to land on a moon in the outer solar system.
+    During its 2.5-hour descent and brief surface operation, Huygens photographed a landscape of rocks made
+    of water ice, detected complex organic chemistry, and confirmed that Titan's methane cycle mirrors Earth's
+    water cycle. It remains the most distant landing ever achieved by a spacecraft. Titan is now considered
+    one of the most compelling targets in the search for life.
+  url: "https://www.esa.int/Science_Exploration/Space_Science/Cassini-Huygens/Huygens_lander"
+
+- date: "2006-01-19"
+  title: "New Horizons — Launch to Pluto"
+  description: >
+    NASA's New Horizons spacecraft launched on January 19, 2006 — the fastest spacecraft ever launched from
+    Earth, reaching 58,000 km/h. After a 9.5-year, 4.8-billion-km journey, it made the first close flyby
+    of Pluto in July 2015, revealing towering nitrogen-ice mountains, a vast heart-shaped frozen plain, and
+    evidence of geological activity. New Horizons later explored Arrokoth in the Kuiper Belt — the most
+    distant object ever visited by a spacecraft. It continues into the Kuiper Belt and will eventually
+    leave the solar system.
+  url: "https://science.nasa.gov/mission/new-horizons/"
+
+- date: "2006-08-24"
+  title: "Pluto Reclassified as a Dwarf Planet"
+  description: >
+    On August 24, 2006, the International Astronomical Union voted to reclassify Pluto as a "dwarf planet"
+    — removing it from the list of eight official planets in the solar system. The decision introduced a new
+    definition of "planet": an object that orbits the Sun, has sufficient mass to be roughly spherical, and
+    has "cleared the neighborhood" around its orbit. Pluto fails the third criterion because it shares its
+    orbital region with other Kuiper Belt objects. The vote was controversial and remains debated, but it
+    clarified the taxonomy of our solar system as thousands of similar objects were discovered beyond Neptune.
+  url: "https://www.iau.org/public/themes/pluto/"
+
+- date: "2008-05-25"
+  title: "Phoenix Mars Lander — First Landing in Martian Arctic"
+  description: >
+    NASA's Phoenix lander touched down in the northern arctic plains of Mars on May 25, 2008, the first
+    spacecraft to land in a polar region of another planet. Within weeks, Phoenix confirmed the presence
+    of water ice directly beneath the Martian surface — scooping it up and watching chunks of it sublimate
+    in the sun. It also detected perchlorate salts that complicate the prospect of microbial life. Phoenix
+    operated for five months before the Martian winter ended the mission. The water ice it found is now
+    understood to be a global feature of the Martian subsurface.
+  url: "https://www.nasa.gov/mission/phoenix/"
+
+- date: "2009-03-07"
+  title: "Kepler Space Telescope — Launch"
+  description: >
+    NASA's Kepler Space Telescope launched on March 7, 2009, dedicated entirely to finding planets orbiting
+    other stars by detecting the tiny dimming of starlight when a planet passes in front of its star. Over
+    nine years of operation, Kepler discovered more than 2,600 confirmed exoplanets and showed that planets
+    are ubiquitous in the galaxy — that virtually every star has planets. It found that small, rocky worlds
+    are common, that "super-Earths" are a dominant planet type, and that potentially habitable planets exist
+    around many nearby stars. The mission transformed our understanding of our place in the cosmos.
+  url: "https://science.nasa.gov/mission/kepler/"
+
+- date: "2011-08-05"
+  title: "Juno — Launch to Jupiter"
+  description: >
+    NASA's Juno spacecraft launched on August 5, 2011 and entered orbit around Jupiter on July 4, 2016,
+    becoming only the second spacecraft to orbit Jupiter (after Galileo). Juno flies closer to Jupiter than
+    any previous spacecraft, diving through its intense radiation belts on each orbit. It has revealed
+    Jupiter's interior structure, discovered that its atmospheric storms (including the Great Red Spot) extend
+    hundreds of kilometers deep, mapped its magnetic field, and imaged the polar auroras in unprecedented detail.
+    The mission has been extended to explore Jupiter's moons, including Ganymede, Europa, and Io.
+  url: "https://science.nasa.gov/mission/juno/"
