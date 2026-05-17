@@ -28,9 +28,14 @@ export const alignmentsGenerator: Generator = {
     const raw = readFileSync('alignments.yaml', 'utf-8');
     const entries = (parse(raw) as AlignmentEntry[] | null) ?? [];
 
+    const ALIGNMENT_EMOJI: Record<string, string> = {
+      'mars-launch-window': '🚀',
+      'planet-parade': '🌟',
+    };
+
     return filterByYear(entries, year).map((e) => ({
       uid: `alignment-${e.type}-${e.start}@space-calendar`,
-      title: e.title,
+      title: `${ALIGNMENT_EMOJI[e.type] ?? '🌟'} ${e.title}`,
       start: e.start,
       end: e.end,
       allDay: true,

@@ -17,7 +17,7 @@ export const oppositionsGenerator: Generator = {
       .filter((e) => e.type === 'opposition')
       .map((e) => ({
         uid: `opposition-${e.name.toLowerCase()}-${e.date}@space-calendar`,
-        title: `${e.name} at Opposition — Closest & Brightest`,
+        title: `🔭 ${e.name} at Opposition — Closest & Brightest`,
         start: e.date,
         end: nextDayStr(e.date),
         allDay: true,
@@ -42,7 +42,7 @@ export const elongationsGenerator: Generator = {
         const sky = isEast ? 'Evening Star' : 'Morning Star';
         return {
           uid: `elongation-${e.name.toLowerCase()}-${e.type}-${e.date}@space-calendar`,
-          title: `${e.name} at Greatest ${direction} Elongation — ${sky}`,
+          title: `🔭 ${e.name} at Greatest ${direction} Elongation — ${sky}`,
           start: e.date,
           end: nextDayStr(e.date),
           allDay: true,

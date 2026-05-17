@@ -74,7 +74,7 @@ export function getFullMoonName(index: number, harvestMoonIndex: number, month: 
 
 /** Builds the full moon event title, appending Blue Moon and Supermoon qualifiers as needed */
 export function buildFullMoonTitle(name: string, blueMoon: boolean, superMoon: boolean): string {
-  let title = `Full Moon — ${name}`;
+  let title = `🌕 Full Moon — ${name}`;
   if (blueMoon) title += ' — Blue Moon';
   if (superMoon) title += ' (Supermoon)';
   return title;
@@ -134,7 +134,7 @@ export const moonPhasesGenerator: Generator = {
       );
       events.push({
         uid: `moon-phase-${dt.toISOString()}@space-calendar`,
-        title: 'New Moon',
+        title: '🌑 New Moon',
         start: dt.toISOString(),
         end: dt.toISOString(),
         allDay: false,

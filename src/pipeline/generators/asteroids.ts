@@ -22,7 +22,7 @@ export const asteroidsGenerator: Generator = {
         });
         return {
           uid: `asteroid-${a.des.replace(/\s+/g, '-').toLowerCase()}-${dt.toISOString()}@space-calendar`,
-          title: `Asteroid ${a.des} — Close Earth Flyby`,
+          title: `🪨 Asteroid ${a.des} — Close Earth Flyby`,
           start: dt.toISOString(),
           end: dt.toISOString(),
           allDay: false,

@@ -1,7 +1,7 @@
 [
   {
     "uid": "season-equinox-3-2026@space-calendar",
-    "title": "March Equinox — Vernal Equinox (Northern Hemisphere)",
+    "title": "\ud83c\udf38 March Equinox \u2014 Vernal Equinox (Northern Hemisphere)",
     "start": "2026-03-20T14:46:00.000Z",
     "end": "2026-03-20T14:46:00.000Z",
     "allDay": false,
@@ -11,17 +11,17 @@
   },
   {
     "uid": "season-solstice-6-2026@space-calendar",
-    "title": "June Solstice — Summer Solstice (Northern Hemisphere)",
+    "title": "\u2600\ufe0f June Solstice \u2014 Summer Solstice (Northern Hemisphere)",
     "start": "2026-06-21T08:24:00.000Z",
     "end": "2026-06-21T08:24:00.000Z",
     "allDay": false,
-    "description": "The Sun reaches its northernmost point in the sky — the longest day of the year in the Northern Hemisphere and the shortest in the Southern. Earth's axial tilt of 23.5° is what produces seasons; today that tilt points the Northern Hemisphere most directly toward the Sun.",
+    "description": "The Sun reaches its northernmost point in the sky \u2014 the longest day of the year in the Northern Hemisphere and the shortest in the Southern. Earth's axial tilt of 23.5\u00b0 is what produces seasons; today that tilt points the Northern Hemisphere most directly toward the Sun.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
   {
     "uid": "season-equinox-9-2026@space-calendar",
-    "title": "September Equinox — Autumnal Equinox (Northern Hemisphere)",
+    "title": "\ud83c\udf42 September Equinox \u2014 Autumnal Equinox (Northern Hemisphere)",
     "start": "2026-09-23T00:05:00.000Z",
     "end": "2026-09-23T00:05:00.000Z",
     "allDay": false,
@@ -31,11 +31,11 @@
   },
   {
     "uid": "season-solstice-12-2026@space-calendar",
-    "title": "December Solstice — Winter Solstice (Northern Hemisphere)",
+    "title": "\u2744\ufe0f December Solstice \u2014 Winter Solstice (Northern Hemisphere)",
     "start": "2026-12-21T20:50:00.000Z",
     "end": "2026-12-21T20:50:00.000Z",
     "allDay": false,
-    "description": "The Sun reaches its southernmost point — the shortest day of the year in the Northern Hemisphere and the longest in the Southern. After today, days begin lengthening again in the Northern Hemisphere. The solstice has been celebrated across virtually every human culture, from Stonehenge to Dongzhi.",
+    "description": "The Sun reaches its southernmost point \u2014 the shortest day of the year in the Northern Hemisphere and the longest in the Southern. After today, days begin lengthening again in the Northern Hemisphere. The solstice has been celebrated across virtually every human culture, from Stonehenge to Dongzhi.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   }

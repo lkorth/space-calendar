@@ -56,7 +56,7 @@ describe('auroraCategory (Northern)', () => {
   it('serves from KV cache when available', async () => {
     const cached = JSON.stringify([{
       uid: 'aurora-45-cached@space-calendar',
-      title: 'Aurora Borealis — Strong Storm Likely',
+      title: '🌌 Aurora Borealis — Strong Storm Likely',
       start: '2026-05-16T03:00:00Z',
       end: '2026-05-16T09:00:00Z',
       allDay: false,
@@ -94,10 +94,10 @@ describe('auroraCategory (Northern)', () => {
     expect(events.some((e) => e.title.toLowerCase().includes('storm'))).toBe(true);
   });
 
-  it('titles events as Aurora Borealis', async () => {
+  it('titles events as Aurora Borealis with emoji', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
     const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
-    expect(events.every((e) => e.title.startsWith('Aurora Borealis'))).toBe(true);
+    expect(events.every((e) => e.title.startsWith('🌌 Aurora Borealis'))).toBe(true);
   });
 
   it('description says to look north', async () => {
@@ -121,10 +121,10 @@ describe('auroraAustralisCategory (Southern)', () => {
     expect(events.length).toBeGreaterThan(0);
   });
 
-  it('titles events as Aurora Australis', async () => {
+  it('titles events as Aurora Australis with emoji', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
     const events = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
-    expect(events.every((e) => e.title.startsWith('Aurora Australis'))).toBe(true);
+    expect(events.every((e) => e.title.startsWith('🌌 Aurora Australis'))).toBe(true);
   });
 
   it('description says to look south', async () => {

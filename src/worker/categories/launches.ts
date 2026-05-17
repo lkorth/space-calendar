@@ -26,7 +26,7 @@ export const launchesCategory: Category = {
 
       return {
         uid: `launch-${launch.id}@space-calendar`,
-        title: `${vehicle} | ${mission}`,
+        title: `🚀 ${vehicle} | ${mission}`,
         start: windowStart.toISOString(),
         end: windowEnd.toISOString(),
         allDay: false,

@@ -21,7 +21,7 @@ const sampleEvents: CalendarEvent[] = [
 const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
   {
     uid: 'season-equinox-3-2026@space-calendar',
-    title: 'March Equinox — Vernal Equinox (Northern Hemisphere)',
+    title: '🌸 March Equinox — Vernal Equinox (Northern Hemisphere)',
     start: '2026-03-20T14:46:00Z',
     end: '2026-03-20T14:46:00Z',
     allDay: false,
@@ -31,7 +31,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
   },
   {
     uid: 'season-solstice-6-2026@space-calendar',
-    title: 'June Solstice — Summer Solstice (Northern Hemisphere)',
+    title: '☀️ June Solstice — Summer Solstice (Northern Hemisphere)',
     start: '2026-06-21T08:24:00Z',
     end: '2026-06-21T08:24:00Z',
     allDay: false,
@@ -41,7 +41,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
   },
   {
     uid: 'season-equinox-9-2026@space-calendar',
-    title: 'September Equinox — Autumnal Equinox (Northern Hemisphere)',
+    title: '🍂 September Equinox — Autumnal Equinox (Northern Hemisphere)',
     start: '2026-09-23T00:05:00Z',
     end: '2026-09-23T00:05:00Z',
     allDay: false,
@@ -51,7 +51,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
   },
   {
     uid: 'season-solstice-12-2026@space-calendar',
-    title: 'December Solstice — Winter Solstice (Northern Hemisphere)',
+    title: '❄️ December Solstice — Winter Solstice (Northern Hemisphere)',
     start: '2026-12-21T20:50:00Z',
     end: '2026-12-21T20:50:00Z',
     allDay: false,
@@ -105,24 +105,24 @@ describe('applyHemisphere', () => {
     expect(applyHemisphere(event, 'northern')).toBe(event);
   });
 
-  it('rewrites March Equinox title for southern hemisphere', () => {
+  it('rewrites March Equinox title for southern hemisphere (flips emoji and season)', () => {
     const result = applyHemisphere(NH_SOLSTICE_EVENTS[0]!, 'southern');
-    expect(result.title).toBe('March Equinox — Autumnal Equinox (Southern Hemisphere)');
+    expect(result.title).toBe('🍂 March Equinox — Autumnal Equinox (Southern Hemisphere)');
   });
 
-  it('rewrites June Solstice title for southern hemisphere', () => {
+  it('rewrites June Solstice title for southern hemisphere (flips emoji and season)', () => {
     const result = applyHemisphere(NH_SOLSTICE_EVENTS[1]!, 'southern');
-    expect(result.title).toBe('June Solstice — Winter Solstice (Southern Hemisphere)');
+    expect(result.title).toBe('❄️ June Solstice — Winter Solstice (Southern Hemisphere)');
   });
 
-  it('rewrites September Equinox title for southern hemisphere', () => {
+  it('rewrites September Equinox title for southern hemisphere (flips emoji and season)', () => {
     const result = applyHemisphere(NH_SOLSTICE_EVENTS[2]!, 'southern');
-    expect(result.title).toBe('September Equinox — Vernal Equinox (Southern Hemisphere)');
+    expect(result.title).toBe('🌸 September Equinox — Vernal Equinox (Southern Hemisphere)');
   });
 
-  it('rewrites December Solstice title for southern hemisphere', () => {
+  it('rewrites December Solstice title for southern hemisphere (flips emoji and season)', () => {
     const result = applyHemisphere(NH_SOLSTICE_EVENTS[3]!, 'southern');
-    expect(result.title).toBe('December Solstice — Summer Solstice (Southern Hemisphere)');
+    expect(result.title).toBe('☀️ December Solstice — Summer Solstice (Southern Hemisphere)');
   });
 
   it('rewrites spring/autumn in March Equinox description for southern hemisphere', () => {

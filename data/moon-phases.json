@@ -1,7 +1,7 @@
 [
   {
     "uid": "moon-phase-2026-01-03T10:03:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Wolf Moon (Supermoon)",
+    "title": "\ud83c\udf15 Full Moon \u2014 Wolf Moon (Supermoon)",
     "start": "2026-01-03T10:03:00.000Z",
     "end": "2026-01-03T10:03:00.000Z",
     "allDay": false,
@@ -11,7 +11,7 @@
   },
   {
     "uid": "moon-phase-2026-01-18T19:52:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-01-18T19:52:00.000Z",
     "end": "2026-01-18T19:52:00.000Z",
     "allDay": false,
@@ -21,7 +21,7 @@
   },
   {
     "uid": "moon-phase-2026-02-01T22:09:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Snow Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Snow Moon",
     "start": "2026-02-01T22:09:00.000Z",
     "end": "2026-02-01T22:09:00.000Z",
     "allDay": false,
@@ -31,7 +31,7 @@
   },
   {
     "uid": "moon-phase-2026-02-17T12:01:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-02-17T12:01:00.000Z",
     "end": "2026-02-17T12:01:00.000Z",
     "allDay": false,
@@ -41,7 +41,7 @@
   },
   {
     "uid": "moon-phase-2026-03-03T11:38:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Worm Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Worm Moon",
     "start": "2026-03-03T11:38:00.000Z",
     "end": "2026-03-03T11:38:00.000Z",
     "allDay": false,
@@ -51,7 +51,7 @@
   },
   {
     "uid": "moon-phase-2026-03-19T01:23:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-03-19T01:23:00.000Z",
     "end": "2026-03-19T01:23:00.000Z",
     "allDay": false,
@@ -61,7 +61,7 @@
   },
   {
     "uid": "moon-phase-2026-04-02T02:12:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Pink Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Pink Moon",
     "start": "2026-04-02T02:12:00.000Z",
     "end": "2026-04-02T02:12:00.000Z",
     "allDay": false,
@@ -71,7 +71,7 @@
   },
   {
     "uid": "moon-phase-2026-04-17T11:52:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-04-17T11:52:00.000Z",
     "end": "2026-04-17T11:52:00.000Z",
     "allDay": false,
@@ -81,7 +81,7 @@
   },
   {
     "uid": "moon-phase-2026-05-01T17:23:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Flower Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Flower Moon",
     "start": "2026-05-01T17:23:00.000Z",
     "end": "2026-05-01T17:23:00.000Z",
     "allDay": false,
@@ -91,7 +91,7 @@
   },
   {
     "uid": "moon-phase-2026-05-16T20:01:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-05-16T20:01:00.000Z",
     "end": "2026-05-16T20:01:00.000Z",
     "allDay": false,
@@ -101,7 +101,7 @@
   },
   {
     "uid": "moon-phase-2026-05-31T08:45:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Flower Moon \u2014 Blue Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Flower Moon \u2014 Blue Moon",
     "start": "2026-05-31T08:45:00.000Z",
     "end": "2026-05-31T08:45:00.000Z",
     "allDay": false,
@@ -111,7 +111,7 @@
   },
   {
     "uid": "moon-phase-2026-06-15T02:54:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-06-15T02:54:00.000Z",
     "end": "2026-06-15T02:54:00.000Z",
     "allDay": false,
@@ -121,7 +121,7 @@
   },
   {
     "uid": "moon-phase-2026-06-29T23:56:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Strawberry Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Strawberry Moon",
     "start": "2026-06-29T23:56:00.000Z",
     "end": "2026-06-29T23:56:00.000Z",
     "allDay": false,
@@ -131,7 +131,7 @@
   },
   {
     "uid": "moon-phase-2026-07-14T09:43:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-07-14T09:43:00.000Z",
     "end": "2026-07-14T09:43:00.000Z",
     "allDay": false,
@@ -141,7 +141,7 @@
   },
   {
     "uid": "moon-phase-2026-07-29T14:36:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Buck Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Buck Moon",
     "start": "2026-07-29T14:36:00.000Z",
     "end": "2026-07-29T14:36:00.000Z",
     "allDay": false,
@@ -151,7 +151,7 @@
   },
   {
     "uid": "moon-phase-2026-08-12T17:37:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-08-12T17:37:00.000Z",
     "end": "2026-08-12T17:37:00.000Z",
     "allDay": false,
@@ -161,7 +161,7 @@
   },
   {
     "uid": "moon-phase-2026-08-28T04:18:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Sturgeon Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Sturgeon Moon",
     "start": "2026-08-28T04:18:00.000Z",
     "end": "2026-08-28T04:18:00.000Z",
     "allDay": false,
@@ -171,7 +171,7 @@
   },
   {
     "uid": "moon-phase-2026-09-11T03:27:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-09-11T03:27:00.000Z",
     "end": "2026-09-11T03:27:00.000Z",
     "allDay": false,
@@ -181,7 +181,7 @@
   },
   {
     "uid": "moon-phase-2026-09-26T16:49:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Harvest Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Harvest Moon",
     "start": "2026-09-26T16:49:00.000Z",
     "end": "2026-09-26T16:49:00.000Z",
     "allDay": false,
@@ -191,7 +191,7 @@
   },
   {
     "uid": "moon-phase-2026-10-10T15:50:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-10-10T15:50:00.000Z",
     "end": "2026-10-10T15:50:00.000Z",
     "allDay": false,
@@ -201,7 +201,7 @@
   },
   {
     "uid": "moon-phase-2026-10-26T04:12:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Hunter's Moon",
+    "title": "\ud83c\udf15 Full Moon \u2014 Hunter's Moon",
     "start": "2026-10-26T04:12:00.000Z",
     "end": "2026-10-26T04:12:00.000Z",
     "allDay": false,
@@ -211,7 +211,7 @@
   },
   {
     "uid": "moon-phase-2026-11-09T07:02:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-11-09T07:02:00.000Z",
     "end": "2026-11-09T07:02:00.000Z",
     "allDay": false,
@@ -221,7 +221,7 @@
   },
   {
     "uid": "moon-phase-2026-11-24T14:53:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Beaver Moon (Supermoon)",
+    "title": "\ud83c\udf15 Full Moon \u2014 Beaver Moon (Supermoon)",
     "start": "2026-11-24T14:53:00.000Z",
     "end": "2026-11-24T14:53:00.000Z",
     "allDay": false,
@@ -231,7 +231,7 @@
   },
   {
     "uid": "moon-phase-2026-12-09T00:52:00.000Z@space-calendar",
-    "title": "New Moon",
+    "title": "\ud83c\udf11 New Moon",
     "start": "2026-12-09T00:52:00.000Z",
     "end": "2026-12-09T00:52:00.000Z",
     "allDay": false,
@@ -241,7 +241,7 @@
   },
   {
     "uid": "moon-phase-2026-12-24T01:28:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Cold Moon (Supermoon)",
+    "title": "\ud83c\udf15 Full Moon \u2014 Cold Moon (Supermoon)",
     "start": "2026-12-24T01:28:00.000Z",
     "end": "2026-12-24T01:28:00.000Z",
     "allDay": false,

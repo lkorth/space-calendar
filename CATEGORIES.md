@@ -7,15 +7,15 @@ This document defines which event types are included in the calendar, which are 
 ### Celestial — Sky Events
 Events visible to the naked eye that require no special equipment and broadly relevant to skywatchers worldwide. Add `&hemi=south` to your subscription URL for Southern Hemisphere season labeling.
 
-| Category | Description |
-|----------|-------------|
-| Moon phases | New moon, full moon — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.), Blue Moon notation when a month contains two full moons, and Supermoon notation when the Moon is within 362,000 km of Earth |
-| Meteor showers | Peak activity nights for annual showers |
-| Solstices & equinoxes | The four seasonal turning points — titles and descriptions reflect the correct season for your hemisphere |
-| Solar eclipses | Worldwide |
-| Lunar eclipses | Worldwide |
+| Emoji | Category | Description |
+|-------|----------|-------------|
+| 🌕 / 🌑 | Moon phases | Full moon (🌕) and new moon (🌑) — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.), Blue Moon notation when a month contains two full moons, and Supermoon notation when the Moon is within 362,000 km of Earth |
+| ☄️ | Meteor showers | Peak activity nights for annual showers |
+| 🌸 ☀️ 🍂 ❄️ | Solstices & equinoxes | The four seasonal turning points — emojis and labels reflect the correct season for your hemisphere |
+| 🌑 🌒 🌓 | Solar eclipses | 🌑 total, 🌒 annular, 🌓 partial — worldwide |
+| 🔴 🌕 | Lunar eclipses | 🔴 total (blood moon), 🌕 partial and penumbral — worldwide |
 
-### Lunar Occultations
+### Lunar Occultations (🌑)
 When the Moon passes directly in front of a naked-eye planet or 1st/2nd magnitude star, briefly hiding it from view. Occultations are among the most dramatic naked-eye events — the target disappears almost instantaneously and reappears just as suddenly. Only events visible from a significant land area (not just polar or oceanic regions) are included.
 
 | Target type | Threshold |
@@ -25,26 +25,26 @@ When the Moon passes directly in front of a naked-eye planet or 1st/2nd magnitud
 
 Events are curated in `occultations.yaml` and include approximate disappearance/reappearance times in UTC and visibility region.
 
-### Planetary Alignments
+### Planetary Alignments (🚀 / 🌟)
 Two types of events covering how the planets line up from Earth's perspective:
 
-**Mars Transfer Windows** — The ~30-day windows every 26 months when Earth and Mars are in the orbital geometry for a minimum-energy Hohmann transfer trajectory (~7-month trip). Every historical Mars mission has launched during one of these windows. Useful context for following Mars exploration news.
+**Mars Transfer Windows** (🚀) — The ~30-day windows every 26 months when Earth and Mars are in the orbital geometry for a minimum-energy Hohmann transfer trajectory (~7-month trip). Every historical Mars mission has launched during one of these windows. Useful context for following Mars exploration news.
 
-**Planet Parades** — Periods when 3 or more naked-eye planets are simultaneously visible in the sky on the same night.
+**Planet Parades** (🌟) — Periods when 3 or more naked-eye planets are simultaneously visible in the sky on the same night.
 
 Events are curated in `alignments.yaml`.
 
 ### Celestial — Planetary
-Significant planetary viewing events.
+Significant planetary viewing events. Emoji key: 🔴 Mars, 🪐 Jupiter/Saturn, 🔵 Uranus/Neptune, ☿ Mercury, ♀ Venus.
 
-| Category | Description |
-|----------|-------------|
-| Planetary oppositions | When outer planets (Mars, Jupiter, Saturn, Uranus, Neptune) are closest and brightest |
-| Mercury & Venus elongations | Best windows to spot inner planets in the evening or morning sky |
-| Notable asteroid close approaches | Significant Earth flybys worth tracking |
-| Comets | Naked-eye or binocular comets — perihelion passages, closest Earth approaches, and peak brightness windows |
+| Emoji | Category | Description |
+|-------|----------|-------------|
+| 🔴 🪐 🔵 | Planetary oppositions | When outer planets are closest and brightest — emoji varies by planet |
+| ☿ ♀ | Mercury & Venus elongations | Best windows to spot inner planets in the evening or morning sky |
+| 🪨 | Notable asteroid close approaches | Significant Earth flybys worth tracking |
+| ☄️ | Comets | Naked-eye or binocular comets — perihelion passages, closest Earth approaches, and peak brightness windows |
 
-### Aurora Forecasts
+### Aurora Forecasts (🌌)
 Location-aware — requires the user to provide a latitude (US zip code, Canadian postal code, or southern hemisphere location). Events are generated only when NOAA's 3-day Kp forecast meets or exceeds the visibility threshold for the user's latitude. Updates every 3–4 hours.
 
 - **Aurora Borealis** — shown when `&hemi=north` (default). Uses northern latitudes (positive).
@@ -62,7 +62,7 @@ Location-aware — requires the user to provide a latitude (US zip code, Canadia
 | 35–40 | Kp 8 |
 | <35 | Kp 9 (extreme storms only) |
 
-### Rocket Launches
+### Rocket Launches (🚀)
 Not every launch — only those with broad public interest. The goal is signal, not noise. Includes:
 
 - **Crewed missions** — any mission with humans aboard, any provider
@@ -70,7 +70,7 @@ Not every launch — only those with broad public interest. The goal is signal, 
 - **Heavy-lift launches** — Falcon Heavy, Starship, SLS, New Glenn, Vulcan Centaur, and equivalent vehicles
 - **Flagship science & exploration payloads** — NASA Discovery/New Frontiers/Flagship-class missions, major space telescopes, planetary probes, lunar and Mars landers, and international equivalents (ESA, JAXA, ISRO, CNSA)
 
-### Space History Milestones
+### Space History Milestones (⭐)
 Significant anniversaries of landmark moments in spaceflight and astronomy. Only milestone years are included — not every anniversary.
 
 **Milestone years:** 20, 25, 50, 75, 100 years
@@ -84,7 +84,7 @@ Covers events such as:
 
 ## Excluded Categories
 
-### Planetary Conjunctions
+### Planetary Conjunctions (✨)
 Close approaches between naked-eye planets (Mercury, Venus, Mars, Jupiter, Saturn). Only events with ≤ 5° separation are included. Uranus and Neptune are excluded — they require dark skies and optical aid to identify.
 
 Events are curated in `conjunctions.yaml` and updated annually. Criteria for inclusion:

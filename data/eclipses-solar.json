@@ -1,21 +1,21 @@
 [
   {
     "uid": "eclipse-solar-2026-02-17@space-calendar",
-    "title": "Annular Solar Eclipse",
+    "title": "\ud83c\udf12 Annular Solar Eclipse",
     "start": "2026-02-17",
     "end": "2026-02-18",
     "allDay": true,
-    "description": "An annular solar eclipse occurs when the Moon is slightly farther from Earth than usual, making it appear too small to fully cover the Sun. The result is a brilliant \"ring of fire\" — a thin ring of sunlight surrounding the Moon's silhouette.\n\nEclipse glasses are required throughout — the Sun is never fully blocked. Check NASA's eclipse page for the visibility path and phase timetable.",
+    "description": "An annular solar eclipse occurs when the Moon is slightly farther from Earth than usual, making it appear too small to fully cover the Sun. The result is a brilliant \"ring of fire\" \u2014 a thin ring of sunlight surrounding the Moon's silhouette.\n\nEclipse glasses are required throughout \u2014 the Sun is never fully blocked. Check NASA's eclipse page for the visibility path and phase timetable.",
     "url": "https://science.nasa.gov/eclipses/",
     "category": "eclipses-solar"
   },
   {
     "uid": "eclipse-solar-2026-08-12@space-calendar",
-    "title": "Total Solar Eclipse",
+    "title": "\ud83c\udf11 Total Solar Eclipse",
     "start": "2026-08-12",
     "end": "2026-08-13",
     "allDay": true,
-    "description": "A total solar eclipse is one of nature's most dramatic events. The Moon completely blocks the Sun, turning day briefly to twilight and revealing the Sun's corona — its outer atmosphere — to the naked eye.\n\nOutside the path of totality, observers will see a partial eclipse. Never look directly at the Sun except during the brief moments of full totality. Check NASA's eclipse page for the visibility path and full phase timetable.",
+    "description": "A total solar eclipse is one of nature's most dramatic events. The Moon completely blocks the Sun, turning day briefly to twilight and revealing the Sun's corona \u2014 its outer atmosphere \u2014 to the naked eye.\n\nOutside the path of totality, observers will see a partial eclipse. Never look directly at the Sun except during the brief moments of full totality. Check NASA's eclipse page for the visibility path and full phase timetable.",
     "pathLocations": [
       {
         "city": "Reykjavik",

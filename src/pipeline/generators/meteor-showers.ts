@@ -15,7 +15,7 @@ export const meteorShowersGenerator: Generator = {
 
       return {
         uid: `meteor-shower-${shower.name.toLowerCase().replace(/\s+/g, '-')}-${year}@space-calendar`,
-        title: `${shower.name} Meteor Shower — Peak Night`,
+        title: `🌠 ${shower.name} Meteor Shower — Peak Night`,
         start: dateStr,
         end: nextDayStr,
         allDay: true,

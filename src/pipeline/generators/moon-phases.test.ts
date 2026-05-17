@@ -113,19 +113,19 @@ describe('getFullMoonName', () => {
 
 describe('buildFullMoonTitle', () => {
   it('builds a plain title with just the name', () => {
-    expect(buildFullMoonTitle('Wolf Moon', false, false)).toBe('Full Moon — Wolf Moon');
+    expect(buildFullMoonTitle('Wolf Moon', false, false)).toBe('🌕 Full Moon — Wolf Moon');
   });
 
   it('appends Blue Moon when flagged', () => {
-    expect(buildFullMoonTitle('Flower Moon', true, false)).toBe('Full Moon — Flower Moon — Blue Moon');
+    expect(buildFullMoonTitle('Flower Moon', true, false)).toBe('🌕 Full Moon — Flower Moon — Blue Moon');
   });
 
   it('appends Supermoon when flagged', () => {
-    expect(buildFullMoonTitle('Wolf Moon', false, true)).toBe('Full Moon — Wolf Moon (Supermoon)');
+    expect(buildFullMoonTitle('Wolf Moon', false, true)).toBe('🌕 Full Moon — Wolf Moon (Supermoon)');
   });
 
   it('appends both Blue Moon and Supermoon when both flagged', () => {
-    expect(buildFullMoonTitle('Cold Moon', true, true)).toBe('Full Moon — Cold Moon — Blue Moon (Supermoon)');
+    expect(buildFullMoonTitle('Cold Moon', true, true)).toBe('🌕 Full Moon — Cold Moon — Blue Moon (Supermoon)');
   });
 
   it('puts Blue Moon before Supermoon in the title', () => {

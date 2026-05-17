@@ -57,7 +57,7 @@ function buildAuroraEvents(
     const severity = kpSeverity(peakKp);
     events.push({
       uid: `${slug}-${lat}-${windowStart.toISOString()}@space-calendar`,
-      title: `${displayName} — ${severity} Storm Likely`,
+      title: `🌌 ${displayName} — ${severity} Storm Likely`,
       start: windowStart.toISOString(),
       end: windowEnd.toISOString(),
       allDay: false,

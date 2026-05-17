@@ -36,7 +36,7 @@ export const solarEclipsesGenerator: Generator = {
 
       return {
         uid: `eclipse-solar-${dateStr}@space-calendar`,
-        title: `${type} Solar Eclipse`,
+        title: `🌑 ${type} Solar Eclipse`,
         start: dateStr,
         end: nextDayStr(dateStr),
         allDay: true,
@@ -70,7 +70,7 @@ export const lunarEclipsesGenerator: Generator = {
 
       return {
         uid: `eclipse-lunar-${datePrefix}@space-calendar`,
-        title: `${eclipse.type} Lunar Eclipse${suffix}`,
+        title: `🌕 ${eclipse.type} Lunar Eclipse${suffix}`,
         start: eclipse.p1,
         end: eclipse.p4,
         allDay: false,

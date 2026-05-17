@@ -18,10 +18,10 @@ export function makeStaticCategory(slug: CategorySlug): Category {
 // ---------------------------------------------------------------------------
 
 const SH_TITLE_MAP: Record<string, string> = {
-  'March Equinox — Vernal Equinox (Northern Hemisphere)': 'March Equinox — Autumnal Equinox (Southern Hemisphere)',
-  'June Solstice — Summer Solstice (Northern Hemisphere)': 'June Solstice — Winter Solstice (Southern Hemisphere)',
-  'September Equinox — Autumnal Equinox (Northern Hemisphere)': 'September Equinox — Vernal Equinox (Southern Hemisphere)',
-  'December Solstice — Winter Solstice (Northern Hemisphere)': 'December Solstice — Summer Solstice (Southern Hemisphere)',
+  '🌸 March Equinox — Vernal Equinox (Northern Hemisphere)': '🍂 March Equinox — Autumnal Equinox (Southern Hemisphere)',
+  '☀️ June Solstice — Summer Solstice (Northern Hemisphere)': '❄️ June Solstice — Winter Solstice (Southern Hemisphere)',
+  '🍂 September Equinox — Autumnal Equinox (Northern Hemisphere)': '🌸 September Equinox — Vernal Equinox (Southern Hemisphere)',
+  '❄️ December Solstice — Winter Solstice (Northern Hemisphere)': '☀️ December Solstice — Summer Solstice (Southern Hemisphere)',
 };
 
 // Full-sentence swaps for SH descriptions. Each pair is unique in the description corpus,

@@ -33,8 +33,8 @@ export const occultationsGenerator: Generator = {
         const targetLabel = e.type === 'planet' ? e.target : `the star ${e.target}`;
         const title =
           e.type === 'planet'
-            ? `Lunar Occultation — Moon covers ${e.target}`
-            : `Lunar Occultation — Moon covers ${e.target}`;
+            ? `🌑 Lunar Occultation — Moon covers ${e.target}`
+            : `🌑 Lunar Occultation — Moon covers ${e.target}`;
 
         const description = [
           `The Moon passes directly in front of ${targetLabel} (magnitude ${e.magnitude > 0 ? '+' : ''}${e.magnitude.toFixed(1)}), briefly hiding it from view. This is a lunar occultation — one of the most dramatic naked-eye astronomical events, since the target disappears almost instantaneously behind the Moon's limb and reappears just as suddenly.`,
@@ -59,7 +59,7 @@ export const occultationsGenerator: Generator = {
 
 /** Pure helper: build event title for an occultation entry (exported for testing) */
 export function buildOccultationTitle(target: string): string {
-  return `Lunar Occultation — Moon covers ${target}`;
+  return `🌑 Lunar Occultation — Moon covers ${target}`;
 }
 
 /** Pure helper: filter entries to a given year (exported for testing) */

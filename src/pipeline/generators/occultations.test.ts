@@ -38,16 +38,16 @@ const SAMPLE_ENTRIES = [
 ];
 
 describe('buildOccultationTitle', () => {
-  it('formats a planet occultation title', () => {
-    expect(buildOccultationTitle('Venus')).toBe('Lunar Occultation — Moon covers Venus');
+  it('formats a planet occultation title with emoji', () => {
+    expect(buildOccultationTitle('Venus')).toBe('🌑 Lunar Occultation — Moon covers Venus');
   });
 
-  it('formats a star occultation title', () => {
-    expect(buildOccultationTitle('Regulus')).toBe('Lunar Occultation — Moon covers Regulus');
+  it('formats a star occultation title with emoji', () => {
+    expect(buildOccultationTitle('Regulus')).toBe('🌑 Lunar Occultation — Moon covers Regulus');
   });
 
-  it('formats a Jupiter occultation title', () => {
-    expect(buildOccultationTitle('Jupiter')).toBe('Lunar Occultation — Moon covers Jupiter');
+  it('formats a Jupiter occultation title with emoji', () => {
+    expect(buildOccultationTitle('Jupiter')).toBe('🌑 Lunar Occultation — Moon covers Jupiter');
   });
 });
 

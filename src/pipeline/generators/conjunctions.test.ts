@@ -57,6 +57,10 @@ describe('buildConjunctionTitle', () => {
   it('contains "Planetary Conjunction" label', () => {
     expect(buildConjunctionTitle(['Venus', 'Saturn'], 0.9)).toContain('Planetary Conjunction');
   });
+
+  it('starts with the ✨ emoji', () => {
+    expect(buildConjunctionTitle(['Venus', 'Jupiter'], 1.6)).toMatch(/^✨/);
+  });
 });
 
 describe('formatMag', () => {

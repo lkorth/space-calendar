@@ -22,7 +22,7 @@ export function formatMag(mag: number): string {
 /** Build the event title for a conjunction */
 export function buildConjunctionTitle(bodies: [string, string], separationDeg: number): string {
   const sep = separationDeg.toFixed(1);
-  return `Planetary Conjunction — ${bodies[0]} & ${bodies[1]} (${sep}° apart)`;
+  return `✨ Planetary Conjunction — ${bodies[0]} & ${bodies[1]} (${sep}° apart)`;
 }
 
 /** Filter entries to a given year */
