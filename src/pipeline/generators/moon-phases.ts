@@ -36,6 +36,50 @@ const FULL_MOON_NAME_ORIGINS: Record<string, string> = {
   'Cold Moon': 'Named for the long, cold nights of December. Also called the Long Night Moon or the Oak Moon.',
 };
 
+/** Returns the index of the Harvest Moon — the full moon nearest to the September equinox */
+export function findHarvestMoonIndex(fullMoonDates: Date[], equinoxDate: Date): number {
+  let harvestIndex = 0;
+  let minDiff = Infinity;
+  for (let i = 0; i < fullMoonDates.length; i++) {
+    const diff = Math.abs(fullMoonDates[i]!.getTime() - equinoxDate.getTime());
+    if (diff < minDiff) {
+      minDiff = diff;
+      harvestIndex = i;
+    }
+  }
+  return harvestIndex;
+}
+
+/** Returns a boolean array — true when that full moon is the second in its calendar month */
+export function detectBlueMoons(fullMoonDates: Date[]): boolean[] {
+  const monthCounts: Record<string, number> = {};
+  const monthOccurrence: number[] = [];
+  for (const dt of fullMoonDates) {
+    const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
+    monthCounts[key] = (monthCounts[key] ?? 0) + 1;
+    monthOccurrence.push(monthCounts[key]);
+  }
+  return fullMoonDates.map((dt, i) => {
+    const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
+    return monthOccurrence[i] === 2 && (monthCounts[key] ?? 0) >= 2;
+  });
+}
+
+/** Returns the traditional name for one full moon given its position in the year */
+export function getFullMoonName(index: number, harvestMoonIndex: number, month: number): string {
+  if (index === harvestMoonIndex) return 'Harvest Moon';
+  if (index === harvestMoonIndex + 1) return "Hunter's Moon";
+  return FULL_MOON_NAMES[month] ?? 'Full Moon';
+}
+
+/** Builds the full moon event title, appending Blue Moon and Supermoon qualifiers as needed */
+export function buildFullMoonTitle(name: string, blueMoon: boolean, superMoon: boolean): string {
+  let title = `Full Moon — ${name}`;
+  if (blueMoon) title += ' — Blue Moon';
+  if (superMoon) title += ' (Supermoon)';
+  return title;
+}
+
 export const moonPhasesGenerator: Generator = {
   slug: 'moon-phases',
   schedule: 'annual',
@@ -50,7 +94,6 @@ export const moonPhasesGenerator: Generator = {
     const fullMoonPhases = phasesData.phasedata.filter((p) => p.phase === 'Full Moon');
     const newMoonPhases = phasesData.phasedata.filter((p) => p.phase === 'New Moon');
 
-    // Find September equinox for Harvest Moon / Hunter's Moon calculation
     const septEquinox = seasonsData.data.find((s) => s.phenom === 'Equinox' && s.month === 9);
     const equinoxDate = septEquinox
       ? new Date(`${year}-${String(septEquinox.month).padStart(2, '0')}-${String(septEquinox.day).padStart(2, '0')}T${septEquinox.time}:00Z`)
@@ -60,57 +103,22 @@ export const moonPhasesGenerator: Generator = {
       (p) => new Date(`${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}T${p.time}:00Z`),
     );
 
-    // Harvest Moon = full moon closest to the September equinox
-    let harvestMoonIndex = 0;
-    let minDiff = Infinity;
-    for (let i = 0; i < fullMoonDates.length; i++) {
-      const diff = Math.abs(fullMoonDates[i]!.getTime() - equinoxDate.getTime());
-      if (diff < minDiff) {
-        minDiff = diff;
-        harvestMoonIndex = i;
-      }
-    }
-
-    // Blue Moon = second full moon in a calendar month
-    const monthCounts: Record<string, number> = {};
-    const monthOccurrence: number[] = [];
-    for (const dt of fullMoonDates) {
-      const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
-      monthCounts[key] = (monthCounts[key] ?? 0) + 1;
-      monthOccurrence.push(monthCounts[key]);
-    }
-    const isBlueMoon = fullMoonDates.map((dt, i) => {
-      const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
-      return monthOccurrence[i] === 2 && (monthCounts[key] ?? 0) >= 2;
-    });
+    const harvestMoonIndex = findHarvestMoonIndex(fullMoonDates, equinoxDate);
+    const blueMoons = detectBlueMoons(fullMoonDates);
 
     const events: CalendarEvent[] = [];
 
     for (let i = 0; i < fullMoonPhases.length; i++) {
       const dt = fullMoonDates[i]!;
       const month = dt.getUTCMonth() + 1;
-
-      let name: string;
-      if (i === harvestMoonIndex) {
-        name = 'Harvest Moon';
-      } else if (i === harvestMoonIndex + 1) {
-        name = "Hunter's Moon";
-      } else {
-        name = FULL_MOON_NAMES[month] ?? 'Full Moon';
-      }
-
-      const blueMoon = isBlueMoon[i]!;
-      const dateKey = dt.toISOString().slice(0, 10);
-      const distKm = moonDistances[dateKey];
+      const name = getFullMoonName(i, harvestMoonIndex, month);
+      const blueMoon = blueMoons[i]!;
+      const distKm = moonDistances[dt.toISOString().slice(0, 10)];
       const superMoon = distKm !== undefined && distKm <= SUPERMOON_THRESHOLD_KM;
-
-      let title = `Full Moon — ${name}`;
-      if (blueMoon) title += ' — Blue Moon';
-      if (superMoon) title += ' (Supermoon)';
 
       events.push({
         uid: `moon-phase-${dt.toISOString()}@space-calendar`,
-        title,
+        title: buildFullMoonTitle(name, blueMoon, superMoon),
         start: dt.toISOString(),
         end: dt.toISOString(),
         allDay: false,
