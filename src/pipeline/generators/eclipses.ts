@@ -1,5 +1,6 @@
 import { usno } from '../clients/usno.ts';
 import { fetchLunarEclipses, eclipseVisibility } from '../clients/nasa.ts';
+import { fetchEclipsePath, matchCitiesToPath } from '../clients/eclipse-path.ts';
 import type { CalendarEvent, ContactTime, Generator } from '../../shared/models.ts';
 
 function makeDateStr(year: number, month: number, day: number): string {
@@ -26,9 +27,13 @@ export const solarEclipsesGenerator: Generator = {
 
   async generate(year: number): Promise<CalendarEvent[]> {
     const data = await usno.solarEclipses(year);
-    return data.eclipses_in_year.map((eclipse) => {
+    return Promise.all(data.eclipses_in_year.map(async (eclipse) => {
       const dateStr = makeDateStr(eclipse.year, eclipse.month, eclipse.day);
       const type = parseSolarType(eclipse.event);
+
+      const pathPoints = await fetchEclipsePath(eclipse.year, eclipse.month, eclipse.day, type);
+      const pathLocations = matchCitiesToPath(pathPoints, dateStr);
+
       return {
         uid: `eclipse-solar-${dateStr}@space-calendar`,
         title: `${type} Solar Eclipse`,
@@ -36,10 +41,11 @@ export const solarEclipsesGenerator: Generator = {
         end: nextDayStr(dateStr),
         allDay: true,
         description: describeSolarEclipse(type),
+        ...(pathLocations.length > 0 && { pathLocations }),
         url: 'https://science.nasa.gov/eclipses/',
         category: 'eclipses-solar',
       };
-    });
+    }));
   },
 };
 

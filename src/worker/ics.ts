@@ -53,6 +53,17 @@ export function buildICS(events: CalendarEvent[], calName: string, tz?: string):
     if (event.contactTimes && event.contactTimes.length > 0) {
       descParts.push(event.contactTimes.map((ct) => `${ct.label}: ${formatContactTime(ct.utc, tz)}`).join('\n'));
     }
+    if (event.pathLocations && event.pathLocations.length > 0) {
+      const header = event.title.includes('Annular') ? 'PATH OF ANNULARITY' : 'PATH OF TOTALITY';
+      const rows = event.pathLocations.map((loc) => {
+        const c2 = formatContactTime(loc.c2UTC, tz);
+        const c3 = formatContactTime(loc.c3UTC, tz);
+        const mins = Math.floor(loc.durationSec / 60);
+        const secs = String(loc.durationSec % 60).padStart(2, '0');
+        return `${loc.city}, ${loc.country}: ${c2}–${c3} (${mins}m${secs}s)`;
+      });
+      descParts.push(`${header}\n${rows.join('\n')}`);
+    }
     if (event.url) descParts.push(event.url);
     if (descParts.length > 0) {
       lines.push(`DESCRIPTION:${escapeText(descParts.join('\n\n'))}`);

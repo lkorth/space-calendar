@@ -4,6 +4,18 @@ export interface ContactTime {
   utc: string;
 }
 
+export interface PathLocation {
+  city: string;
+  country: string;
+  /** ISO 8601 UTC — moment of central eclipse */
+  centralUTC: string;
+  /** ISO 8601 UTC — start of totality/annularity */
+  c2UTC: string;
+  /** ISO 8601 UTC — end of totality/annularity */
+  c3UTC: string;
+  durationSec: number;
+}
+
 export interface CalendarEvent {
   uid: string;
   title: string;
@@ -15,6 +27,8 @@ export interface CalendarEvent {
   description: string;
   /** Ordered phase contact times, formatted into the subscriber's timezone at request time */
   contactTimes?: ContactTime[];
+  /** Cities in the path of totality/annularity, formatted into the subscriber's timezone at request time */
+  pathLocations?: PathLocation[];
   url?: string;
   category: CategorySlug;
 }
