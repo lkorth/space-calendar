@@ -81,7 +81,7 @@ function typeCode(type: string): string {
 function parseDurationSec(s: string): number {
   const m = s.match(/(\d+)m([\d.]+)s/);
   if (!m) return 0;
-  return parseInt(m[1]!) * 60 + parseFloat(m[2]!);
+  return Math.round(parseInt(m[1]!) * 60 + parseFloat(m[2]!));
 }
 
 function parseMinDir(minStr: string): { val: number; dir: string } {
