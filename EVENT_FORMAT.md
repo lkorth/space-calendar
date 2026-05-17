@@ -29,9 +29,12 @@ This document defines how each event type is structured: timing, title format, b
 ```
 Full Moon — Wolf Moon
 Full Moon — Harvest Moon
+Full Moon — Flower Moon — Blue Moon
 New Moon
 ```
 Full moons always include their traditional name. The Harvest Moon is the full moon nearest the September equinox (dynamically computed per year, can fall in September or October). The Hunter's Moon is the first full moon after the Harvest Moon. All other full moons use month-based names: Wolf (Jan), Snow (Feb), Worm (Mar), Pink (Apr), Flower (May), Strawberry (Jun), Buck (Jul), Sturgeon (Aug), Corn (Sep), Beaver (Nov), Cold (Dec).
+
+When a calendar month contains two full moons, the second is additionally labeled "— Blue Moon". The Blue Moon label is appended after the traditional name, preserving both.
 
 **Body:**
 - What the phase means and what's visible in the sky

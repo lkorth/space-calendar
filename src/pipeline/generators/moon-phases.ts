@@ -66,6 +66,19 @@ export const moonPhasesGenerator: Generator = {
       }
     }
 
+    // Blue Moon = second full moon in a calendar month
+    const monthCounts: Record<string, number> = {};
+    const monthOccurrence: number[] = [];
+    for (const dt of fullMoonDates) {
+      const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
+      monthCounts[key] = (monthCounts[key] ?? 0) + 1;
+      monthOccurrence.push(monthCounts[key]);
+    }
+    const isBlueMoon = fullMoonDates.map((dt, i) => {
+      const key = `${dt.getUTCFullYear()}-${dt.getUTCMonth()}`;
+      return monthOccurrence[i] === 2 && (monthCounts[key] ?? 0) >= 2;
+    });
+
     const events: CalendarEvent[] = [];
 
     for (let i = 0; i < fullMoonPhases.length; i++) {
@@ -81,13 +94,16 @@ export const moonPhasesGenerator: Generator = {
         name = FULL_MOON_NAMES[month] ?? 'Full Moon';
       }
 
+      const blueMoon = isBlueMoon[i]!;
+      const title = blueMoon ? `Full Moon — ${name} — Blue Moon` : `Full Moon — ${name}`;
+
       events.push({
         uid: `moon-phase-${dt.toISOString()}@space-calendar`,
-        title: `Full Moon — ${name}`,
+        title,
         start: dt.toISOString(),
         end: dt.toISOString(),
         allDay: false,
-        description: describeFullMoon(name),
+        description: describeFullMoon(name, blueMoon),
         url: 'https://aa.usno.navy.mil/data/MoonPhases',
         category: 'moon-phases',
       });
@@ -114,9 +130,15 @@ export const moonPhasesGenerator: Generator = {
   },
 };
 
-function describeFullMoon(name: string): string {
+const BLUE_MOON_NOTE =
+  'This is a Blue Moon — the second full moon in a single calendar month. Because a lunar cycle is approximately 29.5 days, roughly every 2.5 years a month will contain two full moons. The phrase "once in a blue moon" reflects just how rarely this happens.';
+
+function describeFullMoon(name: string, blueMoon = false): string {
   const origin = FULL_MOON_NAME_ORIGINS[name];
   const base =
     'The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.';
-  return origin ? `${base}\n\n${origin}` : base;
+  const parts = [base];
+  if (origin) parts.push(origin);
+  if (blueMoon) parts.push(BLUE_MOON_NOTE);
+  return parts.join('\n\n');
 }

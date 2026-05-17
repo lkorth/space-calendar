@@ -101,11 +101,11 @@
   },
   {
     "uid": "moon-phase-2026-05-31T08:45:00.000Z@space-calendar",
-    "title": "Full Moon \u2014 Flower Moon",
+    "title": "Full Moon \u2014 Flower Moon \u2014 Blue Moon",
     "start": "2026-05-31T08:45:00.000Z",
     "end": "2026-05-31T08:45:00.000Z",
     "allDay": false,
-    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight \u2014 especially near the horizon due to the Moon illusion.\n\nNamed for the abundant flowers blooming across North America and Europe in May.",
+    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight \u2014 especially near the horizon due to the Moon illusion.\n\nNamed for the abundant flowers blooming across North America and Europe in May.\n\nThis is a Blue Moon \u2014 the second full moon in a single calendar month. Because a lunar cycle is approximately 29.5 days, roughly every 2.5 years a month will contain two full moons. The phrase \"once in a blue moon\" reflects just how rarely this happens.",
     "url": "https://aa.usno.navy.mil/data/MoonPhases",
     "category": "moon-phases"
   },
