@@ -21,6 +21,7 @@ import { cometsGenerator } from './generators/comets.ts';
 import { occultationsGenerator } from './generators/occultations.ts';
 import { conjunctionsGenerator } from './generators/conjunctions.ts';
 import { alignmentsGenerator } from './generators/alignments.ts';
+import { deepSkyGenerator } from './generators/deep-sky.ts';
 
 const ALL_GENERATORS: Generator[] = [
   moonPhasesGenerator,
@@ -36,6 +37,7 @@ const ALL_GENERATORS: Generator[] = [
   occultationsGenerator,
   conjunctionsGenerator,
   alignmentsGenerator,
+  deepSkyGenerator,
 ];
 
 function parseArgs(): { schedule?: string; generator?: string; year: number } {

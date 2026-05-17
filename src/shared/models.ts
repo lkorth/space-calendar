@@ -50,7 +50,8 @@ export type CategorySlug =
   | 'history'
   | 'aurora'
   | 'aurora-australis'
-  | 'milky-way';
+  | 'milky-way'
+  | 'deep-sky';
 
 export type Schedule = 'monthly' | 'weekly' | 'on-change';
 
@@ -69,6 +70,7 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
   'conjunctions',
   'alignments',
   'history',
+  'deep-sky',
 ];
 
 /** Categories fetched live by the worker on each request */

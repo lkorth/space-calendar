@@ -137,6 +137,7 @@ function buildCalName(categories: CategorySlug[]): string {
     aurora: 'Aurora Borealis',
     'aurora-australis': 'Aurora Australis',
     'milky-way': 'Milky Way',
+    'deep-sky': 'Deep Sky',
   };
   return categories.map((s) => labels[s] ?? s).join(', ');
 }

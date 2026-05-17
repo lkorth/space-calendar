@@ -1,0 +1,12 @@
+[
+  {
+    "uid": "messier-marathon-2026@space-calendar",
+    "title": "🌌 Messier Marathon",
+    "start": "2026-03-19",
+    "end": "2026-03-20",
+    "allDay": true,
+    "description": "The Messier Marathon is an annual observing tradition where amateur astronomers attempt to spot all 110 Messier objects — galaxies, nebulae, star clusters, and more — in a single night. Tonight is the optimal window: the new moon keeps skies dark, and the geometry of the Sun's position allows all 110 objects to be above the horizon at some point during the night.\n\nStart at dusk looking west for galaxies M74 and M77 before they set, then sweep east through the night, finishing at dawn with M30 rising in the southeast. A dark-sky site, a star atlas or planetarium app, and a telescope or binoculars are all you need. It typically takes 6–8 hours and a clear, dark night to complete.\n\nBest from latitudes 25°N–35°N, where all 110 objects clear the horizon. Observers at higher latitudes may miss a few far-southern objects but can still attempt a near-complete run.",
+    "url": "https://en.wikipedia.org/wiki/Messier_marathon",
+    "category": "deep-sky"
+  }
+]
