@@ -42,6 +42,14 @@ export interface LunarEclipse {
   penumbralDuration: number;
   /** ISO 8601 UTC — start of penumbral phase (P1, approximated) */
   p1: string;
+  /** ISO 8601 UTC — start of umbral/partial phase (U1, approximated; undefined for penumbral) */
+  u1?: string;
+  /** ISO 8601 UTC — start of totality (U2, approximated; Total only) */
+  u2?: string;
+  /** ISO 8601 UTC — end of totality (U3, approximated; Total only) */
+  u3?: string;
+  /** ISO 8601 UTC — end of umbral/partial phase (U4, approximated; undefined for penumbral) */
+  u4?: string;
   /** ISO 8601 UTC — end of penumbral phase (P4, approximated) */
   p4: string;
   /** Approximate geographic longitude of greatest eclipse (degrees east) */
@@ -93,16 +101,21 @@ export async function fetchLunarEclipses(year: number): Promise<LunarEclipse[]> 
     const greatest = timeStr.slice(0, 5); // HH:MM
     const type = eclipseType(parts[8] ?? 'N');
     const penDur = parseDuration(parts[13] ?? '-');
+    const parDur = parseDuration(parts[14] ?? '-');
+    const totDur = parseDuration(parts[15] ?? '-');
     const geoLng = parseLng(parts[17] ?? '0E');
 
     if (!month || isNaN(day)) continue;
 
     const greatestISO = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${greatest}:00Z`;
-    const halfPen = penDur / 2;
-    const p1 = addMinutes(greatestISO, -halfPen);
-    const p4 = addMinutes(greatestISO, halfPen);
+    const p1 = addMinutes(greatestISO, -penDur / 2);
+    const p4 = addMinutes(greatestISO, penDur / 2);
+    const u1 = parDur > 0 ? addMinutes(greatestISO, -parDur / 2) : undefined;
+    const u4 = parDur > 0 ? addMinutes(greatestISO, parDur / 2) : undefined;
+    const u2 = totDur > 0 ? addMinutes(greatestISO, -totDur / 2) : undefined;
+    const u3 = totDur > 0 ? addMinutes(greatestISO, totDur / 2) : undefined;
 
-    results.push({ year, month, day, greatest, type, penumbralDuration: penDur, p1, p4, geoLng });
+    results.push({ year, month, day, greatest, type, penumbralDuration: penDur, p1, u1, u2, u3, u4, p4, geoLng });
   }
 
   return results;
