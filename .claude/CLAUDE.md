@@ -63,6 +63,17 @@ To add a **live category**: add slug to `CategorySlug` and `LIVE_CATEGORIES` in 
 - Run `npm test` and verify all tests pass before committing.
 - Test files live alongside the code they test (`foo.ts` → `foo.test.ts`).
 
+### E2E tests
+
+Any change to worker routing, new categories, or new validation rules requires e2e coverage in `src/worker/feed.e2e.test.ts`. These tests hit the live deployed worker at `https://space-calendar.lukekorth.com`.
+
+**E2E tests must be committed separately, after the feature is deployed.** Writing them before deployment guarantees they fail (the live worker doesn't have the new code yet), so you can't confirm they actually test the right thing. The correct workflow is:
+
+1. Implement the feature with unit tests — commit.
+2. Deploy: `npm run worker:deploy`.
+3. Verify the new behavior manually against the live endpoint.
+4. Add e2e tests — commit.
+
 ## Commit message style
 
 - Do **not** mention test counts in commit messages (e.g. "Adds 7 tests", "200 tests passing"). Tests are an implementation detail — the commit message should describe what changed and why, not how many tests verify it.
