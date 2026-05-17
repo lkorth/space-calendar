@@ -94,12 +94,16 @@ export interface Env {
   LL2_API_KEY?: string;
 }
 
+export type Hemisphere = 'northern' | 'southern';
+
 export interface RequestParams {
   categories: CategorySlug[];
   /** Whole-number latitude for aurora visibility, e.g. 45 */
   lat?: number;
   /** IANA timezone for formatting contact times, e.g. "America/Denver" */
   tz?: string;
+  /** Hemisphere for season labeling and aurora selection. Defaults to northern. */
+  hemisphere?: Hemisphere;
 }
 
 /** A worker category knows how to produce CalendarEvents, from KV or live */

@@ -5,13 +5,13 @@ This document defines which event types are included in the calendar, which are 
 ## Included Categories
 
 ### Celestial — Sky Events
-Events visible to the naked eye that require no special equipment and are broadly relevant to skywatchers in North America.
+Events visible to the naked eye that require no special equipment and broadly relevant to skywatchers worldwide. Add `&hemi=south` to your subscription URL for Southern Hemisphere season labeling.
 
 | Category | Description |
 |----------|-------------|
 | Moon phases | New moon, full moon — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.), Blue Moon notation when a month contains two full moons, and Supermoon notation when the Moon is within 362,000 km of Earth |
 | Meteor showers | Peak activity nights for annual showers |
-| Solstices & equinoxes | The four seasonal turning points |
+| Solstices & equinoxes | The four seasonal turning points — titles and descriptions reflect the correct season for your hemisphere |
 | Solar eclipses | Worldwide |
 | Lunar eclipses | Worldwide |
 
