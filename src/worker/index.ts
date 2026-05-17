@@ -13,7 +13,7 @@ const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
 ]);
 
 export default {
-  async fetch(request: Request, env: Env, _ctx?: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     if (url.pathname === '/') {
@@ -28,6 +28,10 @@ export default {
     if (params.categories.length === 0) {
       return new Response('Provide at least one category via ?c=', { status: 400 });
     }
+
+    const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
+    const cached = await caches.default.match(cacheKey);
+    if (cached) return cached;
 
     try {
       // Build the category map per-request so hemisphere-aware categories get the right params
@@ -53,19 +57,27 @@ export default {
       const calName = buildCalName(params.categories);
       const ics = buildICS(events, calName, params.tz);
 
-      return new Response(ics, {
+      const response = new Response(ics, {
         headers: {
           'Content-Type': 'text/calendar; charset=utf-8',
           'Cache-Control': 'public, max-age=3600',
           'Content-Disposition': 'attachment; filename="space-calendar.ics"',
         },
       });
+      ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+      return response;
     } catch (err) {
       console.error('Feed error:', err);
       return new Response('Internal server error', { status: 500 });
     }
   },
 };
+
+function buildCacheKey(request: Request, deployId?: string): Request {
+  const url = new URL(request.url);
+  if (deployId) url.searchParams.set('_v', deployId);
+  return new Request(url.toString());
+}
 
 function parseParams(url: URL): RequestParams {
   const rawCategories = (url.searchParams.get('c') ?? '')

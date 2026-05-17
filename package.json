@@ -9,7 +9,7 @@
     "pipeline:monthly": "tsx src/pipeline/run.ts --schedule monthly",
     "pipeline:weekly": "tsx src/pipeline/run.ts --schedule weekly",
     "worker:dev": "wrangler dev",
-    "worker:deploy": "wrangler deploy",
+    "worker:deploy": "wrangler deploy --var DEPLOY_ID:$(git rev-parse --short HEAD)",
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",

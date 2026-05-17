@@ -2,6 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import worker from './index.ts';
 import type { CalendarEvent } from '../shared/models.ts';
 
+beforeEach(() => {
+  vi.stubGlobal('caches', {
+    default: {
+      match: vi.fn().mockResolvedValue(undefined),
+      put: vi.fn().mockResolvedValue(undefined),
+    },
+  });
+});
+
 const moonEvent: CalendarEvent = {
   uid: 'moon-2026-01-01@space-calendar',
   title: 'Full Moon',
@@ -39,12 +48,12 @@ function makeEnv(store: Record<string, string> = {}) {
 
 describe('worker request routing', () => {
   it('returns 404 for unknown paths', async () => {
-    const res = await worker.fetch(makeRequest('https://space-calendar.workers.dev/unknown'), makeEnv(), {} as ExecutionContext);
+    const res = await worker.fetch(makeRequest('https://space-calendar.workers.dev/unknown'), makeEnv(), { waitUntil: vi.fn() } as unknown as ExecutionContext);
     expect(res.status).toBe(404);
   });
 
   it('returns 400 when no categories are specified', async () => {
-    const res = await worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics'), makeEnv(), {} as ExecutionContext);
+    const res = await worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics'), makeEnv(), { waitUntil: vi.fn() } as unknown as ExecutionContext);
     expect(res.status).toBe(400);
   });
 
@@ -53,7 +62,7 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('text/calendar');
@@ -67,7 +76,7 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases,eclipses-lunar'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     const body = await res.text();
     expect(body).toContain('Full Moon');
@@ -82,7 +91,7 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases,eclipses-lunar'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     const body = await res.text();
     const moonPos = body.indexOf('Full Moon');
@@ -96,7 +105,7 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     const body = await res.text();
     expect(body).toContain('BEGIN:VCALENDAR');
@@ -108,7 +117,7 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases,not-a-real-category'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     expect(res.status).toBe(200);
   });
@@ -118,8 +127,39 @@ describe('worker request routing', () => {
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
       env,
-      {} as ExecutionContext,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
     expect(res.headers.get('Cache-Control')).toBeTruthy();
+  });
+
+  it('returns cached response on cache hit without reading KV', async () => {
+    const cachedResponse = new Response('CACHED_ICS', {
+      headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
+    });
+    (caches.default.match as ReturnType<typeof vi.fn>).mockResolvedValueOnce(cachedResponse);
+
+    const kv = makeKV({});
+    const getSpy = vi.spyOn(kv, 'get');
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace };
+
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(await res.text()).toBe('CACHED_ICS');
+    expect(getSpy).not.toHaveBeenCalled();
+  });
+
+  it('stores response in edge cache after computing', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const waitUntil = vi.fn();
+    await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
+      env,
+      { waitUntil } as unknown as ExecutionContext,
+    );
+    expect(waitUntil).toHaveBeenCalledOnce();
+    expect(caches.default.put).toHaveBeenCalledOnce();
   });
 });

@@ -16,6 +16,8 @@ export interface Env {
   CALENDAR_KV: KVNamespace;
   /** Optional API key for Launch Library 2 higher rate limits */
   LL2_API_KEY?: string;
+  /** Git SHA injected at deploy time — changing it busts the edge cache */
+  DEPLOY_ID?: string;
 }
 
 export interface Category {
