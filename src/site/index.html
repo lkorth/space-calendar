@@ -152,7 +152,7 @@
     }
 
     function addToGoogle() {
-      const url = buildUrl(getSelectedCategories(), resolvedLat);
+      const url = buildUrl(getSelectedCategories(), resolvedLat).replace(/^https:\/\//, 'webcal://');
       const googleUrl = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(url);
       window.open(googleUrl, '_blank');
     }
