@@ -234,7 +234,7 @@ export async function fetchCloseApproaches(
   const fields = raw.fields;
   const idx = (name: string) => fields.indexOf(name);
 
-  return raw.data.map((row) => ({
+  return (raw.data ?? []).map((row) => ({
     des: row[idx('des')] ?? '',
     cd: row[idx('cd')] ?? '',
     dist_au: parseFloat(row[idx('dist')] ?? '0'),

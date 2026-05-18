@@ -40,17 +40,38 @@ const ALL_GENERATORS: Generator[] = [
   deepSkyGenerator,
 ];
 
-function parseArgs(): { schedule?: string; generator?: string; year: number } {
+function parseArgs(): { schedule?: string; generator?: string; year?: number } {
   const args = process.argv.slice(2);
   const get = (flag: string) => {
     const i = args.indexOf(flag);
     return i !== -1 ? args[i + 1] : undefined;
   };
+  const yearStr = get('--year');
   return {
     schedule: get('--schedule'),
     generator: get('--generator'),
-    year: parseInt(get('--year') ?? String(new Date().getFullYear()), 10),
+    year: yearStr !== undefined ? parseInt(yearStr, 10) : undefined,
   };
+}
+
+/**
+ * Returns the years to generate and the date window to keep.
+ * Default (no --year): 6 months back through 1 year ahead (rolling window).
+ * With --year N: exactly year N, no filtering.
+ */
+function getWindow(year?: number): { years: number[]; dateMin?: Date; dateMax?: Date } {
+  if (year !== undefined) {
+    return { years: [year] };
+  }
+  const today = new Date();
+  const dateMin = new Date(today);
+  dateMin.setUTCMonth(dateMin.getUTCMonth() - 6);
+  dateMin.setUTCHours(0, 0, 0, 0);
+  const dateMax = new Date(today);
+  dateMax.setUTCFullYear(dateMax.getUTCFullYear() + 1);
+  dateMax.setUTCHours(23, 59, 59, 999);
+  const years = [...new Set([dateMin.getUTCFullYear(), today.getUTCFullYear(), dateMax.getUTCFullYear()])];
+  return { years, dateMin, dateMax };
 }
 
 async function main() {
@@ -65,12 +86,32 @@ async function main() {
     process.exit(1);
   }
 
+  const { years, dateMin, dateMax } = getWindow(year);
+  const windowDesc = dateMin && dateMax
+    ? `${dateMin.toISOString().slice(0, 10)} to ${dateMax.toISOString().slice(0, 10)}`
+    : `year=${years[0]}`;
+
   mkdirSync('data', { recursive: true });
 
   for (const gen of generators) {
-    console.log(`Running generator: ${gen.slug} (year=${year})`);
+    console.log(`Running generator: ${gen.slug} (${windowDesc})`);
     try {
-      const events = await gen.generate(year);
+      const allEvents = (await Promise.all(years.map((y) => gen.generate(y)))).flat();
+
+      const seen = new Set<string>();
+      const unique = allEvents.filter((e) => {
+        if (seen.has(e.uid)) return false;
+        seen.add(e.uid);
+        return true;
+      });
+
+      const events = dateMin && dateMax
+        ? unique.filter((e) => {
+            const start = new Date(e.start);
+            return start >= dateMin && start <= dateMax;
+          })
+        : unique;
+
       const outPath = join('data', `${gen.slug}.json`);
       writeFileSync(outPath, JSON.stringify(events, null, 2));
       console.log(`  ✓ ${events.length} events → ${outPath}`);
