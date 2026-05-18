@@ -317,6 +317,15 @@ export const CLUBS: Club[] = [
     parseEvents: parseJgapEvents,
   },
   {
+    id: 'caa',
+    name: 'Cuyahoga Astronomical Association',
+    location: 'Cleveland, OH',
+    websiteUrl: 'https://cuyastro.org/',
+    scrapeUrl: 'https://cuyastro.org/caaevents/?ical=1',
+    parseEvents: parseIcalEvents,
+    fetchContent: fetchIcalText,
+  },
+  {
     id: 'aaap',
     name: 'Amateur Astronomers Association of Pittsburgh',
     location: 'Pittsburgh, PA',

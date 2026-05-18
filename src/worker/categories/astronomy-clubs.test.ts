@@ -252,6 +252,14 @@ describe('CLUBS registry', () => {
     expect(jgap!.scrapeUrl).toBe('https://registration.jgap.org/');
   });
 
+  it('includes CAA with iCal feed', () => {
+    const caa = CLUBS.find((c) => c.id === 'caa');
+    expect(caa).toBeDefined();
+    expect(caa!.location).toBe('Cleveland, OH');
+    expect(caa!.scrapeUrl).toContain('cuyastro.org');
+    expect(caa!.fetchContent).toBeDefined();
+  });
+
   it('includes AAAP with iCal feed', () => {
     const aaap = CLUBS.find((c) => c.id === 'aaap');
     expect(aaap).toBeDefined();
