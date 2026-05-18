@@ -2,13 +2,13 @@
 
 ## Overview
 
-A single subscribable ICS feed where users select which event categories they want. Static astronomical data is pre-generated annually and stored in the repo. Live launch data is fetched from an external API and cached. A Cloudflare Worker merges the two at request time and serves a filtered ICS feed.
+A single subscribable ICS feed where users select which event categories they want. Static astronomical data is pre-generated on a rolling schedule and stored in the repo. Live launch and aurora data is fetched from external APIs and cached. A Cloudflare Worker merges the two at request time and serves a filtered ICS feed.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        GitHub Repo                          │
 │                                                             │
-│  data/          ← generated JSON, committed once/year       │
+│  data/          ← generated JSON, committed on schedule      │
 │  src/worker/    ← Cloudflare Worker source                  │
 │  src/site/      ← configurator UI (GitHub Pages)            │
 │  history.yaml   ← curated space history events              │
@@ -16,8 +16,8 @@ A single subscribable ICS feed where users select which event categories they wa
 │  .github/       ← Actions workflows                         │
 └────────────┬────────────────────────────┬───────────────────┘
              │                            │
-     push to main                  annual schedule
-             │                       (Jan 1 + manual)
+     push to main              scheduled (see below)
+             │                          (+ manual)
              ▼                            ▼
 ┌────────────────────┐      ┌─────────────────────────────┐
 │   GitHub Actions   │      │      GitHub Actions         │
@@ -82,10 +82,11 @@ No astronomical calculations are performed — all data is consumed from public 
 
 | Workflow | Schedule | Generators |
 |----------|----------|------------|
-| `generate-annual.yml` | January 1 + manual | Moon phases, eclipses, solstices/equinoxes, meteor showers, oppositions, elongations, history milestones |
-| `generate-monthly.yml` | 1st of each month | Asteroid close approaches |
-| `generate-weekly.yml` | Weekly (Sunday) | Comets |
+| `generate-monthly.yml` | 1st of each month | Moon phases, eclipses, solstices/equinoxes, meteor showers, oppositions, elongations, conjunctions, alignments, occultations, deep sky, history milestones |
+| `generate-weekly.yml` | Weekly (Sunday) | Asteroid close approaches, comets |
 | `generate-on-change.yml` | Push to main (YAML changed) | History (if `history.yaml` changed), Comets (if `comets.yaml` changed) |
+
+**Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching.
 
 **API sources:**
 - [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar eclipses, solstices, equinoxes (lunar eclipse and planetary phenomena endpoints do not exist in USNO's API)
@@ -111,9 +112,10 @@ Three types of entries:
 
 | Key pattern | Source | TTL |
 |-------------|--------|-----|
-| `static:<category>` | Generated annually by GitHub Actions | No expiry — overwritten each year |
+| `static:<category>` | Generated on pipeline schedule by GitHub Actions | No expiry — overwritten on each run |
 | `launches` | Launch Library 2 API | 1 hour |
 | `aurora:<lat>` | NOAA SWPC 3-day Kp forecast | 3–4 hours |
+| `astronomy-clubs:<id>` | Club website / iCal feed | 6 hours |
 
 Aurora keys are keyed by whole-number latitude (e.g., `aurora:45`, `aurora:52`), so all subscribers within the same latitude degree share a single cached forecast. This limits the total number of aurora cache entries to ~40 for all of North America (25°N–65°N).
 
@@ -176,12 +178,13 @@ A single static HTML page served from `src/site/` via GitHub Pages.
 
 | Data type | Updated | Stored | Served by |
 |-----------|---------|--------|-----------|
-| Moon phases, eclipses, planetary events | Annually (Jan 1) | KV + repo | Worker (from KV) |
-| Meteor showers | Manually, rarely | KV + repo | Worker (from KV) |
-| Space history milestones | Annually (computed from history.yaml) | KV + repo | Worker (from KV) |
-| Comets | Manually as needed | KV + repo | Worker (from KV) |
+| Moon phases, eclipses, planetary events | Monthly (rolling 6-month back / 1-year ahead window) | KV + repo | Worker (from KV) |
+| Asteroid close approaches | Weekly (rolling window) | KV + repo | Worker (from KV) |
+| Comets | Weekly + on YAML change (rolling window) | KV + repo | Worker (from KV) |
+| Space history milestones | Monthly (computed from history.yaml, rolling window) | KV + repo | Worker (from KV) |
 | Rocket launches | Hourly (TTL) | KV only | Worker (from KV, fetched from LL2) |
 | Aurora forecasts | Every 3–4 hours (TTL) | KV only | Worker (from KV, fetched from NOAA SWPC) |
+| Astronomy club events | Every 6 hours (TTL) | KV only | Worker (from KV, fetched from club website/iCal) |
 
 ---
 

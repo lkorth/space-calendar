@@ -82,21 +82,23 @@ Any change to worker routing, new categories, or new validation rules requires e
 ## Key conventions
 
 - All times are UTC in the ICS file. Calendar clients convert to local time automatically.
-- Static data is pre-generated annually; the `data/` JSON files are the source of truth for what the worker serves.
+- Static data is pre-generated on a rolling schedule (6 months back, 1 year ahead); the `data/` JSON files are the source of truth for what the worker serves.
 - The `data/` JSON must be manually updated whenever generator logic changes that affects existing event titles or descriptions — run the pipeline or update the file directly.
 - Category slugs must be consistent everywhere: `models.ts`, `run.ts` (pipeline), `index.ts` (worker labels map), and `CATEGORIES.md` documentation.
 - Event UIDs are stable identifiers — do not change them without a migration plan, as calendar clients use them to deduplicate and update events.
 
 ## Documentation files
 
-- `CATEGORIES.md` — what's included and excluded, and why. Update when adding/removing categories.
+**Always update the relevant docs as part of the same change — not as a follow-up.** Each doc has a clear ownership:
+
+- `CATEGORIES.md` — what's included and excluded, and why. Update when adding/removing categories or clubs.
 - `EVENT_FORMAT.md` — title format, timing, and body content for each event type. Update when changing how events are titled or described.
-- `ARCHITECTURE.md` — system design and data flow. Update when changing infrastructure or adding new data sources.
-- `README.md` — user-facing overview. Update when the feature set changes.
+- `ARCHITECTURE.md` — system design, data flow, pipeline schedules, KV key patterns, and data window policy. Update when changing infrastructure, pipeline schedules, data sources, or rolling window behavior.
+- `README.md` — user-facing overview. Update when the feature set changes in a user-visible way.
 
 ## Common pitfalls
 
-- The pipeline generates data for **one year at a time** (defaults to current year). The `data/` JSON is a snapshot; it gets overwritten each year.
+- The pipeline generates a rolling window (6 months back, 1 year ahead) by default, spanning up to two calendar years. The `data/` JSON is overwritten on each run. Use `--year N` to generate for a specific year instead.
 - USNO API endpoints differ between features — check `src/pipeline/clients/usno.ts` before assuming a new endpoint exists.
 - JPL Horizons output is plain text embedded in JSON — always check the `$$SOE`/`$$EOE` markers and test your regex against real output.
 - Cloudflare Workers KV is eventually consistent. Don't assume a `put` is immediately visible to concurrent reads.
