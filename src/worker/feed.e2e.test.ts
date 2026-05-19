@@ -192,6 +192,29 @@ describe('Worker feed — events', () => {
     expect(body).toContain('BEGIN:VEVENT');
     expect(body).toContain('🔭');
   });
+
+  it('launches returns at least one event', async () => {
+    const { res, body } = await getFeed('?c=launches');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VEVENT');
+    expect(body).toContain('🚀');
+  });
+
+  it('mission-milestones returns at least one event', async () => {
+    const { res, body } = await getFeed('?c=mission-milestones');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VEVENT');
+    expect(body).toContain('🛸');
+  });
+
+  it('mission-milestones events are all-day with stable UIDs', async () => {
+    const { body } = await getFeed('?c=mission-milestones');
+    const events = extractEvents(body);
+    for (const event of events) {
+      expect(event).toContain('DTSTART;VALUE=DATE:');
+      expect(event).toMatch(/UID:mission-milestone-\d+@space-calendar/);
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------
