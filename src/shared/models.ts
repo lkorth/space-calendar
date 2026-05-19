@@ -48,6 +48,7 @@ export type CategorySlug =
   | 'alignments'
   | 'launches'
   | 'history'
+  | 'mission-milestones'
   | 'aurora'
   | 'aurora-australis'
   | 'milky-way'
@@ -75,7 +76,7 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
 ];
 
 /** Categories fetched live by the worker on each request */
-export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'aurora', 'aurora-australis', 'milky-way', 'astronomy-clubs'];
+export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'mission-milestones', 'aurora', 'aurora-australis', 'milky-way', 'astronomy-clubs'];
 
 // ---------------------------------------------------------------------------
 // Pipeline interfaces

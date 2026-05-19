@@ -70,6 +70,20 @@ Not every launch — only those with broad public interest. The goal is signal, 
 - **Heavy-lift launches** — Falcon Heavy, Starship, SLS, New Glenn, Vulcan Centaur, and equivalent vehicles
 - **Flagship science & exploration payloads** — NASA Discovery/New Frontiers/Flagship-class missions, major space telescopes, planetary probes, lunar and Mars landers, and international equivalents (ESA, JAXA, ISRO, CNSA)
 
+### Mission Milestones (🛸)
+Significant mid-mission events for active spacecraft — gravity assists, orbital insertions, arrivals, and major flybys. Not every mission event, only those with genuine public interest. Includes:
+
+- **Gravity assists** — planetary flybys that reshape a spacecraft's trajectory; every major interplanetary mission uses them and they make good "on this date, Spacecraft X swung past Planet Y" events
+- **Orbital insertions** — when a spacecraft fires its engines to enter orbit around a new body
+- **Arrivals and rendezvous** — when a spacecraft reaches its primary target (asteroid, moon, planet)
+- **Notable flybys** — close encounters with small bodies (asteroids, comets) that are the primary science objective of a flyby mission
+
+Excludes: routine calibration burns, trajectory correction maneuvers, instrument deployments, and operational events with no public narrative.
+
+Events are curated in `mission-milestones.yaml`. Add entries when a mission is confirmed to have a significant waypoint in the upcoming year.
+
+---
+
 ### Space History Milestones (⭐)
 Significant anniversaries of landmark moments in spaceflight and astronomy. Only milestone years are included — not every anniversary.
 

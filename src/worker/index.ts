@@ -4,6 +4,7 @@ import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { milkyWayCategory } from './categories/milky-way.ts';
 import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
+import { missionMilestonesCategory } from './categories/mission-milestones.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, Env, RequestParams } from './types.ts';
@@ -79,6 +80,7 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CalendarEve
     ...STATIC_CATEGORY_MAP,
     ['solstices-equinoxes', makeSolsticesCategory(params.hemisphere)],
     ['launches', launchesCategory],
+    ['mission-milestones', missionMilestonesCategory],
     ['aurora', auroraCategory],
     ['aurora-australis', auroraAustralisCategory],
     ['milky-way', milkyWayCategory],
@@ -138,6 +140,7 @@ function buildCalName(categories: CategorySlug[]): string {
     alignments: 'Planetary Alignments',
     launches: 'Rocket Launches',
     history: 'Space History',
+    'mission-milestones': 'Mission Milestones',
     aurora: 'Aurora Borealis',
     'aurora-australis': 'Aurora Australis',
     'milky-way': 'Milky Way',
