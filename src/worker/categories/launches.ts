@@ -14,6 +14,8 @@ export const launchesCategory: Category = {
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const launches = await fetchUpcomingLaunches(env.LL2_API_KEY);
+    if (launches === null) return { events: [], cache: false };
+
     const events: CalendarEvent[] = launches.map((launch) => {
       const windowStart = new Date(launch.window_start);
       const windowEnd = launch.window_end
@@ -22,8 +24,8 @@ export const launchesCategory: Category = {
 
       const vehicle = launch.rocket.configuration.name;
       const mission = launch.mission?.name ?? launch.name;
-      const webcast = launch.vidURLs[0]?.url;
-      const infoUrl = launch.infoURLs[0]?.url;
+      const webcast = launch.vidURLs?.[0]?.url;
+      const infoUrl = launch.infoURLs?.[0]?.url;
 
       return {
         uid: `launch-${launch.id}@space-calendar`,
@@ -37,12 +39,10 @@ export const launchesCategory: Category = {
       };
     });
 
-    if (events.length > 0) {
-      await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
-        expirationTtl: TTL_SECONDS,
-      });
-    }
-    return { events, cache: events.length > 0 };
+    await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
+      expirationTtl: TTL_SECONDS,
+    });
+    return { events, cache: true };
   },
 };
 

@@ -11,14 +11,14 @@ import { describe, it, expect } from 'vitest';
 import { fetchUpcomingLaunches } from './launch-library.ts';
 
 describe('Launch Library 2 API (real)', () => {
-  it('returns an array', async () => {
+  it('returns an array or null on rate limit', async () => {
     const launches = await fetchUpcomingLaunches();
-    expect(Array.isArray(launches)).toBe(true);
+    expect(launches === null || Array.isArray(launches)).toBe(true);
   });
 
   it('each launch has required fields with correct types', async () => {
     const launches = await fetchUpcomingLaunches();
-    if (launches.length === 0) return; // rate limited or no notable launches
+    if (launches === null || launches.length === 0) return; // rate limited or no notable launches
 
     const launch = launches[0]!;
     expect(typeof launch.id).toBe('string');
@@ -30,13 +30,13 @@ describe('Launch Library 2 API (real)', () => {
     expect(launch.pad).toBeDefined();
     expect(typeof launch.pad.name).toBe('string');
     expect(typeof launch.pad.location.name).toBe('string');
-    expect(Array.isArray(launch.vidURLs)).toBe(true);
-    expect(Array.isArray(launch.infoURLs)).toBe(true);
+    expect(launch.vidURLs === null || Array.isArray(launch.vidURLs)).toBe(true);
+    expect(launch.infoURLs === null || Array.isArray(launch.infoURLs)).toBe(true);
   });
 
   it('window_start and window_end are ISO 8601 strings when present', async () => {
     const launches = await fetchUpcomingLaunches();
-    if (launches.length === 0) return;
+    if (launches === null || launches.length === 0) return;
 
     for (const launch of launches) {
       expect(new Date(launch.window_start).toISOString()).toBeTruthy();
@@ -48,7 +48,7 @@ describe('Launch Library 2 API (real)', () => {
 
   it('mission field is null or has name, description, type', async () => {
     const launches = await fetchUpcomingLaunches();
-    if (launches.length === 0) return;
+    if (launches === null || launches.length === 0) return;
 
     for (const launch of launches) {
       if (launch.mission !== null) {

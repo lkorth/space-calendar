@@ -15,8 +15,8 @@ export interface LL2Launch {
   } | null;
   launch_service_provider: { name: string; type: string };
   pad: { name: string; location: { name: string } };
-  vidURLs: Array<{ url: string; title: string }>;
-  infoURLs: Array<{ url: string; title: string }>;
+  vidURLs: Array<{ url: string; title: string }> | null;
+  infoURLs: Array<{ url: string; title: string }> | null;
   /** Whether this is a crewed mission */
   mission_patches?: Array<{ name: string }>;
 }
@@ -42,6 +42,8 @@ export function isNotable(launch: LL2Launch): boolean {
 
   const crewed = missionType.includes('human') || missionType.includes('crewed');
 
+  const scienceMission = missionType === 'astrophysics' || missionType === 'planetary science';
+
   const flagshipPayload = [
     'flagship',
     'new frontiers',
@@ -61,22 +63,21 @@ export function isNotable(launch: LL2Launch): boolean {
     launch.name.toLowerCase().includes('first flight') ||
     launch.name.toLowerCase().includes('debut');
 
-  return heavyLift || crewed || flagshipPayload || maidenFlight;
+  return heavyLift || crewed || scienceMission || flagshipPayload || maidenFlight;
 }
 
-export async function fetchUpcomingLaunches(apiKey?: string): Promise<LL2Launch[]> {
+export async function fetchUpcomingLaunches(apiKey?: string): Promise<LL2Launch[] | null> {
   const headers: Record<string, string> = { 'Accept': 'application/json' };
   if (apiKey) headers['Authorization'] = `Token ${apiKey}`;
 
   const results: LL2Launch[] = [];
-  let url: string | null =
-    `${BASE}/launch/upcoming/?limit=100&ordering=net&status=1&status=2&status=3`;
+  let url: string | null = `${BASE}/launch/upcoming/?limit=100&ordering=net`;
 
   while (url) {
     const res = await fetch(url, { headers });
     if (res.status === 429) {
       console.warn('Launch Library 2 rate limited (429) — returning empty launch list');
-      return [];
+      return null;
     }
     if (!res.ok) throw new Error(`Launch Library 2 error ${res.status}`);
     const data = (await res.json()) as LL2Response;

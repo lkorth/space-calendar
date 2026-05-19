@@ -14,14 +14,13 @@ export const missionMilestonesCategory: Category = {
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const ll2Events = await fetchUpcomingEvents(env.LL2_API_KEY);
-    const events = ll2Events.map(toCalendarEvent);
+    if (ll2Events === null) return { events: [], cache: false };
 
-    if (events.length > 0) {
-      await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
-        expirationTtl: TTL_SECONDS,
-      });
-    }
-    return { events, cache: events.length > 0 };
+    const events = ll2Events.map(toCalendarEvent);
+    await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
+      expirationTtl: TTL_SECONDS,
+    });
+    return { events, cache: true };
   },
 };
 

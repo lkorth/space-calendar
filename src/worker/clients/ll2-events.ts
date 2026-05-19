@@ -34,7 +34,7 @@ export function isNotableEvent(event: LL2Event): boolean {
   }
 }
 
-export async function fetchUpcomingEvents(apiKey?: string): Promise<LL2Event[]> {
+export async function fetchUpcomingEvents(apiKey?: string): Promise<LL2Event[] | null> {
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (apiKey) headers['Authorization'] = `Token ${apiKey}`;
 
@@ -45,7 +45,7 @@ export async function fetchUpcomingEvents(apiKey?: string): Promise<LL2Event[]> 
     const res = await fetch(url, { headers });
     if (res.status === 429) {
       console.warn('Launch Library 2 rate limited (429) — returning empty events list');
-      return [];
+      return null;
     }
     if (!res.ok) throw new Error(`Launch Library 2 events error ${res.status}`);
     const data = (await res.json()) as LL2EventsResponse;

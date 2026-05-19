@@ -11,14 +11,14 @@ import { describe, it, expect } from 'vitest';
 import { fetchUpcomingEvents } from './ll2-events.ts';
 
 describe('Launch Library 2 events API (real)', () => {
-  it('returns an array', async () => {
+  it('returns an array or null on rate limit', async () => {
     const events = await fetchUpcomingEvents();
-    expect(Array.isArray(events)).toBe(true);
+    expect(events === null || Array.isArray(events)).toBe(true);
   });
 
   it('each event has required fields with correct types', async () => {
     const events = await fetchUpcomingEvents();
-    if (events.length === 0) return;
+    if (events === null || events.length === 0) return;
 
     const event = events[0]!;
     expect(typeof event.id).toBe('number');
@@ -34,7 +34,7 @@ describe('Launch Library 2 events API (real)', () => {
 
   it('date is an ISO 8601 string', async () => {
     const events = await fetchUpcomingEvents();
-    if (events.length === 0) return;
+    if (events === null || events.length === 0) return;
 
     for (const event of events) {
       expect(new Date(event.date).toISOString()).toBeTruthy();
@@ -43,6 +43,7 @@ describe('Launch Library 2 events API (real)', () => {
 
   it('only returns notable event types', async () => {
     const events = await fetchUpcomingEvents();
+    if (events === null) return;
     const NOTABLE = new Set(['Flyby', 'Orbital Insertion', 'Spacecraft Landing', 'EVA']);
     for (const event of events) {
       expect(NOTABLE.has(event.type.name)).toBe(true);
@@ -51,7 +52,7 @@ describe('Launch Library 2 events API (real)', () => {
 
   it('news_url is null or a string', async () => {
     const events = await fetchUpcomingEvents();
-    if (events.length === 0) return;
+    if (events === null || events.length === 0) return;
 
     for (const event of events) {
       expect(event.news_url === null || typeof event.news_url === 'string').toBe(true);

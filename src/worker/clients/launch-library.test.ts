@@ -81,10 +81,10 @@ describe('isNotable', () => {
 });
 
 describe('fetchUpcomingLaunches', () => {
-  it('returns empty array on 429 instead of throwing', async () => {
+  it('returns null on 429 instead of throwing', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
     const result = await fetchUpcomingLaunches();
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it('throws on other non-ok status codes', async () => {
