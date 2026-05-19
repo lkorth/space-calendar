@@ -1,6 +1,6 @@
 import { fetchKpForecast, kpThresholdForLatitude } from '../clients/noaa.ts';
 import type { CalendarEvent } from '../../shared/models.ts';
-import type { Category, Env, RequestParams } from '../types.ts';
+import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
 
 const TTL_SECONDS = 60 * 60 * 4; // 4 hours
 
@@ -12,15 +12,15 @@ function makeAuroraCategory(hemisphere: 'northern' | 'southern'): Category {
   return {
     slug: slug as Category['slug'],
 
-    async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
-      if (params.lat === undefined) return [];
+    async fetch(env: Env, params: RequestParams): Promise<CategoryResult> {
+      if (params.lat === undefined) return { events: [], cache: true };
       const lat = Math.round(params.lat);
 
       // For australis, the lat param will be a negative number (e.g. -45 for New Zealand).
       // kpThresholdForLatitude uses the absolute value so the thresholds mirror each other.
       const kvKey = `${slug}:${lat}`;
       const cached = await env.CALENDAR_KV.get(kvKey);
-      if (cached) return JSON.parse(cached) as CalendarEvent[];
+      if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
       const threshold = kpThresholdForLatitude(Math.abs(lat));
       const forecast = await fetchKpForecast();
@@ -29,7 +29,7 @@ function makeAuroraCategory(hemisphere: 'northern' | 'southern'): Category {
       await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), {
         expirationTtl: TTL_SECONDS,
       });
-      return events;
+      return { events, cache: true };
     },
   };
 }

@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { isNotableEvent } from '../clients/ll2-events.ts';
-import { toCalendarEvent } from './mission-milestones.ts';
+import { toCalendarEvent, missionMilestonesCategory } from './mission-milestones.ts';
 import type { LL2Event } from '../clients/ll2-events.ts';
+import type { KVNamespace } from '@cloudflare/workers-types';
 
 function makeEvent(overrides: Partial<LL2Event> = {}): LL2Event {
   return {
@@ -96,6 +97,49 @@ describe('toCalendarEvent', () => {
   it('sets category to mission-milestones', () => {
     const event = toCalendarEvent(makeEvent());
     expect(event.category).toBe('mission-milestones');
+  });
+});
+
+function makeKV(store: Record<string, string> = {}) {
+  return {
+    get: (key: string) => Promise.resolve(store[key] ?? null),
+    put: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
+function makeLL2Response(events: LL2Event[]) {
+  return { ok: true, status: 200, json: () => Promise.resolve({ count: events.length, next: null, results: events }) };
+}
+
+describe('missionMilestonesCategory cache flag', () => {
+  beforeEach(() => { vi.restoreAllMocks(); });
+
+  it('returns cache: true and events when served from KV', async () => {
+    const cached = [toCalendarEvent(makeEvent())];
+    const env = { CALENDAR_KV: makeKV({ 'mission-milestones': JSON.stringify(cached) }) as unknown as KVNamespace };
+    const result = await missionMilestonesCategory.fetch(env, { categories: ['mission-milestones'] });
+    expect(result.cache).toBe(true);
+    expect(result.events).toHaveLength(1);
+  });
+
+  it('returns cache: true and writes KV when API returns events', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeLL2Response([makeEvent()])));
+    const kv = makeKV();
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace };
+    const result = await missionMilestonesCategory.fetch(env, { categories: ['mission-milestones'] });
+    expect(result.cache).toBe(true);
+    expect(result.events).toHaveLength(1);
+    expect(kv.put).toHaveBeenCalledWith('mission-milestones', expect.any(String), { expirationTtl: 3600 });
+  });
+
+  it('returns cache: false and skips KV write when API is rate limited (429)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
+    const kv = makeKV();
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace };
+    const result = await missionMilestonesCategory.fetch(env, { categories: ['mission-milestones'] });
+    expect(result.cache).toBe(false);
+    expect(result.events).toHaveLength(0);
+    expect(kv.put).not.toHaveBeenCalled();
   });
 
   it('end date rolls over correctly at month boundary', () => {

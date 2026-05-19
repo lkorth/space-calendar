@@ -1,13 +1,13 @@
 import type { CalendarEvent, CategorySlug } from '../../shared/models.ts';
-import type { Category, Env, Hemisphere, RequestParams } from '../types.ts';
+import type { Category, CategoryResult, Env, Hemisphere, RequestParams } from '../types.ts';
 
 export function makeStaticCategory(slug: CategorySlug): Category {
   return {
     slug,
-    async fetch(env: Env, _params: RequestParams): Promise<CalendarEvent[]> {
+    async fetch(env: Env, _params: RequestParams): Promise<CategoryResult> {
       const json = await env.CALENDAR_KV.get(`static:${slug}`);
-      if (!json) return [];
-      return JSON.parse(json) as CalendarEvent[];
+      const events = json ? (JSON.parse(json) as CalendarEvent[]) : [];
+      return { events, cache: true };
     },
   };
 }
@@ -75,12 +75,13 @@ export function applyHemisphere(event: CalendarEvent, hemisphere: Hemisphere): C
 export function makeSolsticesCategory(hemisphere?: Hemisphere): Category {
   return {
     slug: 'solstices-equinoxes',
-    async fetch(env: Env, _params: RequestParams): Promise<CalendarEvent[]> {
+    async fetch(env: Env, _params: RequestParams): Promise<CategoryResult> {
       const json = await env.CALENDAR_KV.get('static:solstices-equinoxes');
-      if (!json) return [];
-      const events = JSON.parse(json) as CalendarEvent[];
-      if (!hemisphere || hemisphere === 'northern') return events;
-      return events.map((e) => applyHemisphere(e, hemisphere));
+      const raw = json ? (JSON.parse(json) as CalendarEvent[]) : [];
+      const events = (!hemisphere || hemisphere === 'northern')
+        ? raw
+        : raw.map((e) => applyHemisphere(e, hemisphere));
+      return { events, cache: true };
     },
   };
 }

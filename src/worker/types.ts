@@ -22,9 +22,17 @@ export interface Env {
   DEPLOY_ID?: string;
 }
 
+export interface CategoryResult {
+  events: CalendarEvent[];
+  /** Whether this result may be stored in the edge cache. Set to false when data
+   *  may be empty due to a transient error (e.g. API rate limiting) rather than
+   *  a genuinely empty result, so a poisoned empty response is never cached. */
+  cache: boolean;
+}
+
 export interface Category {
   readonly slug: CategorySlug;
-  fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]>;
+  fetch(env: Env, params: RequestParams): Promise<CategoryResult>;
 }
 
 export interface WorkerClient<TResponse> {

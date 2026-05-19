@@ -155,25 +155,28 @@ function makeEnv(store: Record<string, string> = {}) {
 
 describe('milkyWayCategory.fetch', () => {
   it('returns empty array when lat is not provided', async () => {
-    expect(await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'] })).toEqual([]);
+    const { events } = await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'] });
+    expect(events).toEqual([]);
   });
 
   it('returns empty array for lat too far north (60°N)', async () => {
-    expect(await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 60 })).toEqual([]);
+    const { events } = await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 60 });
+    expect(events).toEqual([]);
   });
 
   it('returns cached result without recomputing', async () => {
     const cached = [{ uid: 'cached', title: '🌌 Cached', category: 'milky-way' }];
     const env = makeEnv({ 'milky-way:45': JSON.stringify(cached) });
-    expect(await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 })).toEqual(cached);
+    const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
+    expect(events).toEqual(cached);
   });
 
   it('generates events for 45°N (current year has galactic core season)', async () => {
     const env = makeEnv();
-    const result = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
-    expect(result.length).toBeGreaterThan(0);
-    expect(result.every((e) => e.allDay)).toBe(true);
-    expect(result.every((e) => e.category === 'milky-way')).toBe(true);
+    const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
+    expect(events.length).toBeGreaterThan(0);
+    expect(events.every((e) => e.allDay)).toBe(true);
+    expect(events.every((e) => e.category === 'milky-way')).toBe(true);
   });
 
   it('generates more events for 30°S than 45°N (wider season and moon windows)', async () => {
@@ -181,7 +184,7 @@ describe('milkyWayCategory.fetch', () => {
       milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 45 }),
       milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: -30 }),
     ]);
-    expect(south.length).toBeGreaterThanOrEqual(north.length);
+    expect(south.events.length).toBeGreaterThanOrEqual(north.events.length);
   });
 
   it('stores computed events in KV with 24h TTL', async () => {
@@ -196,7 +199,7 @@ describe('milkyWayCategory.fetch', () => {
 
   it('event titles include the month name', async () => {
     const env = makeEnv();
-    const result = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
-    expect(result.every((e) => /🌌 Milky Way Window — \w+/.test(e.title))).toBe(true);
+    const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
+    expect(events.every((e) => /🌌 Milky Way Window — \w+/.test(e.title))).toBe(true);
   });
 });

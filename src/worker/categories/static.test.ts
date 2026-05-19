@@ -65,7 +65,7 @@ describe('makeStaticCategory', () => {
   it('reads events from KV under the static:<slug> key', async () => {
     const kv = makeKV({ 'static:moon-phases': JSON.stringify(sampleEvents) });
     const category = makeStaticCategory('moon-phases');
-    const events = await category.fetch(
+    const { events } = await category.fetch(
       { CALENDAR_KV: kv as unknown as KVNamespace },
       { categories: ['moon-phases'] },
     );
@@ -76,7 +76,7 @@ describe('makeStaticCategory', () => {
   it('returns empty array when KV key does not exist', async () => {
     const kv = makeKV({});
     const category = makeStaticCategory('moon-phases');
-    const events = await category.fetch(
+    const { events } = await category.fetch(
       { CALENDAR_KV: kv as unknown as KVNamespace },
       { categories: ['moon-phases'] },
     );
@@ -86,7 +86,7 @@ describe('makeStaticCategory', () => {
   it('uses the correct slug as the KV key prefix', async () => {
     const kv = makeKV({ 'static:eclipses-solar': JSON.stringify(sampleEvents) });
     const category = makeStaticCategory('eclipses-solar');
-    const events = await category.fetch(
+    const { events } = await category.fetch(
       { CALENDAR_KV: kv as unknown as KVNamespace },
       { categories: ['eclipses-solar'] },
     );
@@ -151,21 +151,21 @@ describe('makeSolsticesCategory', () => {
   it('returns NH events unchanged when hemisphere is northern', async () => {
     const kv = makeKV({ 'static:solstices-equinoxes': JSON.stringify(NH_SOLSTICE_EVENTS) });
     const cat = makeSolsticesCategory('northern');
-    const events = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
+    const { events } = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
     expect(events[0]!.title).toContain('Northern Hemisphere');
   });
 
   it('returns SH-rewritten events when hemisphere is southern', async () => {
     const kv = makeKV({ 'static:solstices-equinoxes': JSON.stringify(NH_SOLSTICE_EVENTS) });
     const cat = makeSolsticesCategory('southern');
-    const events = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
+    const { events } = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
     expect(events.every((e) => e.title.includes('Southern Hemisphere'))).toBe(true);
   });
 
   it('defaults to northern when hemisphere is undefined', async () => {
     const kv = makeKV({ 'static:solstices-equinoxes': JSON.stringify(NH_SOLSTICE_EVENTS) });
     const cat = makeSolsticesCategory(undefined);
-    const events = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
+    const { events } = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
     expect(events[0]!.title).toContain('Northern Hemisphere');
   });
 });

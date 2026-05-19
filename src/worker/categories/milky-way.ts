@@ -1,5 +1,5 @@
 import type { CalendarEvent } from '../../shared/models.ts';
-import type { Category, Env, RequestParams } from '../types.ts';
+import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
 
 // Galactic center (Sagittarius A*): RA 17h 45m 40s, Dec -29° 00' 28"
 const GC_RA_H = 17 + 45 / 60 + 40 / 3600;
@@ -177,14 +177,14 @@ export function milkyWayHoursForNight(dateUTC: Date, lat: number, lon: number): 
 export const milkyWayCategory: Category = {
   slug: 'milky-way',
 
-  async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
+  async fetch(env: Env, params: RequestParams): Promise<CategoryResult> {
     const { lat, tz } = params;
-    if (lat === undefined) return [];
-    if (coreMaxAlt(lat) < MIN_CORE_ALT_DEG) return [];
+    if (lat === undefined) return { events: [], cache: true };
+    if (coreMaxAlt(lat) < MIN_CORE_ALT_DEG) return { events: [], cache: true };
 
     const kvKey = `milky-way:${lat}`;
     const cached = await env.CALENDAR_KV.get(kvKey);
-    if (cached) return JSON.parse(cached) as CalendarEvent[];
+    if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const lon = tzOffsetHours(tz) * 15;
     const year = new Date().getUTCFullYear();
@@ -237,7 +237,7 @@ export const milkyWayCategory: Category = {
     }
 
     await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), { expirationTtl: KV_TTL });
-    return events;
+    return { events, cache: true };
   },
 };
 

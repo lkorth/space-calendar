@@ -7,7 +7,7 @@ import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { missionMilestonesCategory } from './categories/mission-milestones.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
-import type { Category, Env, RequestParams } from './types.ts';
+import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
 
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
   ...STATIC_CATEGORIES
@@ -43,7 +43,7 @@ export default {
     if (cached) return cached;
 
     try {
-      const events = await fetchEvents(params, env);
+      const { events, cache } = await fetchEvents(params, env);
       const calName = buildCalName(params.categories);
 
       let response: Response;
@@ -65,7 +65,9 @@ export default {
         });
       }
 
-      ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+      if (cache) {
+        ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+      }
       return response;
     } catch (err) {
       console.error('Feed error:', err);
@@ -74,7 +76,7 @@ export default {
   },
 };
 
-async function fetchEvents(params: RequestParams, env: Env): Promise<CalendarEvent[]> {
+async function fetchEvents(params: RequestParams, env: Env): Promise<CategoryResult> {
   // Build the category map per-request so hemisphere-aware categories get the right params
   const CATEGORIES: Map<CategorySlug, Category> = new Map([
     ...STATIC_CATEGORY_MAP,
@@ -87,16 +89,19 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CalendarEve
     ['astronomy-clubs', astronomyClubsCategory],
   ]);
 
-  return (
-    await Promise.all(
-      params.categories.map((slug) => {
-        const category = CATEGORIES.get(slug);
-        return category ? category.fetch(env, params) : Promise.resolve([]);
-      }),
-    )
-  )
-    .flat()
-    .sort((a, b) => a.start.localeCompare(b.start));
+  const results = await Promise.all(
+    params.categories.map((slug) => {
+      const category = CATEGORIES.get(slug);
+      return category
+        ? category.fetch(env, params)
+        : Promise.resolve<CategoryResult>({ events: [], cache: true });
+    }),
+  );
+
+  return {
+    events: results.flatMap((r) => r.events).sort((a, b) => a.start.localeCompare(b.start)),
+    cache: results.every((r) => r.cache),
+  };
 }
 
 function buildCacheKey(request: Request, deployId?: string): Request {

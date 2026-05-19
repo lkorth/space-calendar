@@ -1,5 +1,5 @@
 import type { CalendarEvent } from '../../shared/models.ts';
-import type { Category, Env, RequestParams } from '../types.ts';
+import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
 
 const TTL_SECONDS = 60 * 60 * 6; // 6 hours
 
@@ -381,13 +381,13 @@ export async function fetchPageText(url: string): Promise<string> {
 export const astronomyClubsCategory: Category = {
   slug: 'astronomy-clubs',
 
-  async fetch(env: Env, params: RequestParams): Promise<CalendarEvent[]> {
+  async fetch(env: Env, params: RequestParams): Promise<CategoryResult> {
     const club = CLUBS.find((c) => c.id === params.club);
-    if (!club) return [];
+    if (!club) return { events: [], cache: true };
 
     const kvKey = `astronomy-clubs:${club.id}`;
     const cached = await env.CALENDAR_KV.get(kvKey);
-    if (cached) return JSON.parse(cached) as CalendarEvent[];
+    if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const text = await (club.fetchContent ?? fetchPageText)(club.scrapeUrl);
     const cutoff = new Date();
@@ -407,7 +407,7 @@ export const astronomyClubsCategory: Category = {
     await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), {
       expirationTtl: TTL_SECONDS,
     });
-    return events;
+    return { events, cache: true };
   },
 };
 

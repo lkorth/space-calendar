@@ -1,7 +1,7 @@
 import { fetchUpcomingLaunches } from '../clients/launch-library.ts';
 import type { LL2Launch } from '../clients/launch-library.ts';
 import type { CalendarEvent } from '../../shared/models.ts';
-import type { Category, Env, RequestParams } from '../types.ts';
+import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
 
 const KV_KEY = 'launches';
 const TTL_SECONDS = 60 * 60; // 1 hour
@@ -9,9 +9,9 @@ const TTL_SECONDS = 60 * 60; // 1 hour
 export const launchesCategory: Category = {
   slug: 'launches',
 
-  async fetch(env: Env, _params: RequestParams): Promise<CalendarEvent[]> {
+  async fetch(env: Env, _params: RequestParams): Promise<CategoryResult> {
     const cached = await env.CALENDAR_KV.get(KV_KEY);
-    if (cached) return JSON.parse(cached) as CalendarEvent[];
+    if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const launches = await fetchUpcomingLaunches(env.LL2_API_KEY);
     const events: CalendarEvent[] = launches.map((launch) => {
@@ -37,10 +37,12 @@ export const launchesCategory: Category = {
       };
     });
 
-    await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
-      expirationTtl: TTL_SECONDS,
-    });
-    return events;
+    if (events.length > 0) {
+      await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
+        expirationTtl: TTL_SECONDS,
+      });
+    }
+    return { events, cache: events.length > 0 };
   },
 };
 

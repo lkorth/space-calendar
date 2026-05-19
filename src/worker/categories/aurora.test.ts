@@ -33,13 +33,13 @@ beforeEach(() => {
 describe('auroraCategory (Northern)', () => {
   it('returns empty array when lat param is missing', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'] });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'] });
     expect(events).toHaveLength(0);
   });
 
   it('returns events when Kp meets threshold for the given latitude', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events.length).toBeGreaterThan(0);
   });
 
@@ -49,7 +49,7 @@ describe('auroraCategory (Northern)', () => {
       json: () => Promise.resolve(QUIET_FORECAST),
     }));
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events).toHaveLength(0);
   });
 
@@ -65,7 +65,7 @@ describe('auroraCategory (Northern)', () => {
     }]);
     const kv = makeKV({ 'aurora:45': cached });
     const env = { CALENDAR_KV: kv as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events).toHaveLength(1);
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -90,19 +90,19 @@ describe('auroraCategory (Northern)', () => {
 
   it('includes severity language in the event title', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events.some((e) => e.title.toLowerCase().includes('storm'))).toBe(true);
   });
 
   it('titles events as Aurora Borealis with emoji', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events.every((e) => e.title.startsWith('🌌 Aurora Borealis'))).toBe(true);
   });
 
   it('description says to look north', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    const { events } = await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
     expect(events[0]!.description).toContain('Look north');
   });
 });
@@ -110,26 +110,26 @@ describe('auroraCategory (Northern)', () => {
 describe('auroraAustralisCategory (Southern)', () => {
   it('returns empty array when lat param is missing', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'] });
+    const { events } = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'] });
     expect(events).toHaveLength(0);
   });
 
   it('returns events for a southern latitude when Kp meets threshold', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
     // lat=-45 (New Zealand) — same threshold as +45 northern (Kp 6); forecast has Kp 7
-    const events = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
+    const { events } = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
     expect(events.length).toBeGreaterThan(0);
   });
 
   it('titles events as Aurora Australis with emoji', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
+    const { events } = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
     expect(events.every((e) => e.title.startsWith('🌌 Aurora Australis'))).toBe(true);
   });
 
   it('description says to look south', async () => {
     const env = { CALENDAR_KV: makeKV() as unknown as KVNamespace };
-    const events = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
+    const { events } = await auroraAustralisCategory.fetch(env, { categories: ['aurora-australis'], lat: -45 });
     expect(events[0]!.description).toContain('Look south');
   });
 
@@ -145,8 +145,8 @@ describe('auroraAustralisCategory (Southern)', () => {
     const kvS = makeKV();
     const envN = { CALENDAR_KV: kvN as unknown as KVNamespace };
     const envS = { CALENDAR_KV: kvS as unknown as KVNamespace };
-    const northEvents = await auroraCategory.fetch(envN, { categories: ['aurora'], lat: 45 });
-    const southEvents = await auroraAustralisCategory.fetch(envS, { categories: ['aurora-australis'], lat: -45 });
+    const { events: northEvents } = await auroraCategory.fetch(envN, { categories: ['aurora'], lat: 45 });
+    const { events: southEvents } = await auroraAustralisCategory.fetch(envS, { categories: ['aurora-australis'], lat: -45 });
     // Same Kp threshold means same number of events for same forecast
     expect(southEvents.length).toBe(northEvents.length);
   });
