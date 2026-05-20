@@ -3,9 +3,9 @@
     "uid": "alignment-mars-launch-window-2026-11-01@space-calendar",
     "title": "🚀 Mars Launch Window — Optimal Transfer Orbit to Mars",
     "start": "2026-11-01",
-    "end": "2026-12-15",
+    "end": "2026-11-02",
     "allDay": true,
-    "description": "Earth and Mars are in the orbital geometry that allows a spacecraft to reach Mars on a minimum-energy trajectory — a Hohmann transfer orbit taking roughly 7 months. This alignment occurs approximately every 26 months (one Martian synodic period). Every major Mars mission has launched during one of these windows: NASA's Perseverance rover (2020), Mars Science Laboratory / Curiosity (2011), the Mars Exploration Rovers Spirit and Opportunity (2003), and Mars Odyssey (2001).\nA spacecraft launched outside this window would require far more fuel to reach Mars — often prohibitively so. The next window after this one opens in early 2029.\nNo confirmed Mars missions are currently scheduled for this window, but it is the window most likely to be targeted by future crewed Mars mission planning.",
+    "description": "Launch window: November 1, 2026 – December 15, 2026\n\nEarth and Mars are in the orbital geometry that allows a spacecraft to reach Mars on a minimum-energy trajectory — a Hohmann transfer orbit taking roughly 7 months. This alignment occurs approximately every 26 months (one Martian synodic period). Every major Mars mission has launched during one of these windows: NASA's Perseverance rover (2020), Mars Science Laboratory / Curiosity (2011), the Mars Exploration Rovers Spirit and Opportunity (2003), and Mars Odyssey (2001).\nA spacecraft launched outside this window would require far more fuel to reach Mars — often prohibitively so. The next window after this one opens in early 2029.\nNo confirmed Mars missions are currently scheduled for this window, but it is the window most likely to be targeted by future crewed Mars mission planning.",
     "url": "https://mars.nasa.gov/mars-exploration/missions/",
     "category": "alignments"
   },

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterByYear } from './alignments.ts';
+import { filterByYear, formatDate, entryToEvent } from './alignments.ts';
 
 const SAMPLE_ENTRIES = [
   {
@@ -61,5 +61,54 @@ describe('filterByYear', () => {
     expect(filterByYear(crossYear, 2025)).toHaveLength(1);
     expect(filterByYear(crossYear, 2026)).toHaveLength(1);
     expect(filterByYear(crossYear, 2027)).toHaveLength(0);
+  });
+});
+
+describe('formatDate', () => {
+  it('formats a date string as Month D, YYYY', () => {
+    expect(formatDate('2026-11-01')).toBe('November 1, 2026');
+    expect(formatDate('2029-01-15')).toBe('January 15, 2029');
+  });
+});
+
+describe('entryToEvent', () => {
+  it('collapses mars-launch-window to a single day', () => {
+    const event = entryToEvent({
+      start: '2026-11-01',
+      end: '2026-12-15',
+      type: 'mars-launch-window',
+      title: 'Mars Launch Window',
+      description: 'Details here.',
+      url: 'https://example.com',
+    });
+    expect(event.start).toBe('2026-11-01');
+    expect(event.end).toBe('2026-11-02');
+  });
+
+  it('prepends window date range to mars-launch-window description', () => {
+    const event = entryToEvent({
+      start: '2026-11-01',
+      end: '2026-12-15',
+      type: 'mars-launch-window',
+      title: 'Mars Launch Window',
+      description: 'Details here.',
+      url: 'https://example.com',
+    });
+    expect(event.description).toMatch(/^Launch window: November 1, 2026 – December 15, 2026\n\n/);
+    expect(event.description).toContain('Details here.');
+  });
+
+  it('preserves full date range for planet-parade', () => {
+    const event = entryToEvent({
+      start: '2026-04-15',
+      end: '2026-05-10',
+      type: 'planet-parade',
+      title: 'Planet Parade',
+      description: 'Details here.',
+      url: 'https://example.com',
+    });
+    expect(event.start).toBe('2026-04-15');
+    expect(event.end).toBe('2026-05-10');
+    expect(event.description).toBe('Details here.');
   });
 });

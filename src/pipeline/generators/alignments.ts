@@ -20,6 +20,41 @@ export function filterByYear(entries: AlignmentEntry[], year: number): Alignment
   });
 }
 
+function nextDayStr(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().split('T')[0]!;
+}
+
+/** Format a YYYY-MM-DD string as "Month D, YYYY" (e.g. "November 1, 2026") */
+export function formatDate(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+}
+
+const ALIGNMENT_EMOJI: Record<string, string> = {
+  'mars-launch-window': '🚀',
+  'planet-parade': '🌟',
+};
+
+export function entryToEvent(e: AlignmentEntry): CalendarEvent {
+  const isMarsWindow = e.type === 'mars-launch-window';
+  const eventEnd = isMarsWindow ? nextDayStr(e.start) : e.end;
+  const description = isMarsWindow
+    ? `Launch window: ${formatDate(e.start)} – ${formatDate(e.end)}\n\n${e.description.trim()}`
+    : e.description.trim();
+  return {
+    uid: `alignment-${e.type}-${e.start}@space-calendar`,
+    title: `${ALIGNMENT_EMOJI[e.type] ?? '🌟'} ${e.title}`,
+    start: e.start,
+    end: eventEnd,
+    allDay: true,
+    description,
+    url: e.url,
+    category: 'alignments' as const,
+  };
+}
+
 export const alignmentsGenerator: Generator = {
   slug: 'alignments',
   schedule: 'monthly',
@@ -27,21 +62,6 @@ export const alignmentsGenerator: Generator = {
   async generate(year: number): Promise<CalendarEvent[]> {
     const raw = readFileSync('alignments.yaml', 'utf-8');
     const entries = (parse(raw) as AlignmentEntry[] | null) ?? [];
-
-    const ALIGNMENT_EMOJI: Record<string, string> = {
-      'mars-launch-window': '🚀',
-      'planet-parade': '🌟',
-    };
-
-    return filterByYear(entries, year).map((e) => ({
-      uid: `alignment-${e.type}-${e.start}@space-calendar`,
-      title: `${ALIGNMENT_EMOJI[e.type] ?? '🌟'} ${e.title}`,
-      start: e.start,
-      end: e.end,
-      allDay: true,
-      description: e.description.trim(),
-      url: e.url,
-      category: 'alignments' as const,
-    }));
+    return filterByYear(entries, year).map(entryToEvent);
   },
 };
