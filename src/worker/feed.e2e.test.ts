@@ -242,4 +242,44 @@ describe('Worker feed — static data spot checks', () => {
     const { body } = await getFeed('?c=oppositions');
     expect(body).toContain('Opposition');
   });
+
+  it('elongations returns at least one event', async () => {
+    const { body } = await getFeed('?c=elongations');
+    expect(body).toContain('Elongation');
+  });
+
+  it('conjunctions returns at least one event', async () => {
+    const { body } = await getFeed('?c=conjunctions');
+    expect(body).toContain('Conjunction');
+  });
+
+  it('alignments returns at least one event', async () => {
+    const { body } = await getFeed('?c=alignments');
+    expect(body).toContain('BEGIN:VEVENT');
+  });
+
+  it('occultations returns at least one event', async () => {
+    const { body } = await getFeed('?c=occultations');
+    expect(body).toContain('Occultation');
+  });
+
+  it('asteroids returns at least one event', async () => {
+    const { body } = await getFeed('?c=asteroids');
+    expect(body).toContain('Asteroid');
+  });
+
+  it('history returns at least one event', async () => {
+    const { body } = await getFeed('?c=history');
+    expect(body).toContain('Years Ago');
+  });
+
+  it('deep-sky returns at least one event', async () => {
+    const { body } = await getFeed('?c=deep-sky');
+    expect(body).toContain('Messier Marathon');
+  });
+
+  it('comets returns a valid calendar', async () => {
+    const { res } = await getFeed('?c=comets');
+    expect(res.status).toBe(200);
+  });
 });

@@ -1,20 +1,16 @@
 /**
- * Ensures every CategorySlug has a corresponding entry in the configurator HTML.
- * If this fails, add a checkbox with value="<slug>" to src/site/index.html.
- *
- * Exception: aurora-australis is derived from the aurora checkbox + hemisphere
- * selection and intentionally has no direct value= entry.
+ * Meta tests ensuring every CategorySlug is represented in both the
+ * configurator HTML and the e2e test suite.
  */
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { STATIC_CATEGORIES, LIVE_CATEGORIES } from '../shared/models.ts';
 
-const CONFIGURATOR_EXCEPTIONS = new Set([
-  // Both aurora slugs are represented by a single checkbox; getAuroraSlug() in the
-  // configurator JS maps it to 'aurora' or 'aurora-australis' based on hemisphere.
-  'aurora',
-  'aurora-australis',
-]);
+// Both aurora slugs are represented by a single checkbox; getAuroraSlug() maps
+// it to 'aurora' or 'aurora-australis' based on hemisphere.
+const AURORA_EXCEPTIONS = new Set(['aurora', 'aurora-australis']);
+
+const CONFIGURATOR_EXCEPTIONS = new Set([...AURORA_EXCEPTIONS]);
 
 describe('configurator', () => {
   it('has an entry for every category slug', () => {
@@ -24,6 +20,21 @@ describe('configurator', () => {
     for (const slug of allSlugs) {
       if (CONFIGURATOR_EXCEPTIONS.has(slug)) continue;
       expect(html, `Missing value="${slug}" in index.html`).toContain(`value="${slug}"`);
+    }
+  });
+});
+
+describe('e2e test coverage', () => {
+  it('has a test for every category slug', () => {
+    const e2e = readFileSync('src/worker/feed.e2e.test.ts', 'utf-8');
+    const allSlugs = [...STATIC_CATEGORIES, ...LIVE_CATEGORIES];
+
+    // aurora-australis is covered by the aurora test (hemisphere determines the slug)
+    const E2E_EXCEPTIONS = new Set(['aurora-australis']);
+
+    for (const slug of allSlugs) {
+      if (E2E_EXCEPTIONS.has(slug)) continue;
+      expect(e2e, `Missing e2e test for slug "${slug}" in feed.e2e.test.ts`).toContain(`c=${slug}`);
     }
   });
 });
