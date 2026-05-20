@@ -5,7 +5,6 @@ import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
 const GC_RA_H = 17 + 45 / 60 + 40 / 3600;
 const GC_DEC_DEG = -(29 + 0 / 60 + 28 / 3600);
 
-const MIN_CORE_ALT_DEG = 10; // minimum useful elevation — below this, horizon haze dominates
 const MIN_DARK_HOURS = 1.0;  // minimum moonless+dark+core overlap to count a night as good
 const KV_TTL = 60 * 60 * 24; // 24h — refreshes naturally when pipeline regenerates
 const MAX_GAP_DAYS = 2;      // group windows separated by ≤1 borderline night
@@ -15,6 +14,12 @@ const toRad = (d: number) => (d * Math.PI) / 180;
 // ---------------------------------------------------------------------------
 // Pure astronomy helpers (exported for unit testing)
 // ---------------------------------------------------------------------------
+
+/** Minimum useful core altitude in degrees for a given latitude.
+ *  At high latitudes the core never rises far, so a lower floor is used. */
+export function minCoreAltDeg(lat: number): number {
+  return Math.abs(lat) >= 43 ? 14 : 18;
+}
 
 /** Maximum transit altitude of the galactic core for an observer at `lat` degrees */
 export function coreMaxAlt(lat: number): number {
@@ -125,7 +130,7 @@ export function milkyWayHoursForNight(dateUTC: Date, lat: number, lon: number): 
   const jd = julianDate(dateUTC.getUTCFullYear(), dateUTC.getUTCMonth() + 1, dateUTC.getUTCDate()) + 0.5;
 
   // Galactic core: check if it ever rises above the minimum useful altitude
-  const coreHW = hourAngleAtAlt(MIN_CORE_ALT_DEG, lat, GC_DEC_DEG);
+  const coreHW = hourAngleAtAlt(minCoreAltDeg(lat), lat, GC_DEC_DEG);
   if (coreHW === null || coreHW <= 0) return 0;
 
   // Sun: check for astronomical darkness
@@ -180,7 +185,7 @@ export const milkyWayCategory: Category = {
   async fetch(env: Env, params: RequestParams): Promise<CategoryResult> {
     const { lat, tz } = params;
     if (lat === undefined) return { events: [], cache: true };
-    if (coreMaxAlt(lat) < MIN_CORE_ALT_DEG) return { events: [], cache: true };
+    if (coreMaxAlt(lat) < minCoreAltDeg(lat)) return { events: [], cache: true };
 
     const kvKey = `milky-way:${lat}`;
     const cached = await env.CALENDAR_KV.get(kvKey);

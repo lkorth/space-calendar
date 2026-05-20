@@ -6,6 +6,7 @@ import {
   milkyWayHoursForNight,
   tzOffsetHours,
   milkyWayCategory,
+  minCoreAltDeg,
 } from './milky-way.ts';
 
 // ---------------------------------------------------------------------------
@@ -27,6 +28,24 @@ describe('coreMaxAlt', () => {
 
   it('returns ~1° at 60°N (barely above horizon)', () => {
     expect(coreMaxAlt(60)).toBeCloseTo(1, 0);
+  });
+});
+
+describe('minCoreAltDeg', () => {
+  it('returns 14° at 43°N and above', () => {
+    expect(minCoreAltDeg(43)).toBe(14);
+    expect(minCoreAltDeg(55)).toBe(14);
+  });
+
+  it('returns 18° below 43°N', () => {
+    expect(minCoreAltDeg(42)).toBe(18);
+    expect(minCoreAltDeg(30)).toBe(18);
+    expect(minCoreAltDeg(0)).toBe(18);
+  });
+
+  it('applies the same threshold to southern latitudes by absolute value', () => {
+    expect(minCoreAltDeg(-43)).toBe(14);
+    expect(minCoreAltDeg(-42)).toBe(18);
   });
 });
 
@@ -81,13 +100,13 @@ describe('milkyWayHoursForNight', () => {
     expect(milkyWayHoursForNight(dec, 45, 0)).toBe(0);
   });
 
-  it('returns 0 for 60°N (core never reaches 10° altitude)', () => {
+  it('returns 0 for 60°N (core never reaches minimum altitude threshold)', () => {
     const june = new Date(Date.UTC(2026, 5, 3));
     expect(milkyWayHoursForNight(june, 60, 0)).toBe(0);
   });
 
   it('returns more hours for 30°S than 45°N in June (better southern viewing)', () => {
-    const june = new Date(Date.UTC(2026, 5, 3));
+    const june = new Date(Date.UTC(2026, 5, 15)); // June 15 — actual new moon
     expect(milkyWayHoursForNight(june, -30, 0)).toBeGreaterThan(milkyWayHoursForNight(june, 45, 0));
   });
 
