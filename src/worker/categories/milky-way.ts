@@ -7,7 +7,6 @@ const GC_DEC_DEG = -(29 + 0 / 60 + 28 / 3600);
 
 const MIN_DARK_HOURS = 1.0;  // minimum moonless+dark+core overlap to count a night as good
 const KV_TTL = 60 * 60 * 24; // 24h — refreshes naturally when pipeline regenerates
-const MAX_GAP_DAYS = 2;      // group windows separated by ≤1 borderline night
 
 const toRad = (d: number) => (d * Math.PI) / 180;
 
@@ -45,6 +44,15 @@ export function overlapHours(aStart: number, aEnd: number, bStart: number, bEnd:
     if (inWindow(h, aStart, aEnd) && inWindow(h, bStart, bEnd)) overlap += step;
   }
   return overlap;
+}
+
+export interface NightWindow {
+  /** Total qualifying hours */
+  hours: number;
+  /** UTC hours from midnight of dateUTC when the window starts (may be > 24 if past midnight) */
+  startHour: number;
+  /** UTC hours from midnight of dateUTC when the window ends (may be > 24 if past midnight) */
+  endHour: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -123,32 +131,33 @@ export function tzOffsetHours(tz: string | undefined): number {
   }
 }
 
-/** Hours where the galactic core is above MIN_CORE_ALT_DEG, it is astronomically dark
- *  (sun below -18°), AND the moon is below the horizon — all on the same night.
- *  dateUTC should be midnight UTC of the night in question. */
-export function milkyWayHoursForNight(dateUTC: Date, lat: number, lon: number): number {
+/** Compute the viewing window for a single night: the contiguous span where the galactic
+ *  core is above the minimum altitude, it is astronomically dark, and the moon is below
+ *  the horizon. dateUTC should be midnight UTC of the night in question.
+ *
+ *  The scan is centered on core transit so a window that spans midnight is found as a
+ *  single block. startHour/endHour are UTC hours from midnight of dateUTC and may exceed
+ *  24 if the window extends into the following day.
+ *
+ *  Returns null if there is no qualifying overlap. */
+export function milkyWayWindowForNight(dateUTC: Date, lat: number, lon: number): NightWindow | null {
   const jd = julianDate(dateUTC.getUTCFullYear(), dateUTC.getUTCMonth() + 1, dateUTC.getUTCDate()) + 0.5;
 
-  // Galactic core: check if it ever rises above the minimum useful altitude
   const coreHW = hourAngleAtAlt(minCoreAltDeg(lat), lat, GC_DEC_DEG);
-  if (coreHW === null || coreHW <= 0) return 0;
+  if (coreHW === null || coreHW <= 0) return null;
 
-  // Sun: check for astronomical darkness
   const sun = sunPosition(jd);
   const sunHW = hourAngleAtAlt(-18, lat, sun.dec);
   if (sunHW === null) {
-    // Determine if midnight sun (no darkness) or polar night (all dark)
     const cosHA = (Math.sin(toRad(-18)) - Math.sin(toRad(lat)) * Math.sin(toRad(sun.dec))) /
                   (Math.cos(toRad(lat)) * Math.cos(toRad(sun.dec)));
-    if (cosHA > 1) return 0; // midnight sun
-    // Polar night — skip the darkness check below
+    if (cosHA > 1) return null; // midnight sun
   }
 
-  // Moon: compute rise/set. moonHW === null means never rises; 12 means circumpolar above horizon.
   const moon = moonPosition(jd);
   const moonHW = hourAngleAtAlt(0, lat, moon.dec);
   const moonAlwaysUp = moonHW !== null && moonHW >= 12;
-  if (moonAlwaysUp) return 0; // moonlit all night, never useful
+  if (moonAlwaysUp) return null;
 
   const moonNeverRises = moonHW === null;
   const moonTransit = transitUT(moon.ra, jd, lon);
@@ -163,16 +172,31 @@ export function milkyWayHoursForNight(dateUTC: Date, lat: number, lon: number): 
   const coreRise = ((coreTransit - coreHW) % 24 + 24) % 24;
   const coreSet = ((coreTransit + coreHW) % 24 + 24) % 24;
 
-  // Three-way overlap: dark ∩ core above threshold ∩ moon below horizon
+  // Scan the 24h period centered on core transit so any midnight-spanning window is
+  // encountered as a single contiguous stretch rather than split at h=0.
+  const scanStart = ((coreTransit - 12) % 24 + 24) % 24;
   const step = 0.25;
   let overlap = 0;
-  for (let h = 0; h < 24; h += step) {
+  let windowStart = -1;
+  let windowEnd = -1;
+
+  for (let i = 0; i < 24 / step; i++) {
+    const h = (scanStart + i * step) % 24;
+    const absoluteH = scanStart + i * step;
+
     const isDark = sunHW === null ? true : inWindow(h, darkStart, darkEnd);
     const coreUp = inWindow(h, coreRise, coreSet);
     const moonDown = moonNeverRises ? true : !inWindow(h, moonRise, moonSet);
-    if (isDark && coreUp && moonDown) overlap += step;
+
+    if (isDark && coreUp && moonDown) {
+      overlap += step;
+      if (windowStart < 0) windowStart = absoluteH;
+      windowEnd = absoluteH + step;
+    }
   }
-  return overlap;
+
+  if (overlap === 0) return null;
+  return { hours: overlap, startHour: windowStart, endHour: windowEnd };
 }
 
 // ---------------------------------------------------------------------------
@@ -195,50 +219,24 @@ export const milkyWayCategory: Category = {
     const year = new Date().getUTCFullYear();
     const dayMs = 24 * 60 * 60 * 1000;
 
-    // Scan every night of the year
-    type GoodNight = { date: Date; hours: number };
-    const goodNights: GoodNight[] = [];
-    for (let d = new Date(Date.UTC(year, 0, 1)); d.getUTCFullYear() === year; d = new Date(d.getTime() + dayMs)) {
-      const hours = milkyWayHoursForNight(d, lat, lon);
-      if (hours >= MIN_DARK_HOURS) goodNights.push({ date: new Date(d), hours });
-    }
-
-    // Group consecutive good nights (tolerate up to 1-night gap for borderline transitions)
     const events: CalendarEvent[] = [];
-    let i = 0;
-    while (i < goodNights.length) {
-      let j = i;
-      let bestHours = goodNights[i]!.hours;
-      let bestDate = goodNights[i]!.date;
+    for (let d = new Date(Date.UTC(year, 0, 1)); d.getUTCFullYear() === year; d = new Date(d.getTime() + dayMs)) {
+      const window = milkyWayWindowForNight(d, lat, lon);
+      if (!window || window.hours < MIN_DARK_HOURS) continue;
 
-      while (j + 1 < goodNights.length) {
-        const gapDays = (goodNights[j + 1]!.date.getTime() - goodNights[j]!.date.getTime()) / dayMs;
-        if (gapDays > MAX_GAP_DAYS) break;
-        j++;
-        if (goodNights[j]!.hours > bestHours) {
-          bestHours = goodNights[j]!.hours;
-          bestDate = goodNights[j]!.date;
-        }
-      }
-
-      const windowStart = goodNights[i]!.date;
-      const windowEnd = new Date(goodNights[j]!.date.getTime() + dayMs); // DTEND is exclusive
-      const monthName = windowStart.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
-      const peakDate = bestDate.toLocaleString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
-      const nights = j - i + 1;
+      const eventStart = new Date(d.getTime() + window.startHour * 3600000);
+      const eventEnd = new Date(d.getTime() + window.endHour * 3600000);
 
       events.push({
-        uid: `milky-way-${windowStart.toISOString().slice(0, 10)}@space-calendar`,
-        title: `🌌 Milky Way Window — ${monthName}`,
-        start: windowStart.toISOString(),
-        end: windowEnd.toISOString(),
-        allDay: true,
-        description: buildDescription(lat, coreMaxAlt(lat), Math.round(bestHours * 10) / 10, peakDate, nights),
+        uid: `milky-way-${d.toISOString().slice(0, 10)}@space-calendar`,
+        title: `🌌 Milky Way Viewing`,
+        start: eventStart.toISOString(),
+        end: eventEnd.toISOString(),
+        allDay: false,
+        description: buildDescription(lat, coreMaxAlt(lat), window.hours),
         url: 'https://www.lightpollutionmap.info/',
         category: 'milky-way',
       });
-
-      i = j + 1;
     }
 
     await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), { expirationTtl: KV_TTL });
@@ -246,15 +244,12 @@ export const milkyWayCategory: Category = {
   },
 };
 
-function buildDescription(lat: number, maxAlt: number, peakHours: number, peakDate: string, nights: number): string {
+function buildDescription(lat: number, maxAlt: number, hours: number): string {
   const hemi = lat >= 0 ? 'south' : 'north';
   const latStr = `${Math.abs(lat)}°${lat >= 0 ? 'N' : 'S'}`;
-  const lines = [
-    `The galactic core reaches up to ${Math.round(maxAlt)}° above the horizon from your latitude (${latStr}). During this window you can expect up to ${peakHours} hours per night where the core is visible during astronomical darkness with the moon below the horizon.`,
-    nights > 1
-      ? `Best night: ${peakDate}. Look ${hemi} after astronomical twilight ends and allow 20–30 minutes for your eyes to dark-adapt.`
-      : `Look ${hemi} after astronomical twilight ends and allow 20–30 minutes for your eyes to dark-adapt.`,
+  return [
+    `Tonight the galactic core reaches up to ${Math.round(maxAlt)}° above the horizon from your latitude (${latStr}), with approximately ${Math.round(hours * 10) / 10} hours where it is visible during astronomical darkness with the moon below the horizon.`,
+    `Look ${hemi} after astronomical twilight ends and allow 20–30 minutes for your eyes to dark-adapt.`,
     `A dark site well away from city lights is essential. Check light pollution levels at lightpollutionmap.info before heading out.`,
-  ];
-  return lines.join('\n\n');
+  ].join('\n\n');
 }

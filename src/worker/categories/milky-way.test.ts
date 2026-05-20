@@ -3,7 +3,7 @@ import {
   coreMaxAlt,
   coreHoursAboveAlt,
   overlapHours,
-  milkyWayHoursForNight,
+  milkyWayWindowForNight,
   tzOffsetHours,
   milkyWayCategory,
   minCoreAltDeg,
@@ -86,54 +86,78 @@ describe('overlapHours', () => {
 });
 
 // ---------------------------------------------------------------------------
-// milkyWayHoursForNight — core and darkness conditions
+// milkyWayWindowForNight
 // ---------------------------------------------------------------------------
 
-describe('milkyWayHoursForNight', () => {
-  it('returns positive hours for 45°N in June (peak season, near new moon)', () => {
+describe('milkyWayWindowForNight', () => {
+  it('returns a window for 45°N in June near new moon', () => {
     const june = new Date(Date.UTC(2026, 5, 15)); // June 15 — actual new moon
-    expect(milkyWayHoursForNight(june, 45, 0)).toBeGreaterThan(1);
+    const result = milkyWayWindowForNight(june, 45, 0);
+    expect(result).not.toBeNull();
+    expect(result!.hours).toBeGreaterThan(1);
   });
 
-  it('returns 0 for 45°N in December (galactic core not up at night)', () => {
-    const dec = new Date(Date.UTC(2026, 11, 20)); // near Dec new moon
-    expect(milkyWayHoursForNight(dec, 45, 0)).toBe(0);
+  it('returns null for 45°N in December (galactic core not up at night)', () => {
+    const dec = new Date(Date.UTC(2026, 11, 20));
+    expect(milkyWayWindowForNight(dec, 45, 0)).toBeNull();
   });
 
-  it('returns 0 for 60°N (core never reaches minimum altitude threshold)', () => {
+  it('returns null for 60°N (core never reaches minimum altitude threshold)', () => {
     const june = new Date(Date.UTC(2026, 5, 3));
-    expect(milkyWayHoursForNight(june, 60, 0)).toBe(0);
+    expect(milkyWayWindowForNight(june, 60, 0)).toBeNull();
   });
 
   it('returns more hours for 30°S than 45°N in June (better southern viewing)', () => {
     const june = new Date(Date.UTC(2026, 5, 15)); // June 15 — actual new moon
-    expect(milkyWayHoursForNight(june, -30, 0)).toBeGreaterThan(milkyWayHoursForNight(june, 45, 0));
+    const north = milkyWayWindowForNight(june, 45, 0);
+    const south = milkyWayWindowForNight(june, -30, 0);
+    expect(south).not.toBeNull();
+    expect(north).not.toBeNull();
+    expect(south!.hours).toBeGreaterThan(north!.hours);
   });
 
-  it('returns 0 for 60°N in June (midnight sun — no astronomical darkness)', () => {
+  it('returns null for 60°N in June (midnight sun — no astronomical darkness)', () => {
     const june = new Date(Date.UTC(2026, 5, 15));
-    expect(milkyWayHoursForNight(june, 60, 0)).toBe(0);
+    expect(milkyWayWindowForNight(june, 60, 0)).toBeNull();
   });
 
-  // Moon-aware conditions
-  it('returns 0 around full moon (moon up all night blocks the window)', () => {
+  it('returns null around full moon (moon up all night blocks the window)', () => {
     // Full moon June 29, 2026
     const fullMoon = new Date(Date.UTC(2026, 5, 29));
-    expect(milkyWayHoursForNight(fullMoon, 45, 0)).toBe(0);
+    expect(milkyWayWindowForNight(fullMoon, 45, 0)).toBeNull();
   });
 
-  it('returns positive hours when waning crescent moon rises late (evening window is clear)', () => {
+  it('returns a window when waning crescent moon rises late (evening window is clear)', () => {
     // June 8: 7 days before June 15 new moon — waning crescent rises after midnight
     const waningCrescent = new Date(Date.UTC(2026, 5, 8));
-    expect(milkyWayHoursForNight(waningCrescent, 45, 0)).toBeGreaterThan(0);
+    expect(milkyWayWindowForNight(waningCrescent, 45, 0)).not.toBeNull();
   });
 
   it('returns more hours near new moon than near full moon (same season)', () => {
-    const newMoon = new Date(Date.UTC(2026, 5, 15)); // June 15 new moon
-    const fullMoon = new Date(Date.UTC(2026, 5, 29)); // June 29 full moon
-    expect(milkyWayHoursForNight(newMoon, 45, 0)).toBeGreaterThan(
-      milkyWayHoursForNight(fullMoon, 45, 0),
-    );
+    const newMoon = new Date(Date.UTC(2026, 5, 15));
+    const fullMoon = new Date(Date.UTC(2026, 5, 29));
+    const newMoonWindow = milkyWayWindowForNight(newMoon, 45, 0);
+    const fullMoonWindow = milkyWayWindowForNight(fullMoon, 45, 0);
+    expect(newMoonWindow).not.toBeNull();
+    expect(newMoonWindow!.hours).toBeGreaterThan(fullMoonWindow?.hours ?? 0);
+  });
+
+  it('returns startHour and endHour that span the window duration', () => {
+    const june = new Date(Date.UTC(2026, 5, 15));
+    const result = milkyWayWindowForNight(june, 45, 0);
+    expect(result).not.toBeNull();
+    expect(result!.endHour - result!.startHour).toBeCloseTo(result!.hours, 0);
+  });
+
+  it('startHour and endHour produce valid UTC timestamps', () => {
+    const date = new Date(Date.UTC(2026, 5, 15));
+    const result = milkyWayWindowForNight(date, 45, 0);
+    expect(result).not.toBeNull();
+    const start = new Date(date.getTime() + result!.startHour * 3600000);
+    const end = new Date(date.getTime() + result!.endHour * 3600000);
+    expect(start.getTime()).toBeLessThan(end.getTime());
+    // Window should be on or after the given date
+    expect(start.getTime()).toBeGreaterThanOrEqual(date.getTime());
   });
 });
 
@@ -190,12 +214,23 @@ describe('milkyWayCategory.fetch', () => {
     expect(events).toEqual(cached);
   });
 
-  it('generates events for 45°N (current year has galactic core season)', async () => {
+  it('generates timed (not all-day) events for 45°N', async () => {
     const env = makeEnv();
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect(events.length).toBeGreaterThan(0);
-    expect(events.every((e) => e.allDay)).toBe(true);
+    expect(events.every((e) => e.allDay === false)).toBe(true);
     expect(events.every((e) => e.category === 'milky-way')).toBe(true);
+  });
+
+  it('event start and end are valid ISO datetime strings', async () => {
+    const env = makeEnv();
+    const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
+    expect(events.length).toBeGreaterThan(0);
+    for (const e of events) {
+      expect(new Date(e.start).getTime()).not.toBeNaN();
+      expect(new Date(e.end).getTime()).not.toBeNaN();
+      expect(new Date(e.start).getTime()).toBeLessThan(new Date(e.end).getTime());
+    }
   });
 
   it('generates more events for 30°S than 45°N (wider season and moon windows)', async () => {
@@ -216,9 +251,9 @@ describe('milkyWayCategory.fetch', () => {
     );
   });
 
-  it('event titles include the month name', async () => {
+  it('event titles are "🌌 Milky Way Viewing"', async () => {
     const env = makeEnv();
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
-    expect(events.every((e) => /🌌 Milky Way Window — \w+/.test(e.title))).toBe(true);
+    expect(events.every((e) => e.title === '🌌 Milky Way Viewing')).toBe(true);
   });
 });
