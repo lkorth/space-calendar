@@ -104,15 +104,20 @@
     <div class="section-label">Planetary Events</div>
     <div class="category"><input type="checkbox" id="oppositions" value="oppositions" /><label for="oppositions"><div class="category-name">Planetary Oppositions</div><div class="category-desc">Best nights to view Mars, Jupiter, Saturn, and more</div></label></div>
     <div class="category"><input type="checkbox" id="elongations" value="elongations" /><label for="elongations"><div class="category-name">Mercury & Venus Elongations</div><div class="category-desc">Best windows to spot inner planets</div></label></div>
+    <div class="category"><input type="checkbox" id="conjunctions" value="conjunctions" /><label for="conjunctions"><div class="category-name">Planetary Conjunctions</div><div class="category-desc">Close naked-eye planet pairs (≤ 5° apart)</div></label></div>
+    <div class="category"><input type="checkbox" id="alignments" value="alignments" /><label for="alignments"><div class="category-name">Planetary Alignments</div><div class="category-desc">Planet parades and Mars launch windows</div></label></div>
+    <div class="category"><input type="checkbox" id="occultations" value="occultations" /><label for="occultations"><div class="category-name">Lunar Occultations</div><div class="category-desc">When the Moon passes in front of a bright planet or star</div></label></div>
     <div class="category"><input type="checkbox" id="asteroids" value="asteroids" /><label for="asteroids"><div class="category-name">Asteroid Close Approaches</div><div class="category-desc">Significant Earth flybys worth tracking</div></label></div>
     <div class="category"><input type="checkbox" id="comets" value="comets" /><label for="comets"><div class="category-name">Comets</div><div class="category-desc">Perihelion, closest approach, and naked-eye visibility windows</div></label></div>
 
     <div class="section-label">Launches & History</div>
     <div class="category"><input type="checkbox" id="launches" value="launches" /><label for="launches"><div class="category-name">Rocket Launches</div><div class="category-desc">Crewed missions, maiden flights, heavy-lift vehicles, and flagship science payloads — no routine launches</div></label></div>
+    <div class="category"><input type="checkbox" id="mission-milestones" value="mission-milestones" /><label for="mission-milestones"><div class="category-name">Mission Milestones</div><div class="category-desc">Gravity assists, orbital insertions, spacecraft arrivals, and notable flybys for active missions</div></label></div>
     <div class="category"><input type="checkbox" id="history" value="history" /><label for="history"><div class="category-name">Space History Milestones</div><div class="category-desc">20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight</div></label></div>
 
     <div class="section-label" id="deep-sky-label">Deep Sky</div>
     <div class="category" id="deep-sky-row"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night — best from mid-northern latitudes</div></label></div>
+    <div class="category"><input type="checkbox" id="milky-way" value="milky-way" /><label for="milky-way"><div class="category-name">Milky Way Viewing Windows</div><div class="category-desc">Nights when the galactic core is above the horizon during astronomical darkness with no moon — requires your location</div></label></div>
 
     <div class="section-label">Local Clubs</div>
     <div class="category">
@@ -247,7 +252,8 @@
       const url = new URL('/feed.ics', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
-      if (hasAurora && lat !== null) url.searchParams.set('lat', lat);
+      const hasMilkyWay = categories.includes('milky-way');
+      if ((hasAurora || hasMilkyWay) && lat !== null) url.searchParams.set('lat', lat);
       if (hemi === 'south') url.searchParams.set('hemi', 'south');
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
@@ -268,10 +274,12 @@
       const auroraSlug = getAuroraSlug();
       const hemi = getHemi();
       const auroraReady = !auroraSlug || globalLat !== null;
+      const milkyWaySelected = categories.includes('milky-way');
+      const milkyWayReady = !milkyWaySelected || globalLat !== null;
       const clubId = getClubId();
       const clubsSelected = categories.includes('astronomy-clubs');
       const clubReady = !clubsSelected || clubId !== null;
-      const ready = categories.length > 0 && auroraReady && clubReady;
+      const ready = categories.length > 0 && auroraReady && milkyWayReady && clubReady;
 
       const display = document.getElementById('url-display');
       const btnCopy = document.getElementById('btn-copy');
@@ -283,6 +291,8 @@
         display.innerHTML = '<span class="empty-msg">Enter a US zip or Canadian postal code above for aurora</span>';
       } else if (auroraSlug === 'aurora-australis' && globalLat === null) {
         display.innerHTML = '<span class="empty-msg">Enter your latitude above for Aurora Australis</span>';
+      } else if (milkyWaySelected && globalLat === null) {
+        display.innerHTML = '<span class="empty-msg">Enter your location above for Milky Way viewing windows</span>';
       } else if (clubsSelected && clubId === null) {
         display.innerHTML = '<span class="empty-msg">Select an astronomy club above</span>';
       } else {
