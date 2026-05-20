@@ -78,9 +78,9 @@ describe('toCalendarEvent', () => {
     expect(event.allDay).toBe(true);
   });
 
-  it('falls back to thespacedevs.com when news_url is null', () => {
+  it('omits url when news_url is null', () => {
     const event = toCalendarEvent(makeEvent({ news_url: null }));
-    expect(event.url).toBe('https://thespacedevs.com/');
+    expect(event.url).toBeUndefined();
   });
 
   it('uses news_url when present', () => {

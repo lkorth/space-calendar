@@ -36,7 +36,7 @@ export function toCalendarEvent(event: LL2Event): CalendarEvent {
     end: end.toISOString().slice(0, 10),
     allDay: true,
     description: buildDescription(event),
-    url: event.news_url ?? 'https://thespacedevs.com/',
+    url: event.news_url ?? undefined,
     category: 'mission-milestones',
   };
 }

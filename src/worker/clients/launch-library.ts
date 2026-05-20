@@ -15,8 +15,8 @@ export interface LL2Launch {
   } | null;
   launch_service_provider: { name: string; type: string };
   pad: { name: string; location: { name: string } };
-  vidURLs: Array<{ url: string; title: string }> | null;
-  infoURLs: Array<{ url: string; title: string }> | null;
+  vidURLs?: Array<{ url: string; title: string }> | null;
+  infoURLs?: Array<{ url: string; title: string }> | null;
   /** Whether this is a crewed mission */
   mission_patches?: Array<{ name: string }>;
 }

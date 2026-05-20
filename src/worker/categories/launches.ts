@@ -34,7 +34,7 @@ export const launchesCategory: Category = {
         end: windowEnd.toISOString(),
         allDay: false,
         description: buildDescription(launch, webcast),
-        url: infoUrl ?? 'https://thespacedevs.com/',
+        url: infoUrl,
         category: 'launches',
       };
     });

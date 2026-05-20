@@ -30,8 +30,8 @@ describe('Launch Library 2 API (real)', () => {
     expect(launch.pad).toBeDefined();
     expect(typeof launch.pad.name).toBe('string');
     expect(typeof launch.pad.location.name).toBe('string');
-    expect(launch.vidURLs === null || Array.isArray(launch.vidURLs)).toBe(true);
-    expect(launch.infoURLs === null || Array.isArray(launch.infoURLs)).toBe(true);
+    expect(launch.vidURLs == null || Array.isArray(launch.vidURLs)).toBe(true);
+    expect(launch.infoURLs == null || Array.isArray(launch.infoURLs)).toBe(true);
   });
 
   it('window_start and window_end are ISO 8601 strings when present', async () => {
