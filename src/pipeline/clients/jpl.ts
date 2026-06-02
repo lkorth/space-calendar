@@ -2,6 +2,21 @@ const CAD_BASE = 'https://ssd-api.jpl.nasa.gov/cad.api';
 const SBDB_BASE = 'https://ssd-api.jpl.nasa.gov/sbdb.api';
 const HORIZONS_BASE = 'https://ssd.jpl.nasa.gov/api/horizons.api';
 
+const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504]);
+
+export async function fetchWithRetry(url: string, maxRetries = 3): Promise<Response> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    if (attempt > 0) {
+      const delayMs = 1000 * Math.pow(2, attempt - 1);
+      await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
+    }
+    const res = await fetch(url);
+    if (res.ok || !RETRYABLE_STATUS.has(res.status) || attempt === maxRetries) return res;
+    console.warn(`JPL API ${res.status} on attempt ${attempt + 1}/${maxRetries + 1}, retrying in ${Math.pow(2, attempt)}s…`);
+  }
+  throw new Error('unreachable');
+}
+
 // ---------------------------------------------------------------------------
 // JPL Horizons — planetary elongation ephemeris
 // Used to find oppositions (outer planets) and greatest elongations (inner)
@@ -33,7 +48,7 @@ async function fetchElongation(
     MAKE_EPHEM: 'YES',
   });
 
-  const res = await fetch(`${HORIZONS_BASE}?${params}`);
+  const res = await fetchWithRetry(`${HORIZONS_BASE}?${params}`);
   if (!res.ok) throw new Error(`JPL Horizons error ${res.status} for body ${bodyId}`);
   const json = (await res.json()) as { result: string };
 
@@ -84,7 +99,7 @@ export async function fetchMoonDistances(year: number): Promise<Record<string, n
     MAKE_EPHEM: 'YES',
   });
 
-  const res = await fetch(`${HORIZONS_BASE}?${params}`);
+  const res = await fetchWithRetry(`${HORIZONS_BASE}?${params}`);
   if (!res.ok) throw new Error(`JPL Horizons error ${res.status} fetching Moon distances`);
   const json = (await res.json()) as { result: string };
 
@@ -227,7 +242,7 @@ export async function fetchCloseApproaches(
   const dateMax = `${year}-12-31`;
   let url = `${CAD_BASE}?date-min=${dateMin}&date-max=${dateMax}&dist-max=${distMaxAu}&sort=date`;
   if (hMax !== undefined) url += `&h-max=${hMax}`;
-  const res = await fetch(url);
+  const res = await fetchWithRetry(url);
   if (!res.ok) throw new Error(`JPL CAD API error ${res.status}`);
   const raw = (await res.json()) as CloseApproachResponse;
 
@@ -264,7 +279,7 @@ export interface SBDBObject {
 
 export async function fetchComet(designation: string): Promise<SBDBObject> {
   const url = `${SBDB_BASE}?sstr=${encodeURIComponent(designation)}&phys-par=1&full-prec=1`;
-  const res = await fetch(url);
+  const res = await fetchWithRetry(url);
   if (!res.ok) throw new Error(`JPL SBDB API error ${res.status}: ${designation}`);
   return res.json() as Promise<SBDBObject>;
 }

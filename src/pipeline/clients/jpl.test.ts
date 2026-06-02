@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { findOppositions, findGreatestElongations } from './jpl.ts';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { findOppositions, findGreatestElongations, fetchWithRetry } from './jpl.ts';
 import type { EphemerisEntry } from './jpl.ts';
 
 function makeEntries(values: Array<[string, number, 'T' | 'L']>): EphemerisEntry[] {
@@ -104,5 +104,66 @@ describe('findGreatestElongations', () => {
       ['2026-04-05', 27.0, 'L'],
     ]);
     expect(findGreatestElongations(entries, 18)).toHaveLength(2);
+  });
+});
+
+describe('fetchWithRetry', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it('returns a successful response without retrying', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const promise = fetchWithRetry('https://example.com');
+    await vi.runAllTimersAsync();
+    const res = await promise;
+
+    expect(res.status).toBe(200);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries on 503 and succeeds on the next attempt', async () => {
+    const mockFetch = vi.fn()
+      .mockResolvedValueOnce(new Response('', { status: 503 }))
+      .mockResolvedValueOnce(new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const promise = fetchWithRetry('https://example.com');
+    await vi.runAllTimersAsync();
+    const res = await promise;
+
+    expect(res.status).toBe(200);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns the error response after exhausting all retries', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const promise = fetchWithRetry('https://example.com', 2);
+    await vi.runAllTimersAsync();
+    const res = await promise;
+
+    expect(res.status).toBe(503);
+    expect(mockFetch).toHaveBeenCalledTimes(3); // initial + 2 retries
+  });
+
+  it('does not retry on non-transient errors like 404', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(new Response('', { status: 404 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const promise = fetchWithRetry('https://example.com');
+    await vi.runAllTimersAsync();
+    const res = await promise;
+
+    expect(res.status).toBe(404);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 });
