@@ -171,8 +171,8 @@ describe('Worker feed — events', () => {
   it('milky-way with mid-latitude returns viewing window events', async () => {
     const { res, body } = await getFeed('?c=milky-way&lat=38&hemi=north&tz=America/Denver');
     expect(res.status).toBe(200);
-    expect(body).toContain('Milky Way Window');
-    expect(body).toContain('DTSTART;VALUE=DATE:');
+    expect(body).toContain('Milky Way Viewing');
+    expect(body).toContain('DTSTART:');
   });
 
   it('milky-way with high northern latitude returns 200 with no events (core never rises)', async () => {
