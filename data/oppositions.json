@@ -38,5 +38,25 @@
     "description": "Neptune reaches opposition, its closest approach to Earth this year. At magnitude ~7.8 it requires binoculars at minimum — a small telescope will show its distinctive blue-grey disk. It is the most distant planet in our solar system.",
     "url": "https://solarsystem.nasa.gov/planets/neptune/overview/",
     "category": "oppositions"
+  },
+  {
+    "uid": "opposition-mars-2027-02-20@space-calendar",
+    "title": "🔭 Mars at Opposition — Closest & Brightest",
+    "start": "2027-02-20",
+    "end": "2027-02-21",
+    "allDay": true,
+    "description": "Mars reaches opposition — Earth is directly between Mars and the Sun, making the Red Planet closer and brighter than at any other point in its roughly two-year cycle. Look for a distinctly reddish-orange 'star' rising in the east at sunset. Through a small telescope, Mars's polar ice caps and dark surface markings may be visible.",
+    "url": "https://solarsystem.nasa.gov/planets/mars/overview/",
+    "category": "oppositions"
+  },
+  {
+    "uid": "opposition-jupiter-2027-02-11@space-calendar",
+    "title": "🔭 Jupiter at Opposition — Closest & Brightest",
+    "start": "2027-02-11",
+    "end": "2027-02-12",
+    "allDay": true,
+    "description": "Jupiter reaches opposition, its closest and brightest point of the year. Shining brilliantly, it rises at sunset and is visible all night. Even binoculars will reveal Jupiter's four Galilean moons (Io, Europa, Ganymede, Callisto), while a small telescope shows the cloud bands and the Great Red Spot.",
+    "url": "https://solarsystem.nasa.gov/planets/jupiter/overview/",
+    "category": "oppositions"
   }
 ]

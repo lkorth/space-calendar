@@ -36,5 +36,15 @@
     ],
     "url": "https://science.nasa.gov/eclipses/",
     "category": "eclipses-solar"
+  },
+  {
+    "uid": "eclipse-solar-2027-02-06@space-calendar",
+    "title": "🌑 Annular Solar Eclipse",
+    "start": "2027-02-06",
+    "end": "2027-02-07",
+    "allDay": true,
+    "description": "An annular solar eclipse occurs when the Moon is slightly farther from Earth than usual, making it appear too small to fully cover the Sun. The result is a brilliant \"ring of fire\" — a thin ring of sunlight surrounding the Moon's silhouette.\n\nEclipse glasses are required throughout — the Sun is never fully blocked. Check NASA's eclipse page for the visibility path and phase timetable.",
+    "url": "https://science.nasa.gov/eclipses/",
+    "category": "eclipses-solar"
   }
 ]

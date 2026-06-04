@@ -1,5 +1,25 @@
 [
   {
+    "uid": "meteor-shower-geminids-2025@space-calendar",
+    "title": "🌠 Geminids Meteor Shower — Peak Night",
+    "start": "2025-12-14",
+    "end": "2025-12-15",
+    "allDay": true,
+    "description": "The Geminids meteor shower reaches its peak tonight, produced by debris left behind by Asteroid 3200 Phaethon as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 150 meteors per hour (ZHR). Meteors radiate from the constellation Gemini but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 30% illuminated (waning crescent) — rises a few hours before dawn. Good viewing from dusk until moonrise.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Geminids",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-ursids-2025@space-calendar",
+    "title": "🌠 Ursids Meteor Shower — Peak Night",
+    "start": "2025-12-22",
+    "end": "2025-12-23",
+    "allDay": true,
+    "description": "The Ursids meteor shower reaches its peak tonight, produced by debris left behind by Comet 8P/Tuttle as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 10 meteors per hour (ZHR). Meteors radiate from the constellation Ursa Minor but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 7% illuminated — near new moon. Dark skies all night make this an excellent year for this shower.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Ursids",
+    "category": "meteor-showers"
+  },
+  {
     "uid": "meteor-shower-quadrantids-2026@space-calendar",
     "title": "🌠 Quadrantids Meteor Shower — Peak Night",
     "start": "2026-01-04",
@@ -87,6 +107,36 @@
     "allDay": true,
     "description": "The Ursids meteor shower reaches its peak tonight, produced by debris left behind by Comet 8P/Tuttle as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 10 meteors per hour (ZHR). Meteors radiate from the constellation Ursa Minor but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 98% illuminated — near full moon. Bright moonlight will significantly reduce visible meteor counts. Look for bright fireballs that cut through the glare.",
     "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Ursids",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-quadrantids-2027@space-calendar",
+    "title": "🌠 Quadrantids Meteor Shower — Peak Night",
+    "start": "2027-01-04",
+    "end": "2027-01-05",
+    "allDay": true,
+    "description": "The Quadrantids meteor shower reaches its peak tonight, produced by debris left behind by Asteroid 2003 EH1 as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 120 meteors per hour (ZHR). Meteors radiate from the constellation Boötes but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 7% illuminated — near new moon. Dark skies all night make this an excellent year for this shower.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Quadrantids",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-lyrids-2027@space-calendar",
+    "title": "🌠 Lyrids Meteor Shower — Peak Night",
+    "start": "2027-04-22",
+    "end": "2027-04-23",
+    "allDay": true,
+    "description": "The Lyrids meteor shower reaches its peak tonight, produced by debris left behind by Comet C/1861 G1 (Thatcher) as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 20 meteors per hour (ZHR). Meteors radiate from the constellation Lyra but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 98% illuminated — near full moon. Bright moonlight will significantly reduce visible meteor counts. Look for bright fireballs that cut through the glare.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Lyrids",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-eta-aquariids-2027@space-calendar",
+    "title": "🌠 Eta Aquariids Meteor Shower — Peak Night",
+    "start": "2027-05-06",
+    "end": "2027-05-07",
+    "allDay": true,
+    "description": "The Eta Aquariids meteor shower reaches its peak tonight, produced by debris left behind by Comet 1P/Halley as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 50 meteors per hour (ZHR). Meteors radiate from the constellation Aquarius but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 0% illuminated — near new moon. Dark skies all night make this an excellent year for this shower.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#eta+Aquariids",
     "category": "meteor-showers"
   }
 ]

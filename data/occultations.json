@@ -48,5 +48,15 @@
     "description": "The Moon passes directly in front of Jupiter (magnitude -2.9), briefly hiding it from view. This is a lunar occultation — one of the most dramatic naked-eye astronomical events, since the target disappears almost instantaneously behind the Moon's limb and reappears just as suddenly.\n\nThe waning gibbous Moon (96% illuminated) covers Jupiter in the pre-dawn sky. Jupiter shines at magnitude −2.9 near opposition, making it one of the brightest objects in the sky. Disappearance occurs at the Moon's bright limb and reappearance at the dark limb — the sudden reappearance is particularly dramatic. Observers with small telescopes can watch Jupiter's moons emerge one by one as the planet reappears.\n\nVisible from: Most of North America (excluding the far western US), northern Cuba.\n\nDisappears: 05:15 UTC\nReappears: 06:20 UTC",
     "url": "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html",
     "category": "occultations"
+  },
+  {
+    "uid": "occultation-mars-2027-01-13@space-calendar",
+    "title": "🌑 Lunar Occultation — Moon covers Mars",
+    "start": "2027-01-13T22:50:00.000Z",
+    "end": "2027-01-13T23:45:00.000Z",
+    "allDay": false,
+    "description": "The Moon passes directly in front of Mars (magnitude -1.1), briefly hiding it from view. This is a lunar occultation — one of the most dramatic naked-eye astronomical events, since the target disappears almost instantaneously behind the Moon's limb and reappears just as suddenly.\n\nThe waxing crescent Moon occults Mars in the evening sky for observers across Europe and North Africa. Mars is near opposition and shining at magnitude −1.1, making it an unmistakably bright reddish-orange object. The dark-limb disappearance is visible to the naked eye.\n\nVisible from: Europe, North Africa.\n\nDisappears: 22:50 UTC\nReappears: 23:45 UTC",
+    "url": "https://eclipse.gsfc.nasa.gov/SKYCAL/SKYCAL.html",
+    "category": "occultations"
   }
 ]

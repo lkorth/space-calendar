@@ -1,5 +1,15 @@
 [
   {
+    "uid": "elongation-mercury-greatest-elongation-west-2025-12-08@space-calendar",
+    "title": "🔭 Mercury at Greatest Western Elongation — Morning Star",
+    "start": "2025-12-08",
+    "end": "2025-12-09",
+    "allDay": true,
+    "description": "Mercury reaches its greatest angular separation from the Sun (20.7°), making this the best window to spot the innermost planet. Look for it low in the eastern sky just before sunrise. Look east before sunrise — Mercury sets or rises with the twilight and is only visible for a short window. It never strays far from the Sun in our sky.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
     "uid": "elongation-mercury-greatest-elongation-east-2026-02-20@space-calendar",
     "title": "🔭 Mercury at Greatest Eastern Elongation — Evening Star",
     "start": "2026-02-20",
@@ -66,6 +76,46 @@
     "end": "2026-08-16",
     "allDay": true,
     "description": "Venus reaches its greatest angular separation from the Sun (45.9°) — the best viewing opportunity of this apparition. Find it low in the western sky shortly after sunset, shining brilliantly at magnitude −4 or brighter, far outshining every other star and planet. Look west after sunset and it will be unmistakable.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
+    "uid": "elongation-mercury-greatest-elongation-east-2027-02-03@space-calendar",
+    "title": "🔭 Mercury at Greatest Eastern Elongation — Evening Star",
+    "start": "2027-02-03",
+    "end": "2027-02-04",
+    "allDay": true,
+    "description": "Mercury reaches its greatest angular separation from the Sun (18.3°), making this the best window to spot the innermost planet. Look for it low in the western sky shortly after sunset. Look west after sunset — Mercury sets or rises with the twilight and is only visible for a short window. It never strays far from the Sun in our sky.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
+    "uid": "elongation-mercury-greatest-elongation-west-2027-03-17@space-calendar",
+    "title": "🔭 Mercury at Greatest Western Elongation — Morning Star",
+    "start": "2027-03-17",
+    "end": "2027-03-18",
+    "allDay": true,
+    "description": "Mercury reaches its greatest angular separation from the Sun (27.6°), making this the best window to spot the innermost planet. Look for it low in the eastern sky just before sunrise. Look east before sunrise — Mercury sets or rises with the twilight and is only visible for a short window. It never strays far from the Sun in our sky.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
+    "uid": "elongation-mercury-greatest-elongation-east-2027-05-28@space-calendar",
+    "title": "🔭 Mercury at Greatest Eastern Elongation — Evening Star",
+    "start": "2027-05-28",
+    "end": "2027-05-29",
+    "allDay": true,
+    "description": "Mercury reaches its greatest angular separation from the Sun (22.9°), making this the best window to spot the innermost planet. Look for it low in the western sky shortly after sunset. Look west after sunset — Mercury sets or rises with the twilight and is only visible for a short window. It never strays far from the Sun in our sky.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
+    "uid": "elongation-venus-greatest-elongation-west-2027-01-04@space-calendar",
+    "title": "🔭 Venus at Greatest Western Elongation — Morning Star",
+    "start": "2027-01-04",
+    "end": "2027-01-05",
+    "allDay": true,
+    "description": "Venus reaches its greatest angular separation from the Sun (47.0°) — the best viewing opportunity of this apparition. Find it low in the eastern sky just before sunrise, shining brilliantly at magnitude −4 or brighter, far outshining every other star and planet. Look east before sunrise and it will be unmistakable.",
     "url": "https://aa.usno.navy.mil/data/planets",
     "category": "elongations"
   }
