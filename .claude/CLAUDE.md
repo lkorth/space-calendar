@@ -7,7 +7,9 @@ A subscribable ICS calendar feed for space and astronomy events (moon phases, ec
 ## How to run things
 
 ```bash
-npm test                         # unit + integration tests (vitest)
+npm test                         # unit tests only (vitest) — what CI runs on PRs
+npm run test:e2e                 # e2e tests against live worker — run after deploying
+npm run test:integration         # integration tests hitting live third-party APIs — run manually
 npm run typecheck                # TypeScript type check (both pipeline and worker tsconfigs)
 npm run pipeline                 # run all data generators → writes to data/
 npm run pipeline -- --generator moon-phases  # run one generator
@@ -62,6 +64,16 @@ To add a **live category**: add slug to `CategorySlug` and `LIVE_CATEGORIES` in 
 - Worker category logic (e.g., aurora threshold, cache key format) must be covered by unit tests.
 - Run `npm test` and verify all tests pass before committing.
 - Test files live alongside the code they test (`foo.ts` → `foo.test.ts`).
+
+### Three test tiers
+
+| Tier | Pattern | Script | When it runs |
+|------|---------|--------|--------------|
+| **Unit** | `*.test.ts` | `npm test` | Every PR (blocking) |
+| **Integration** | `*.integration.test.ts` | `npm run test:integration` | Weekly schedule (non-blocking) |
+| **E2E** | `*.e2e.test.ts` | `npm run test:e2e` | Post-deploy (non-blocking on PRs) |
+
+Unit tests run in isolation and must never hit external APIs or the live worker. Integration tests hit real third-party URLs (scrapers, APIs) and are flaky by nature — run manually or on a schedule, never as a PR gate. E2E tests hit the live deployed worker and run automatically after each deploy.
 
 ### E2E tests
 
