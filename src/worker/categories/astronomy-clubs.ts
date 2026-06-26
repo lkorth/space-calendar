@@ -41,8 +41,8 @@ const DATE_ONLY_RE = new RegExp(
   'i',
 );
 
-// Matches a title line with time embedded at the end, e.g. "Jupiter: 8:45 PM EDT"
-const TITLE_TIME_RE = /^(.*?):\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*(EDT|EST|CDT|CST|MDT|MST|PDT|PST)\s*$/i;
+// Matches a title line with time embedded at the end, e.g. "Jupiter: 8:45 PM EDT" or "Jupiter: 8:45 PM" (no tz)
+const TITLE_TIME_RE = /^(.*?):\s*(\d{1,2}):(\d{2})\s*(AM|PM)(?:\s*(EDT|EST|CDT|CST|MDT|MST|PDT|PST))?\s*$/i;
 
 const TZ_OFFSETS: Record<string, number> = {
   EDT: -4, EST: -5, CDT: -5, CST: -6, MDT: -6, MST: -7, PDT: -7, PST: -8,
@@ -54,7 +54,7 @@ const MONTH_INDEX: Record<string, number> = {
 };
 
 // Lines to skip when scanning backward for an event title
-const SKIP_LINE_RE = /^(?:reserve|back|next|home|about|login|register|sign\s*in|\d+\s+spots?|loading|©|\(?\d+\s+spots?\)?|programs?\s*&|programs?\s*and|LINK:)/i;
+const SKIP_LINE_RE = /^(?:reserve|back|next|home|about|login|register|sign\s*in|\d+\s+spots?|loading|©|\(?\d+\s+spots?\)?|programs?\s*&|programs?\s*and|LINK:|[()]+|full)/i;
 
 export function parseJgapEvents(text: string): ParsedEvent[] {
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -147,7 +147,14 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
           dMinute = parseInt(mStr!);
           if (ap!.toUpperCase() === 'PM' && dHour !== 12) dHour += 12;
           else if (ap!.toUpperCase() === 'AM' && dHour === 12) dHour = 0;
-          dTzOffset = TZ_OFFSETS[tz!.toUpperCase()] ?? 0;
+          if (tz) {
+            dTzOffset = TZ_OFFSETS[tz.toUpperCase()] ?? 0;
+          } else {
+            // No timezone on page — JGAP is in Ohio (America/New_York).
+            // TZ_OFFSETS stores negative values (subtracted in formula), getTzOffsetHours returns positive (added),
+            // so negate to match the formula: Date.UTC(..., dHour - dTzOffset, ...)
+            dTzOffset = -getTzOffsetHours('America/New_York', new Date(dYear, dMonth, dDay, dHour, dMinute));
+          }
           break;
         }
         if (SKIP_LINE_RE.test(candidate)) continue;

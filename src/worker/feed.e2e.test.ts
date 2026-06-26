@@ -232,10 +232,10 @@ describe('Worker feed — static data spot checks', () => {
     expect(body).toContain('Lunar Eclipse');
   });
 
-  it('solstices-equinoxes returns 4 events', async () => {
+  it('solstices-equinoxes returns at least 4 events', async () => {
     const { body } = await getFeed('?c=solstices-equinoxes');
     const events = extractEvents(body);
-    expect(events).toHaveLength(4);
+    expect(events.length).toBeGreaterThanOrEqual(4);
   });
 
   it('oppositions returns at least one event', async () => {

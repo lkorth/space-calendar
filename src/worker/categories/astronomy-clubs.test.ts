@@ -244,6 +244,86 @@ describe('parseJgapEvents — actual page format (time in title, date on own lin
   });
 });
 
+// Format served as of June 2026: no timezone in title-time, FULL events split across 3 lines
+const ACTUAL_PAGE_TEXT_NO_TZ = `
+The Low Moon: 9:00 PM
+(
+FULL
+)
+Friday June 26th 2026
+The titled orbit of the moon sometimes takes it low in the sky.
+The Low Moon: 9:00 PM
+(
+FULL
+)
+Saturday June 27th 2026
+The titled orbit of the moon sometimes takes it low in the sky.
+How Far The Galaxies: 9:00 PM
+(27 spots left)
+Friday July 3rd 2026
+This weekend is the birthday of Henrietta Swann Leavitt.
+Reserve
+LINK:https://registration.jgap.org/?event=abc5
+How Far Are the Galaxies: 8:45 PM
+(50 spots left)
+Saturday July 4th 2026
+Leavitt figured out how to determine the incredible distance to the galaxies.
+Reserve
+LINK:https://registration.jgap.org/?event=abc6
+`.trim();
+
+describe('parseJgapEvents — no-timezone format with FULL events', () => {
+  it('parses all events including FULL ones', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events).toHaveLength(4);
+  });
+
+  it('extracts titles correctly', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[0]!.title).toBe('The Low Moon');
+    expect(events[1]!.title).toBe('The Low Moon');
+    expect(events[2]!.title).toBe('How Far The Galaxies');
+    expect(events[3]!.title).toBe('How Far Are the Galaxies');
+  });
+
+  it('converts 9:00 PM Eastern (no tz, summer→EDT UTC-4) to UTC', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    // 9:00 PM EDT = 21:00 + 4h = 01:00 UTC next day
+    expect(events[0]!.startUtc.toISOString()).toBe('2026-06-27T01:00:00.000Z');
+    expect(events[1]!.startUtc.toISOString()).toBe('2026-06-28T01:00:00.000Z');
+    expect(events[2]!.startUtc.toISOString()).toBe('2026-07-04T01:00:00.000Z');
+  });
+
+  it('converts 8:45 PM Eastern (no tz, summer→EDT UTC-4) to UTC', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    // 8:45 PM EDT = 20:45 + 4h = 00:45 UTC next day
+    expect(events[3]!.startUtc.toISOString()).toBe('2026-07-05T00:45:00.000Z');
+  });
+
+  it('sets spotsLeft to undefined for FULL events', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[0]!.spotsLeft).toBeUndefined();
+    expect(events[1]!.spotsLeft).toBeUndefined();
+  });
+
+  it('captures spots for non-full events', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[2]!.spotsLeft).toBe(27);
+    expect(events[3]!.spotsLeft).toBe(50);
+  });
+
+  it('captures registration URLs for non-full events', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[2]!.registrationUrl).toBe('https://registration.jgap.org/?event=abc5');
+    expect(events[3]!.registrationUrl).toBe('https://registration.jgap.org/?event=abc6');
+  });
+
+  it('sets end 2 hours after start', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[0]!.endUtc.getTime() - events[0]!.startUtc.getTime()).toBe(2 * 60 * 60 * 1000);
+  });
+});
+
 describe('CLUBS registry', () => {
   it('includes JGAP', () => {
     const jgap = CLUBS.find((c) => c.id === 'jgap');
