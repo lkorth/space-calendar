@@ -1,25 +1,5 @@
 [
   {
-    "uid": "moon-phase-2025-12-04T23:14:00.000Z@space-calendar",
-    "title": "🌕 Full Moon — Cold Moon (Supermoon)",
-    "start": "2025-12-04T23:14:00.000Z",
-    "end": "2025-12-04T23:14:00.000Z",
-    "allDay": false,
-    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the long, cold nights of December. Also called the Long Night Moon or the Oak Moon.\n\nThis is a Supermoon — the Moon is closer to Earth than usual, making it appear slightly larger and brighter than a typical full moon (up to about 14% larger and 30% brighter at its closest). The Moon follows an elliptical orbit, so its distance from Earth varies by roughly 50,000 km between perigee (closest) and apogee (farthest).",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
-    "uid": "moon-phase-2025-12-20T01:43:00.000Z@space-calendar",
-    "title": "🌑 New Moon",
-    "start": "2025-12-20T01:43:00.000Z",
-    "end": "2025-12-20T01:43:00.000Z",
-    "allDay": false,
-    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
     "uid": "moon-phase-2026-01-03T10:03:00.000Z@space-calendar",
     "title": "🌕 Full Moon — Wolf Moon (Supermoon)",
     "start": "2026-01-03T10:03:00.000Z",
@@ -376,6 +356,16 @@
     "end": "2027-06-04T19:40:00.000Z",
     "allDay": false,
     "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-06-19T00:44:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Strawberry Moon",
+    "start": "2027-06-19T00:44:00.000Z",
+    "end": "2027-06-19T00:44:00.000Z",
+    "allDay": false,
+    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed by Algonquin peoples for June's brief strawberry harvesting season in northeastern North America.",
     "url": "https://aa.usno.navy.mil/data/MoonPhases",
     "category": "moon-phases"
   }

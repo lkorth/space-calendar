@@ -1,15 +1,5 @@
 [
   {
-    "uid": "season-solstice-12-2025@space-calendar",
-    "title": "❄️ December Solstice — Winter Solstice (Northern Hemisphere)",
-    "start": "2025-12-21T15:03:00.000Z",
-    "end": "2025-12-21T15:03:00.000Z",
-    "allDay": false,
-    "description": "The Sun reaches its southernmost point — the shortest day of the year in the Northern Hemisphere and the longest in the Southern. After today, days begin lengthening again in the Northern Hemisphere. The solstice has been celebrated across virtually every human culture, from Stonehenge to Dongzhi.",
-    "url": "https://aa.usno.navy.mil/data/EarthSeasons",
-    "category": "solstices-equinoxes"
-  },
-  {
     "uid": "season-equinox-3-2026@space-calendar",
     "title": "🌸 March Equinox — Vernal Equinox (Northern Hemisphere)",
     "start": "2026-03-20T14:46:00.000Z",
@@ -56,6 +46,16 @@
     "end": "2027-03-20T20:25:00.000Z",
     "allDay": false,
     "description": "The Sun crosses the celestial equator moving northward. Day and night are approximately equal in length worldwide. In the Northern Hemisphere this marks the astronomical start of spring; in the Southern Hemisphere, the start of autumn. Many cultures have marked this moment for millennia.",
+    "url": "https://aa.usno.navy.mil/data/EarthSeasons",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "season-solstice-6-2027@space-calendar",
+    "title": "☀️ June Solstice — Summer Solstice (Northern Hemisphere)",
+    "start": "2027-06-21T14:11:00.000Z",
+    "end": "2027-06-21T14:11:00.000Z",
+    "allDay": false,
+    "description": "The Sun reaches its northernmost point in the sky — the longest day of the year in the Northern Hemisphere and the shortest in the Southern. Earth's axial tilt of 23.5° is what produces seasons; today that tilt points the Northern Hemisphere most directly toward the Sun.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   }
