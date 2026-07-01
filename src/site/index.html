@@ -52,6 +52,15 @@
     .empty-msg { color: #6060a0; font-size: 0.9rem; }
     .copied { background: #306030 !important; }
     .needs-location { font-size: 0.75rem; color: #5858a0; margin-top: 0.3rem; }
+    .preview-body { padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; min-height: 60px; }
+    .preview-month-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin: 1.25rem 0 0.4rem; }
+    .preview-month-label:first-child { margin-top: 0; }
+    .preview-event { display: flex; gap: 0.75rem; padding: 0.3rem 0; border-bottom: 1px solid #1a1a2e; }
+    .preview-event:last-child { border-bottom: none; }
+    .preview-event-date { font-size: 0.8rem; color: #6060a0; width: 3.75rem; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+    .preview-event-title { font-size: 0.85rem; color: #c0c0d8; line-height: 1.4; }
+    .preview-msg { font-size: 0.85rem; color: #6060a0; }
+    .preview-loading { font-size: 0.85rem; color: #5050a0; font-style: italic; }
   </style>
 </head>
 <body>
@@ -139,6 +148,9 @@
         </div>
       </label>
     </div>
+
+    <div class="section-label" style="margin-top:2rem">Preview</div>
+    <div class="preview-body" id="preview-body"><span class="preview-msg">Select categories above to preview events</span></div>
 
     <div class="output">
       <div class="output-label">Your Subscription URL</div>
@@ -301,6 +313,8 @@
 
       btnCopy.disabled = !ready;
       btnGoogle.disabled = !ready;
+
+      schedulePreview(categories, globalLat, hemi, clubId, ready);
     }
 
     function copyUrl() {
@@ -324,6 +338,74 @@
         el.addEventListener('change', update);
       }
     });
+
+    let _previewTimer = null;
+    let _previewCtrl = null;
+
+    function buildPreviewUrl(categories, lat, hemi, clubId) {
+      const url = new URL('/feed.json', WORKER_BASE);
+      url.searchParams.set('c', categories.join(','));
+      const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
+      const hasMilkyWay = categories.includes('milky-way');
+      if ((hasAurora || hasMilkyWay) && lat !== null) url.searchParams.set('lat', lat);
+      if (hemi === 'south') url.searchParams.set('hemi', 'south');
+      if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
+      if (detectedTZ) url.searchParams.set('tz', detectedTZ);
+      return url.toString();
+    }
+
+    function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function schedulePreview(categories, lat, hemi, clubId, ready) {
+      clearTimeout(_previewTimer);
+      if (_previewCtrl) { _previewCtrl.abort(); _previewCtrl = null; }
+      const body = document.getElementById('preview-body');
+      if (!ready) {
+        body.innerHTML = '<span class="preview-msg">Select categories above to preview events</span>';
+        return;
+      }
+      body.innerHTML = '<span class="preview-loading">Loading…</span>';
+      _previewTimer = setTimeout(() => fetchPreview(categories, lat, hemi, clubId), 400);
+    }
+
+    async function fetchPreview(categories, lat, hemi, clubId) {
+      _previewCtrl = new AbortController();
+      try {
+        const res = await fetch(buildPreviewUrl(categories, lat, hemi, clubId), { signal: _previewCtrl.signal });
+        if (!res.ok) throw new Error(String(res.status));
+        const { events } = await res.json();
+        renderPreviewEvents(events);
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          document.getElementById('preview-body').innerHTML = '<span class="preview-msg">Could not load preview</span>';
+        }
+      }
+    }
+
+    function renderPreviewEvents(events) {
+      const now = new Date();
+      const upcoming = events.filter(e => new Date(e.start) >= now).slice(0, 40);
+      if (upcoming.length === 0) {
+        document.getElementById('preview-body').innerHTML = '<span class="preview-msg">No upcoming events for selected categories</span>';
+        return;
+      }
+      const tz = detectedTZ || 'UTC';
+      let lastMonthKey = null;
+      let html = '';
+      for (const ev of upcoming) {
+        const start = new Date(ev.start);
+        const tzForEvent = ev.allDay ? 'UTC' : tz;
+        const monthKey = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', timeZone: tzForEvent }).format(start);
+        if (monthKey !== lastMonthKey) {
+          html += `<div class="preview-month-label">${monthKey}</div>`;
+          lastMonthKey = monthKey;
+        }
+        const dateStr = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: tzForEvent }).format(start);
+        const timeStr = ev.allDay ? '' : ` · ${new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz }).format(start)}`;
+        html += `<div class="preview-event"><span class="preview-event-date">${dateStr}</span><span class="preview-event-title">${esc(ev.title)}${timeStr}</span></div>`;
+      }
+      document.getElementById('preview-body').innerHTML = html;
+    }
   </script>
 </body>
 </html>
