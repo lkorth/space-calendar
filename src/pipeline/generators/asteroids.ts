@@ -44,6 +44,9 @@ export const asteroidsGenerator: Generator = {
         const kmFormatted = (a.dist_au * 149_597_870.7).toLocaleString('en-US', {
           maximumFractionDigits: 0,
         });
+        const moonRef = a.dist_ld < 1
+          ? '— passing inside the Moon\'s orbit'
+          : `— about ${ldRounded}× the Moon's distance from Earth`;
         return {
           uid: `asteroid-${a.des.replace(/\s+/g, '-').toLowerCase()}-${dt.toISOString()}@space-calendar`,
           title: `🪨 Asteroid ${a.des} — Close Earth Flyby`,
@@ -51,8 +54,8 @@ export const asteroidsGenerator: Generator = {
           end: dt.toISOString(),
           allDay: false,
           description: [
-            `Asteroid ${a.des} makes its closest approach to Earth, passing at ${ldRounded} lunar distances (${kmFormatted} km). For reference, the Moon is 1 lunar distance away — this asteroid will pass ${ldRounded}× farther than the Moon. There is no impact risk.`,
-            `The asteroid has an absolute magnitude (H) of ${a.h.toFixed(1)}, suggesting a diameter of roughly ${estimateDiameter(a.h)} and a flyby velocity of ${a.v_rel_kms.toFixed(1)} km/s relative to Earth. Close approaches like this are opportunities for radar observation and scientific characterization.`,
+            `Asteroid ${a.des} makes its closest approach to Earth, passing at ${ldRounded} lunar distances (${kmFormatted} km) ${moonRef}. There is no impact risk.`,
+            `The asteroid has an absolute magnitude (H) of ${a.h.toFixed(1)}, suggesting a diameter of roughly ${estimateDiameter(a.h)} and a flyby velocity of ${a.v_rel_kms.toFixed(1)} km/s relative to Earth. ${asteroidContext(a.h, a.dist_ld)}`,
           ].join('\n\n'),
           url: `https://cneos.jpl.nasa.gov/ca/`,
           category: 'asteroids',
@@ -65,4 +68,17 @@ function estimateDiameter(h: number): string {
   const km = (1329 / Math.sqrt(0.14)) * Math.pow(10, -h / 5);
   if (km >= 1) return `${km.toFixed(1)} km`;
   return `${(km * 1000).toFixed(0)} m`;
+}
+
+function asteroidContext(h: number, dist_ld: number): string {
+  if (h <= 18) {
+    return `At this size it qualifies as a Potentially Hazardous Asteroid. This close approach is a priority target for planetary radar observation to sharpen its orbital solution.`;
+  }
+  if (h <= 22) {
+    return `At this size, NASA's Center for Near Earth Object Studies (CNEOS) tracks it closely — close approaches like this are used to refine its orbital solution and improve the accuracy of future predictions.`;
+  }
+  if (dist_ld <= 1) {
+    return `Passing inside the Moon's orbit, this is close enough that CNEOS catalogs the approach to keep Earth's near-Earth object database current and orbital solutions well-constrained.`;
+  }
+  return `Close approaches like this help astronomers refine orbital calculations and keep the near-Earth object catalog current.`;
 }

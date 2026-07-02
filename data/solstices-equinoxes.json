@@ -5,7 +5,7 @@
     "start": "2026-03-20T14:46:00.000Z",
     "end": "2026-03-20T14:46:00.000Z",
     "allDay": false,
-    "description": "The Sun crosses the celestial equator moving northward. Day and night are approximately equal in length worldwide. In the Northern Hemisphere this marks the astronomical start of spring; in the Southern Hemisphere, the start of autumn. Many cultures have marked this moment for millennia.",
+    "description": "The Sun crosses the celestial equator today, rising almost exactly due east and setting almost exactly due west — as close to true east and west as it gets all year. In the Northern Hemisphere days are now growing longer by about 3 minutes each day; in the Southern Hemisphere, shortening.\n\nThis moment marks the astronomical start of spring in the Northern Hemisphere and autumn in the Southern. Ancient monuments from Stonehenge to the Pyramid of Chichén Itzá were oriented to mark it — evidence of how reliably humans have tracked this turning point for thousands of years.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
@@ -15,7 +15,7 @@
     "start": "2026-06-21T08:24:00.000Z",
     "end": "2026-06-21T08:24:00.000Z",
     "allDay": false,
-    "description": "The Sun reaches its northernmost point in the sky — the longest day of the year in the Northern Hemisphere and the shortest in the Southern. Earth's axial tilt of 23.5° is what produces seasons; today that tilt points the Northern Hemisphere most directly toward the Sun.",
+    "description": "The Sun rises at its northernmost point on the horizon and follows its highest arc across the midday sky — today is the longest day of the year in the Northern Hemisphere. North of the Arctic Circle the Sun doesn't set at all. In the Southern Hemisphere this is the winter solstice and the shortest day.\n\nAfter today, days begin shortening — slowly at first, then more rapidly. Despite being the longest day, the hottest days of summer typically lag 4–6 weeks behind: land and ocean keep absorbing heat long after the solstice. Stonehenge's main axis aligns with the midsummer sunrise, and cultures worldwide have marked this turning point for thousands of years.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
@@ -25,7 +25,7 @@
     "start": "2026-09-23T00:05:00.000Z",
     "end": "2026-09-23T00:05:00.000Z",
     "allDay": false,
-    "description": "The Sun crosses the celestial equator moving southward. Day and night are again approximately equal. In the Northern Hemisphere this marks the astronomical start of autumn; in the Southern Hemisphere, the start of spring.",
+    "description": "The Sun crosses the celestial equator moving southward, once again rising nearly due east and setting nearly due west. From today, nights in the Northern Hemisphere grow longer by about 3 minutes each day until the December solstice.\n\nNotice the angle of midday sunlight today compared to the June solstice — the difference makes the seasonal shift concrete. Many harvest festivals cluster around this time: across temperate cultures worldwide, the Sun's southward march reliably signaled the end of the growing season.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
@@ -35,7 +35,7 @@
     "start": "2026-12-21T20:50:00.000Z",
     "end": "2026-12-21T20:50:00.000Z",
     "allDay": false,
-    "description": "The Sun reaches its southernmost point — the shortest day of the year in the Northern Hemisphere and the longest in the Southern. After today, days begin lengthening again in the Northern Hemisphere. The solstice has been celebrated across virtually every human culture, from Stonehenge to Dongzhi.",
+    "description": "The Sun rises at its southernmost point on the horizon and follows its lowest arc across the midday sky — today is the shortest day of the year in the Northern Hemisphere. Near the Arctic Circle only a few hours of pale twilight are visible. After today, days begin growing longer again.\n\nThe December solstice has been marked by virtually every human culture: Roman Saturnalia, Norse Yule, Persian Yalda Night, China's Dongzhi, and the Christian Christmas all cluster around this turning point. Stonehenge's main axis aligns with the setting midwinter Sun, suggesting it was meaningful to its builders 5,000 years ago. In the Southern Hemisphere today is the summer solstice — the longest day of the year.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
@@ -45,7 +45,7 @@
     "start": "2027-03-20T20:25:00.000Z",
     "end": "2027-03-20T20:25:00.000Z",
     "allDay": false,
-    "description": "The Sun crosses the celestial equator moving northward. Day and night are approximately equal in length worldwide. In the Northern Hemisphere this marks the astronomical start of spring; in the Southern Hemisphere, the start of autumn. Many cultures have marked this moment for millennia.",
+    "description": "The Sun crosses the celestial equator today, rising almost exactly due east and setting almost exactly due west — as close to true east and west as it gets all year. In the Northern Hemisphere days are now growing longer by about 3 minutes each day; in the Southern Hemisphere, shortening.\n\nThis moment marks the astronomical start of spring in the Northern Hemisphere and autumn in the Southern. Ancient monuments from Stonehenge to the Pyramid of Chichén Itzá were oriented to mark it — evidence of how reliably humans have tracked this turning point for thousands of years.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   },
@@ -55,7 +55,7 @@
     "start": "2027-06-21T14:11:00.000Z",
     "end": "2027-06-21T14:11:00.000Z",
     "allDay": false,
-    "description": "The Sun reaches its northernmost point in the sky — the longest day of the year in the Northern Hemisphere and the shortest in the Southern. Earth's axial tilt of 23.5° is what produces seasons; today that tilt points the Northern Hemisphere most directly toward the Sun.",
+    "description": "The Sun rises at its northernmost point on the horizon and follows its highest arc across the midday sky — today is the longest day of the year in the Northern Hemisphere. North of the Arctic Circle the Sun doesn't set at all. In the Southern Hemisphere this is the winter solstice and the shortest day.\n\nAfter today, days begin shortening — slowly at first, then more rapidly. Despite being the longest day, the hottest days of summer typically lag 4–6 weeks behind: land and ocean keep absorbing heat long after the solstice. Stonehenge's main axis aligns with the midsummer sunrise, and cultures worldwide have marked this turning point for thousands of years.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   }

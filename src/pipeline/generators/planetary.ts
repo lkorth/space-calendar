@@ -54,13 +54,13 @@ export const elongationsGenerator: Generator = {
   },
 };
 
-function describeOpposition(body: string): string {
+export function describeOpposition(body: string): string {
   const descriptions: Record<string, string> = {
-    Mars: "Mars reaches opposition — Earth is directly between Mars and the Sun, making the Red Planet closer and brighter than at any other point in its roughly two-year cycle. Look for a distinctly reddish-orange 'star' rising in the east at sunset. Through a small telescope, Mars's polar ice caps and dark surface markings may be visible.",
-    Jupiter: "Jupiter reaches opposition, its closest and brightest point of the year. Shining brilliantly, it rises at sunset and is visible all night. Even binoculars will reveal Jupiter's four Galilean moons (Io, Europa, Ganymede, Callisto), while a small telescope shows the cloud bands and the Great Red Spot.",
-    Saturn: "Saturn reaches opposition — its closest and brightest point of the year. The ringed planet rises at sunset and is visible all night. A small telescope at 30× or more will clearly show Saturn's rings and the moon Titan.",
-    Uranus: "Uranus reaches opposition, its closest approach to Earth this year. At magnitude ~5.7 it sits right at the edge of naked-eye visibility from a very dark site. Binoculars easily reveal it as a small blue-green disk.",
-    Neptune: "Neptune reaches opposition, its closest approach to Earth this year. At magnitude ~7.8 it requires binoculars at minimum — a small telescope will show its distinctive blue-grey disk. It is the most distant planet in our solar system.",
+    Mars: `Mars rises at sunset and is visible all night — the Red Planet at its closest to Earth in this two-year cycle. Look for its unmistakable reddish-orange color, distinctly warmer than any star nearby. Through a small telescope on steady nights: dark basaltic plains, one or both polar ice caps, and the largest surface features.\n\nMars oppositions vary dramatically. Perihelic oppositions (when Mars is also near perihelion) bring it within 56 million km with a disk up to 25 arcseconds across. Aphelic oppositions keep it near 100 million km with a disk under 14 arcseconds. Check the angular diameter for this year to calibrate expectations — but any opposition is the best Mars will look for the next two years.`,
+    Jupiter: `Jupiter rises at sunset and dominates the night sky — the brightest point of light after the Moon on most nights. Binoculars reveal all four Galilean moons (Io, Europa, Ganymede, Callisto) as a chain of tiny points on either side of the disk; watch them shift position night to night. A small telescope at 60× or more shows the dark equatorial cloud bands and, with patience, the Great Red Spot rotating across the face every ten hours.\n\nOpposition is Jupiter's best night of the year, though it remains excellent for weeks before and after — its disk doesn't change dramatically in apparent size over that window.`,
+    Saturn: `Saturn rises at sunset and is visible all night — the ringed planet at its closest and brightest. Even a 30× telescope clearly shows the rings, separated from the disk by the dark Cassini Division. The moon Titan is visible as a faint golden point nearby.\n\nSaturn's ring tilt changes over its 29-year orbit, ranging from nearly edge-on (rings barely a line) to tilted at 27° (rings at their most spectacular). In 2025 the rings passed through edge-on and are now opening again — check the current ring tilt to know what the eyepiece view will show.`,
+    Uranus: `Uranus reaches its closest point to Earth this year at around magnitude 5.7 — right at the limit of naked-eye detection from a truly dark site, but an easy binocular target. It appears as a steady blue-green point distinct from background stars (which twinkle; Uranus does not). A telescope at 100× or more reveals a small, pale aqua disk about 3.7 arcseconds across.\n\nUranus was the first planet discovered with a telescope — William Herschel spotted it in 1781, initially mistaking it for a comet. Opposition is the best time of year to find it.`,
+    Neptune: `Neptune reaches opposition — its closest approach to Earth this year, still nearly 4.4 billion km away. At magnitude ~7.8 it's invisible to the naked eye; binoculars show it as an extremely faint blue-grey point. A telescope at 150× or more reveals a tiny disk about 2.3 arcseconds across.\n\nNeptune moves so slowly (one full orbit in 165 years) that a star chart is essential to distinguish it from background stars. It was discovered in 1846 through pure mathematical prediction, the first planet found by calculation rather than observation.`,
   };
   return (
     descriptions[body] ??
@@ -68,12 +68,24 @@ function describeOpposition(body: string): string {
   );
 }
 
-function describeElongation(body: string, eastern: boolean, elongDeg: number): string {
-  const sky = eastern ? 'low in the western sky shortly after sunset' : 'low in the eastern sky just before sunrise';
-  const look = eastern ? 'Look west after sunset' : 'Look east before sunrise';
+export function describeElongation(body: string, eastern: boolean, elongDeg: number): string {
   const degStr = elongDeg.toFixed(1);
   if (body === 'Mercury') {
-    return `Mercury reaches its greatest angular separation from the Sun (${degStr}°), making this the best window to spot the innermost planet. Look for it ${sky}. ${look} — Mercury sets or rises with the twilight and is only visible for a short window. It never strays far from the Sun in our sky.`;
+    const sky = eastern ? 'western sky' : 'eastern sky';
+    const when = eastern ? 'after sunset' : 'before sunrise';
+    const look = eastern ? 'Look west after sunset' : 'Look east before sunrise';
+    let quality: string;
+    if (elongDeg >= 25) {
+      quality = `At ${degStr}°, this is a favorable elongation — Mercury stands well clear of the twilight glow and is easier to spot than usual. A binocular target even for casual observers.`;
+    } else if (elongDeg >= 20) {
+      quality = `At ${degStr}°, this is a moderate elongation with a short but workable viewing window low in the twilight. Binoculars help.`;
+    } else {
+      quality = `At ${degStr}°, this is a shallow elongation — Mercury sits deep in the twilight glow and will be a challenge to spot. Binoculars are recommended; look precisely where the Sun set (or will rise).`;
+    }
+    return `Mercury reaches its greatest angular separation from the Sun (${degStr}°) — the best window to spot the innermost planet this apparition. ${look}: Mercury appears as a bright, steady point low in the ${sky} ${when}.\n\n${quality} Mercury never rises far from the Sun; it always stays close to the horizon near sunrise or sunset and is only visible for a brief window each apparition.`;
   }
-  return `Venus reaches its greatest angular separation from the Sun (${degStr}°) — the best viewing opportunity of this apparition. Find it ${sky}, shining brilliantly at magnitude −4 or brighter, far outshining every other star and planet. ${look} and it will be unmistakable.`;
+  // Venus
+  const sky = eastern ? 'western sky after sunset' : 'eastern sky before sunrise';
+  const name = eastern ? 'Evening Star' : 'Morning Star';
+  return `Venus reaches its greatest angular separation from the Sun (${degStr}°) — its best position as the ${name} this apparition. Look for it blazing in the ${sky}, far outshining every star and planet. At ${degStr}° from the Sun, Venus enjoys a long viewing window of well over an hour in a dark sky before it follows the Sun below the horizon.\n\nAt this elongation Venus shows a roughly half-lit phase through a telescope — like a tiny half-moon, with a disk noticeably larger than any planet appears to the naked eye.`;
 }

@@ -5,7 +5,7 @@
     "start": "2026-01-10",
     "end": "2026-01-11",
     "allDay": true,
-    "description": "Jupiter reaches opposition, its closest and brightest point of the year. Shining brilliantly, it rises at sunset and is visible all night. Even binoculars will reveal Jupiter's four Galilean moons (Io, Europa, Ganymede, Callisto), while a small telescope shows the cloud bands and the Great Red Spot.",
+    "description": "Jupiter rises at sunset and dominates the night sky — the brightest point of light after the Moon on most nights. Binoculars reveal all four Galilean moons (Io, Europa, Ganymede, Callisto) as a chain of tiny points on either side of the disk; watch them shift position night to night. A small telescope at 60× or more shows the dark equatorial cloud bands and, with patience, the Great Red Spot rotating across the face every ten hours.\n\nOpposition is Jupiter's best night of the year, though it remains excellent for weeks before and after — its disk doesn't change dramatically in apparent size over that window.",
     "url": "https://solarsystem.nasa.gov/planets/jupiter/overview/",
     "category": "oppositions"
   },
@@ -15,7 +15,7 @@
     "start": "2026-10-05",
     "end": "2026-10-06",
     "allDay": true,
-    "description": "Saturn reaches opposition — its closest and brightest point of the year. The ringed planet rises at sunset and is visible all night. A small telescope at 30× or more will clearly show Saturn's rings and the moon Titan.",
+    "description": "Saturn rises at sunset and is visible all night — the ringed planet at its closest and brightest. Even a 30× telescope clearly shows the rings, separated from the disk by the dark Cassini Division. The moon Titan is visible as a faint golden point nearby.\n\nSaturn's ring tilt changes over its 29-year orbit, ranging from nearly edge-on (rings barely a line) to tilted at 27° (rings at their most spectacular). In 2025 the rings passed through edge-on and are now opening again — check the current ring tilt to know what the eyepiece view will show.",
     "url": "https://solarsystem.nasa.gov/planets/saturn/overview/",
     "category": "oppositions"
   },
@@ -25,7 +25,7 @@
     "start": "2026-11-26",
     "end": "2026-11-27",
     "allDay": true,
-    "description": "Uranus reaches opposition, its closest approach to Earth this year. At magnitude ~5.7 it sits right at the edge of naked-eye visibility from a very dark site. Binoculars easily reveal it as a small blue-green disk.",
+    "description": "Uranus reaches its closest point to Earth this year at around magnitude 5.7 — right at the limit of naked-eye detection from a truly dark site, but an easy binocular target. It appears as a steady blue-green point distinct from background stars (which twinkle; Uranus does not). A telescope at 100× or more reveals a small, pale aqua disk about 3.7 arcseconds across.\n\nUranus was the first planet discovered with a telescope — William Herschel spotted it in 1781, initially mistaking it for a comet. Opposition is the best time of year to find it.",
     "url": "https://solarsystem.nasa.gov/planets/uranus/overview/",
     "category": "oppositions"
   },
@@ -35,7 +35,7 @@
     "start": "2026-09-26",
     "end": "2026-09-27",
     "allDay": true,
-    "description": "Neptune reaches opposition, its closest approach to Earth this year. At magnitude ~7.8 it requires binoculars at minimum — a small telescope will show its distinctive blue-grey disk. It is the most distant planet in our solar system.",
+    "description": "Neptune reaches opposition — its closest approach to Earth this year, still nearly 4.4 billion km away. At magnitude ~7.8 it's invisible to the naked eye; binoculars show it as an extremely faint blue-grey point. A telescope at 150× or more reveals a tiny disk about 2.3 arcseconds across.\n\nNeptune moves so slowly (one full orbit in 165 years) that a star chart is essential to distinguish it from background stars. It was discovered in 1846 through pure mathematical prediction, the first planet found by calculation rather than observation.",
     "url": "https://solarsystem.nasa.gov/planets/neptune/overview/",
     "category": "oppositions"
   },
@@ -45,7 +45,7 @@
     "start": "2027-02-20",
     "end": "2027-02-21",
     "allDay": true,
-    "description": "Mars reaches opposition — Earth is directly between Mars and the Sun, making the Red Planet closer and brighter than at any other point in its roughly two-year cycle. Look for a distinctly reddish-orange 'star' rising in the east at sunset. Through a small telescope, Mars's polar ice caps and dark surface markings may be visible.",
+    "description": "Mars rises at sunset and is visible all night — the Red Planet at its closest to Earth in this two-year cycle. Look for its unmistakable reddish-orange color, distinctly warmer than any star nearby. Through a small telescope on steady nights: dark basaltic plains, one or both polar ice caps, and the largest surface features.\n\nMars oppositions vary dramatically. Perihelic oppositions (when Mars is also near perihelion) bring it within 56 million km with a disk up to 25 arcseconds across. Aphelic oppositions keep it near 100 million km with a disk under 14 arcseconds. Check the angular diameter for this year to calibrate expectations — but any opposition is the best Mars will look for the next two years.",
     "url": "https://solarsystem.nasa.gov/planets/mars/overview/",
     "category": "oppositions"
   },
@@ -55,7 +55,7 @@
     "start": "2027-02-11",
     "end": "2027-02-12",
     "allDay": true,
-    "description": "Jupiter reaches opposition, its closest and brightest point of the year. Shining brilliantly, it rises at sunset and is visible all night. Even binoculars will reveal Jupiter's four Galilean moons (Io, Europa, Ganymede, Callisto), while a small telescope shows the cloud bands and the Great Red Spot.",
+    "description": "Jupiter rises at sunset and dominates the night sky — the brightest point of light after the Moon on most nights. Binoculars reveal all four Galilean moons (Io, Europa, Ganymede, Callisto) as a chain of tiny points on either side of the disk; watch them shift position night to night. A small telescope at 60× or more shows the dark equatorial cloud bands and, with patience, the Great Red Spot rotating across the face every ten hours.\n\nOpposition is Jupiter's best night of the year, though it remains excellent for weeks before and after — its disk doesn't change dramatically in apparent size over that window.",
     "url": "https://solarsystem.nasa.gov/planets/jupiter/overview/",
     "category": "oppositions"
   }
