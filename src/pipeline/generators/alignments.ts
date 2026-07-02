@@ -5,7 +5,7 @@ import type { CalendarEvent, Generator } from '../../shared/models.ts';
 interface AlignmentEntry {
   start: string;
   end: string;
-  type: 'mars-launch-window' | 'planet-parade';
+  type: 'mars-launch-window' | 'planet-parade' | 'saturn-rings-edge-on';
   title: string;
   description: string;
   url: string;
@@ -35,6 +35,7 @@ export function formatDate(dateStr: string): string {
 const ALIGNMENT_EMOJI: Record<string, string> = {
   'mars-launch-window': '🚀',
   'planet-parade': '🌟',
+  'saturn-rings-edge-on': '🪐',
 };
 
 export function entryToEvent(e: AlignmentEntry): CalendarEvent {

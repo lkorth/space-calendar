@@ -11,10 +11,106 @@
 # Fields:
 #   start:       ISO 8601 start date of the window/event (YYYY-MM-DD)
 #   end:         ISO 8601 end date (YYYY-MM-DD)
-#   type:        "mars-launch-window" | "planet-parade"
+#   type:        "mars-launch-window" | "planet-parade" | "saturn-rings-edge-on"
 #   title:       Event title
 #   description: Full explanation
 #   url:         Authoritative source
+
+# ── Saturn Ring Plane Crossings ─────────────────────────────────────────────
+# Earth crosses Saturn's ring plane when the sub-observer latitude of Saturn
+# (the latitude on Saturn from which Earth would be at the zenith) passes
+# through zero. This happens roughly twice per Saturn orbit (~29.5 years) —
+# once as the rings go from north-facing to edge-on to south-facing, and once
+# on the return. Earth may cross the ring plane up to three times per episode
+# due to Earth's orbital geometry, but the 2025 event had only a single
+# crossing (verified via JPL Horizons sub-observer latitude data).
+#
+# Crossing dates are verified against JPL Horizons quantity 14 (sub-obs lat).
+
+# 2025 crossing — only one crossing this episode (no three-crossing pattern).
+# Earth crossed Saturn's ring plane between Mar 23–24, 2025 (sub-obs lat:
+# +0.051° → −0.018°). Rings are now south-face-up and widening toward max
+# southern tilt ~2032, then narrowing toward the 2038–2039 crossings.
+
+- start: "2025-03-20"
+  end: "2025-03-28"
+  type: "saturn-rings-edge-on"
+  title: "Saturn's Rings Disappear — Ring Plane Crossing"
+  description: >
+    Saturn's rings are at their most edge-on as seen from Earth — so thin
+    that through most telescopes they appear only as a faint line across the
+    planet's disk, and to the naked eye Saturn looks like a "plain" star
+    with no rings at all. Earth crossed Saturn's ring plane on March 23–24,
+    2025, with the sub-observer latitude dropping from +0.05° to −0.02° over
+    that night. The rings will gradually reopen with the south side now
+    facing Earth, reaching maximum southern tilt around 2032.
+
+
+    Ring plane crossings happen roughly every 13–15 years. The previous
+    crossing was in September 2009; before that, May 1995. The next episode
+    is a three-crossing sequence in 2038–2039.
+  url: "https://science.nasa.gov/saturn/rings/"
+
+# 2038–2039 crossings — three-crossing pattern.
+# Earth's orbital motion causes it to dip across Saturn's ring plane three
+# times in quick succession:
+#   (1) Oct 15–16, 2038: south-face → north-face (sub-obs: −0.045° → +0.019°)
+#   (2) Apr 01–02, 2039: north-face → south-face (sub-obs: +0.032° → −0.010°)
+#   (3) Jul 09–10, 2039: south-face → north-face (sub-obs: −0.031° → +0.013°)
+# After crossing 3 the rings settle back to north-facing for ~13 more years.
+
+- start: "2038-10-12"
+  end: "2038-10-21"
+  type: "saturn-rings-edge-on"
+  title: "Saturn's Rings Disappear — Ring Plane Crossing (1 of 3)"
+  description: >
+    Saturn's rings are nearly edge-on as seen from Earth — appearing only as
+    a razor-thin line through a telescope, and all but invisible to the naked
+    eye. This is the first of three ring plane crossings in a sequence
+    spanning 2038–2039. Earth crossed Saturn's ring plane on October 15–16,
+    2038 (sub-observer latitude −0.045° → +0.019°), as the rings transition
+    from showing their south face to their north face.
+
+
+    The rings will briefly return to near-edge-on in April 2039 (crossing 2
+    of 3) before settling permanently to the north-facing orientation in July
+    2039 (crossing 3 of 3). After July 2039, the rings widen toward maximum
+    northern tilt around 2046.
+  url: "https://science.nasa.gov/saturn/rings/"
+
+- start: "2039-03-26"
+  end: "2039-04-10"
+  type: "saturn-rings-edge-on"
+  title: "Saturn's Rings Nearly Edge-On Again — Ring Plane Crossing (2 of 3)"
+  description: >
+    Saturn's rings return to near-edge-on for a brief second pass — a result
+    of Earth's orbital motion causing it to re-cross Saturn's ring plane.
+    Earth crossed on April 1–2, 2039 (sub-observer latitude +0.032° →
+    −0.010°), temporarily swinging the rings back to a south-facing
+    orientation. The effect lasts only a few weeks before the geometry shifts
+    again.
+
+
+    This is crossing 2 of 3 in the 2038–2039 sequence. The final crossing
+    (July 2039) settles the rings back to north-facing for the next ~13 years.
+  url: "https://science.nasa.gov/saturn/rings/"
+
+- start: "2039-07-03"
+  end: "2039-07-17"
+  type: "saturn-rings-edge-on"
+  title: "Saturn's Rings Reappear — Final Ring Plane Crossing (3 of 3)"
+  description: >
+    The third and final ring plane crossing of the 2038–2039 sequence.
+    Earth crossed Saturn's ring plane on July 9–10, 2039 (sub-observer
+    latitude −0.031° → +0.013°), with the rings returning to a north-facing
+    orientation for the long term. After this crossing, the rings will
+    gradually widen as Saturn's north pole tilts further toward Earth,
+    reaching maximum tilt around 2046.
+
+
+    The previous crossings in this sequence were October 2038 and April
+    2039. The next ring plane crossing episode will be around 2053.
+  url: "https://science.nasa.gov/saturn/rings/"
 
 # ── Mars Launch Windows ─────────────────────────────────────────────────────
 # Every ~26 months, Earth and Mars align such that a spacecraft launched from

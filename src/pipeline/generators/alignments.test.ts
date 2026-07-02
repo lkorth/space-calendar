@@ -111,4 +111,19 @@ describe('entryToEvent', () => {
     expect(event.end).toBe('2026-05-10');
     expect(event.description).toBe('Details here.');
   });
+
+  it('preserves full date range for saturn-rings-edge-on', () => {
+    const event = entryToEvent({
+      start: '2025-03-20',
+      end: '2025-03-28',
+      type: 'saturn-rings-edge-on',
+      title: "Saturn's Rings Disappear",
+      description: 'Details here.',
+      url: 'https://example.com',
+    });
+    expect(event.start).toBe('2025-03-20');
+    expect(event.end).toBe('2025-03-28');
+    expect(event.description).toBe('Details here.');
+    expect(event.title).toContain('🪐');
+  });
 });

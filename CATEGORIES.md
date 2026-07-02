@@ -25,12 +25,14 @@ When the Moon passes directly in front of a naked-eye planet or 1st/2nd magnitud
 
 Events are curated in `occultations.yaml` and include approximate disappearance/reappearance times in UTC and visibility region.
 
-### Planetary Alignments (🚀 / 🌟)
-Two types of events covering how the planets line up from Earth's perspective:
+### Planetary Alignments (🚀 / 🌟 / 🪐)
+Three types of events covering rare or notable planetary geometry:
 
 **Mars Transfer Windows** (🚀) — The ~30-day windows every 26 months when Earth and Mars are in the orbital geometry for a minimum-energy Hohmann transfer trajectory (~7-month trip). Every historical Mars mission has launched during one of these windows. Useful context for following Mars exploration news.
 
 **Planet Parades** (🌟) — Periods when 3 or more naked-eye planets are simultaneously visible in the sky on the same night.
+
+**Saturn Ring Plane Crossings** (🪐) — When Earth crosses Saturn's ring plane, making the rings appear edge-on (nearly invisible) from Earth. Happens roughly every 13–15 years (twice per Saturn orbit). The most recent crossing was March 23–24, 2025; the next will be around 2038–2040. Crossing dates are verified against JPL Horizons sub-observer latitude data.
 
 Events are curated in `alignments.yaml`.
 
