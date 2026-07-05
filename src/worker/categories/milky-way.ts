@@ -118,14 +118,24 @@ function hourAngleAtAlt(alt: number, lat: number, dec: number): number | null {
   return (Math.acos(cosHA) * 180) / Math.PI / 15;
 }
 
-/** Estimate UTC offset in hours from an IANA timezone name (summer date to capture DST) */
+function offsetHoursAt(tz: string, ref: Date): number {
+  const local = new Date(ref.toLocaleString('en-US', { timeZone: tz }));
+  const utc = new Date(ref.toLocaleString('en-US', { timeZone: 'UTC' }));
+  return (local.getTime() - utc.getTime()) / 3600000;
+}
+
+/** Estimate an observer's *standard* (non-DST) UTC offset from an IANA timezone name.
+ *  Used to approximate longitude (lon = offset * 15), which is a property of geography,
+ *  not of the clock — so the DST-shifted offset must not be used here, or every
+ *  DST-observing zone would compute a longitude ~15° too far east while DST is active.
+ *  DST always adds to the standard offset (never subtracts), so the standard offset is
+ *  the smaller of a January and a July reading, for either hemisphere. */
 export function tzOffsetHours(tz: string | undefined): number {
   if (!tz) return 0;
   try {
-    const ref = new Date(Date.UTC(2026, 5, 15, 0, 0, 0));
-    const local = new Date(ref.toLocaleString('en-US', { timeZone: tz }));
-    const utc = new Date(ref.toLocaleString('en-US', { timeZone: 'UTC' }));
-    return (local.getTime() - utc.getTime()) / 3600000;
+    const jan = offsetHoursAt(tz, new Date(Date.UTC(2026, 0, 15, 0, 0, 0)));
+    const jul = offsetHoursAt(tz, new Date(Date.UTC(2026, 6, 15, 0, 0, 0)));
+    return Math.min(jan, jul);
   } catch {
     return 0;
   }

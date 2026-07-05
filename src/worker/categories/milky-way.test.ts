@@ -162,6 +162,70 @@ describe('milkyWayWindowForNight', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Astronomical twilight threshold regression
+//
+// milkyWayWindowForNight requires the sun to be 18° below the horizon
+// (astronomical twilight) before a window opens. This is deliberately checked
+// against an independently-written solar altitude formula (not the source's
+// own sunPosition/hourAngleAtAlt) so a regression to a shallower threshold
+// (e.g. -12° nautical or -6° civil twilight) would be caught even if it were
+// introduced consistently across the source file.
+// ---------------------------------------------------------------------------
+
+function sunAltitudeDeg(dateUTC: Date, hourUTC: number, lat: number, lon: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const toDeg = (r: number) => (r * 180) / Math.PI;
+  const y = dateUTC.getUTCFullYear();
+  const m = dateUTC.getUTCMonth() + 1;
+  const d = dateUTC.getUTCDate();
+  const jd = (() => {
+    let yy = y, mm = m;
+    if (mm <= 2) { yy--; mm += 12; }
+    const A = Math.floor(yy / 100);
+    const B = 2 - A + Math.floor(A / 4);
+    return Math.floor(365.25 * (yy + 4716)) + Math.floor(30.6001 * (mm + 1)) + d + hourUTC / 24 + B - 1524.5;
+  })();
+  const n = jd - 2451545.0;
+  const L = ((280.460 + 0.9856474 * n) % 360 + 360) % 360;
+  const g = toRad(((357.528 + 0.9856003 * n) % 360 + 360) % 360);
+  const lambda = toRad(L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g));
+  const epsilon = toRad(23.439);
+  const raHours = toDeg(Math.atan2(Math.cos(epsilon) * Math.sin(lambda), Math.cos(lambda))) / 15;
+  const dec = toDeg(Math.asin(Math.sin(epsilon) * Math.sin(lambda)));
+
+  const T = n / 36525;
+  const gmstDeg = 280.46061837 + 360.98564736629 * n + 0.000387933 * T * T;
+  const lstHours = (((gmstDeg / 15) % 24 + 24) % 24 + lon / 15 + 24) % 24;
+  const haHours = (((lstHours - raHours + 12) % 24 + 24) % 24) - 12;
+
+  const latR = toRad(lat);
+  const decR = toRad(dec);
+  const haR = toRad(haHours * 15);
+  const sinAlt = Math.sin(latR) * Math.sin(decR) + Math.cos(latR) * Math.cos(decR) * Math.cos(haR);
+  return toDeg(Math.asin(sinAlt));
+}
+
+describe('astronomical twilight threshold', () => {
+  it('opens the window only once the sun crosses 18° below the horizon', () => {
+    // 30°S, new moon (June 15, 2026): confirmed sun-limited window start at this
+    // latitude/date (core and moon are already satisfied well before the sun is).
+    const date = new Date(Date.UTC(2026, 5, 15));
+    const result = milkyWayWindowForNight(date, -30, 0);
+    expect(result).not.toBeNull();
+
+    const atStart = sunAltitudeDeg(date, result!.startHour, -30, 0);
+    const justBeforeStart = sunAltitudeDeg(date, result!.startHour - 0.25, -30, 0);
+
+    // The included sample must already be at/past -18°; the excluded sample
+    // one step earlier must not yet be. A regression to -12° or -6° would put
+    // both readings on the same side of that threshold.
+    expect(atStart).toBeLessThanOrEqual(-18);
+    expect(atStart).toBeGreaterThan(-21.5); // stays within one scan step of -18°
+    expect(justBeforeStart).toBeGreaterThan(-18);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // tzOffsetHours
 // ---------------------------------------------------------------------------
 
@@ -170,8 +234,11 @@ describe('tzOffsetHours', () => {
     expect(tzOffsetHours(undefined)).toBe(0);
   });
 
-  it('returns approximately -6 for America/Denver (MDT in summer)', () => {
-    expect(tzOffsetHours('America/Denver')).toBeCloseTo(-6, 0);
+  it('returns the standard-time offset (-7) for America/Denver, not the DST offset (-6)', () => {
+    // Longitude approximation must use the fixed geographic meridian, not the
+    // DST-shifted clock offset, or summer computations would place the observer
+    // ~15° too far east and shift dark-sky timings roughly an hour too early.
+    expect(tzOffsetHours('America/Denver')).toBeCloseTo(-7, 0);
   });
 
   it('returns 0 for UTC', () => {
