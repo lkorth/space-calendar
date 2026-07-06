@@ -21,6 +21,7 @@ export interface ParsedEvent {
   description?: string;
   spotsLeft?: number;
   registrationUrl?: string;
+  full?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -56,6 +57,9 @@ const MONTH_INDEX: Record<string, number> = {
 // Lines to skip when scanning backward for an event title
 const SKIP_LINE_RE = /^(?:reserve|back|next|home|about|login|register|sign\s*in|\d+\s+spots?|loading|©|\(?\d+\s+spots?\)?|programs?\s*&|programs?\s*and|LINK:|[()]+|full)/i;
 
+// A line that is exactly "FULL" (its own line, no surrounding text)
+const FULL_RE = /^full$/i;
+
 export function parseJgapEvents(text: string): ParsedEvent[] {
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
   const events: ParsedEvent[] = [];
@@ -88,6 +92,7 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
       if (inlineSpots) spotsLeft = parseInt(inlineSpots[1]!);
 
       let title: string | null = null;
+      let full = false;
       const dayOfWeekIndex = line.search(new RegExp(`\\b(?:${DAYS})\\b`, 'i'));
       if (dayOfWeekIndex > 0) {
         const before = line.slice(0, dayOfWeekIndex).replace(/[\s–—\-]+$/, '').trim();
@@ -100,6 +105,7 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
             const spotsMatch = candidate.match(/^(\d+)\s+spots?/i);
             if (spotsMatch) { spotsLeft = parseInt(spotsMatch[1]!); continue; }
           }
+          if (FULL_RE.test(candidate)) { full = true; continue; }
           if (!SKIP_LINE_RE.test(candidate) && candidate.length > 2) { title = candidate; break; }
         }
       }
@@ -116,7 +122,7 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
         if (fwd.length > 2) descLines.push(fwd);
       }
       const description = descLines.length > 0 ? descLines.join(' ') : undefined;
-      events.push({ title, startUtc, endUtc, description, spotsLeft, registrationUrl });
+      events.push({ title, startUtc, endUtc, description, spotsLeft, registrationUrl, full: full || undefined });
       continue;
     }
 
@@ -134,11 +140,13 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
       let dMinute = 0;
       let dTzOffset = 0;
       let dSpotsLeft: number | undefined;
+      let dFull = false;
 
       for (let j = i - 1; j >= Math.max(0, i - 4); j--) {
         const candidate = lines[j]!;
         const spotsMatch = candidate.match(/^\(?(\d+)\s+spots?\s*(?:left)?\)?$/i);
         if (spotsMatch) { dSpotsLeft = parseInt(spotsMatch[1]!); continue; }
+        if (FULL_RE.test(candidate)) { dFull = true; continue; }
         const ttMatch = candidate.match(TITLE_TIME_RE);
         if (ttMatch) {
           const [, rawTitle, hStr, mStr, ap, tz] = ttMatch;
@@ -179,7 +187,7 @@ export function parseJgapEvents(text: string): ParsedEvent[] {
       }
       const dDescription = dDescLines.length > 0 ? dDescLines.join(' ') : undefined;
 
-      events.push({ title: dTitle, startUtc: dStart, endUtc: dEnd, description: dDescription, spotsLeft: dSpotsLeft, registrationUrl: dRegistrationUrl });
+      events.push({ title: dTitle, startUtc: dStart, endUtc: dEnd, description: dDescription, spotsLeft: dSpotsLeft, registrationUrl: dRegistrationUrl, full: dFull || undefined });
     }
   }
 
@@ -402,7 +410,7 @@ export const astronomyClubsCategory: Category = {
     const parsed = club.parseEvents(text).filter((p) => p.startUtc >= cutoff);
     const events: CalendarEvent[] = parsed.map((p) => ({
       uid: `astronomy-club-${club.id}-${p.startUtc.toISOString()}@space-calendar`,
-      title: `🔭 ${p.title}`,
+      title: p.full ? `🔭 ${p.title} [Full]` : `🔭 ${p.title}`,
       start: p.startUtc.toISOString(),
       end: p.endUtc.toISOString(),
       allDay: false,
@@ -418,11 +426,13 @@ export const astronomyClubsCategory: Category = {
   },
 };
 
-function buildDescription(club: Club, p: ParsedEvent): string {
+export function buildDescription(club: Club, p: ParsedEvent): string {
   const parts: string[] = [];
   if (p.description) parts.push(p.description);
   parts.push(`Public program at ${club.name} in ${club.location}.`);
-  if (p.spotsLeft !== undefined) {
+  if (p.full) {
+    parts.push('This program is full.');
+  } else if (p.spotsLeft !== undefined) {
     parts.push(`${p.spotsLeft} spot${p.spotsLeft === 1 ? '' : 's'} remaining.`);
   }
   if (p.registrationUrl) {

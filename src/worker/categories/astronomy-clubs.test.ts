@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseJgapEvents, parseIcalEvents, unescapeIcalText, isUsDst, getTzOffsetHours, CLUBS } from './astronomy-clubs.ts';
+import { parseJgapEvents, parseIcalEvents, unescapeIcalText, isUsDst, getTzOffsetHours, CLUBS, buildDescription } from './astronomy-clubs.ts';
 
 const SAMPLE_TEXT = `
 John Glenn Astronomy Park
@@ -306,6 +306,18 @@ describe('parseJgapEvents — no-timezone format with FULL events', () => {
     expect(events[1]!.spotsLeft).toBeUndefined();
   });
 
+  it('marks FULL events as full', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[0]!.full).toBe(true);
+    expect(events[1]!.full).toBe(true);
+  });
+
+  it('leaves full undefined for non-full events', () => {
+    const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
+    expect(events[2]!.full).toBeUndefined();
+    expect(events[3]!.full).toBeUndefined();
+  });
+
   it('captures spots for non-full events', () => {
     const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
     expect(events[2]!.spotsLeft).toBe(27);
@@ -321,6 +333,32 @@ describe('parseJgapEvents — no-timezone format with FULL events', () => {
   it('sets end 2 hours after start', () => {
     const events = parseJgapEvents(ACTUAL_PAGE_TEXT_NO_TZ);
     expect(events[0]!.endUtc.getTime() - events[0]!.startUtc.getTime()).toBe(2 * 60 * 60 * 1000);
+  });
+});
+
+describe('buildDescription', () => {
+  const club = CLUBS.find((c) => c.id === 'jgap')!;
+
+  it('notes the program is full instead of a spot count', () => {
+    const description = buildDescription(club, {
+      title: 'The Low Moon',
+      startUtc: new Date(),
+      endUtc: new Date(),
+      full: true,
+    });
+    expect(description).toContain('This program is full.');
+    expect(description).not.toMatch(/spot.*remaining/i);
+  });
+
+  it('reports remaining spots when not full', () => {
+    const description = buildDescription(club, {
+      title: 'How Far The Galaxies',
+      startUtc: new Date(),
+      endUtc: new Date(),
+      spotsLeft: 27,
+    });
+    expect(description).toContain('27 spots remaining.');
+    expect(description).not.toContain('This program is full.');
   });
 });
 
