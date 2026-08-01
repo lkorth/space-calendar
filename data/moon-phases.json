@@ -1,25 +1,5 @@
 [
   {
-    "uid": "moon-phase-2026-01-03T10:03:00.000Z@space-calendar",
-    "title": "🌕 Full Moon — Wolf Moon (Supermoon)",
-    "start": "2026-01-03T10:03:00.000Z",
-    "end": "2026-01-03T10:03:00.000Z",
-    "allDay": false,
-    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the wolves that howled outside villages on cold winter nights, in Native American and colonial American traditions.\n\nThis is a Supermoon — the Moon is closer to Earth than usual, making it appear slightly larger and brighter than a typical full moon (up to about 14% larger and 30% brighter at its closest). The Moon follows an elliptical orbit, so its distance from Earth varies by roughly 50,000 km between perigee (closest) and apogee (farthest).",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
-    "uid": "moon-phase-2026-01-18T19:52:00.000Z@space-calendar",
-    "title": "🌑 New Moon",
-    "start": "2026-01-18T19:52:00.000Z",
-    "end": "2026-01-18T19:52:00.000Z",
-    "allDay": false,
-    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
     "uid": "moon-phase-2026-02-01T22:09:00.000Z@space-calendar",
     "title": "🌕 Full Moon — Snow Moon",
     "start": "2026-02-01T22:09:00.000Z",
@@ -366,6 +346,26 @@
     "end": "2027-06-19T00:44:00.000Z",
     "allDay": false,
     "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed by Algonquin peoples for June's brief strawberry harvesting season in northeastern North America.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-07-04T03:02:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-07-04T03:02:00.000Z",
+    "end": "2027-07-04T03:02:00.000Z",
+    "allDay": false,
+    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-07-18T15:45:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Buck Moon",
+    "start": "2027-07-18T15:45:00.000Z",
+    "end": "2027-07-18T15:45:00.000Z",
+    "allDay": false,
+    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the time of year when male white-tailed deer begin growing their new antlers in velvet.",
     "url": "https://aa.usno.navy.mil/data/MoonPhases",
     "category": "moon-phases"
   }

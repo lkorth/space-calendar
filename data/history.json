@@ -50,16 +50,6 @@
     "category": "history"
   },
   {
-    "uid": "history-20060119@space-calendar",
-    "title": "20 Years Ago: New Horizons — Launch to Pluto (2006)",
-    "start": "2026-01-19",
-    "end": "2026-01-20",
-    "allDay": true,
-    "description": "NASA's New Horizons spacecraft launched on January 19, 2006 — the fastest spacecraft ever launched from Earth, reaching 58,000 km/h. After a 9.5-year, 4.8-billion-km journey, it made the first close flyby of Pluto in July 2015, revealing towering nitrogen-ice mountains, a vast heart-shaped frozen plain, and evidence of geological activity. New Horizons later explored Arrokoth in the Kuiper Belt — the most distant object ever visited by a spacecraft. It continues into the Kuiper Belt and will eventually leave the solar system.\n",
-    "url": "https://science.nasa.gov/mission/new-horizons/",
-    "category": "history"
-  },
-  {
     "uid": "history-20060824@space-calendar",
     "title": "20 Years Ago: Pluto Reclassified as a Dwarf Planet (2006)",
     "start": "2026-08-24",

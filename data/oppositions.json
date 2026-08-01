@@ -1,15 +1,5 @@
 [
   {
-    "uid": "opposition-jupiter-2026-01-10@space-calendar",
-    "title": "🔭 Jupiter at Opposition — Closest & Brightest",
-    "start": "2026-01-10",
-    "end": "2026-01-11",
-    "allDay": true,
-    "description": "Jupiter rises at sunset and dominates the night sky — the brightest point of light after the Moon on most nights. Binoculars reveal all four Galilean moons (Io, Europa, Ganymede, Callisto) as a chain of tiny points on either side of the disk; watch them shift position night to night. A small telescope at 60× or more shows the dark equatorial cloud bands and, with patience, the Great Red Spot rotating across the face every ten hours.\n\nOpposition is Jupiter's best night of the year, though it remains excellent for weeks before and after — its disk doesn't change dramatically in apparent size over that window.",
-    "url": "https://solarsystem.nasa.gov/planets/jupiter/overview/",
-    "category": "oppositions"
-  },
-  {
     "uid": "opposition-saturn-2026-10-05@space-calendar",
     "title": "🔭 Saturn at Opposition — Closest & Brightest",
     "start": "2026-10-05",
