@@ -24,6 +24,59 @@ describe('configurator', () => {
   });
 });
 
+describe('configurator subscribe flow', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  it('offers a webcal:// subscribe path for Apple Calendar', () => {
+    // 54% of subscribers arrive via Apple Calendar, and webcal:// is the only one-tap
+    // route into it. Losing this would silently regress the largest client segment.
+    expect(html).toContain("'webcal:'");
+    expect(html).toContain('function addToApple()');
+  });
+
+  it('offers both calendars unconditionally, ordered by platform', () => {
+    // Both buttons are always present; only their order and emphasis vary, so nobody
+    // is stuck when the user-agent guess does not match the calendar they actually use.
+    expect(html).toContain('function addToGoogle()');
+    expect(html).toContain('calendar.google.com/calendar/r?cid=');
+    expect(html).toContain('function orderSubscribeButtons()');
+  });
+
+  it('falls back to a selectable URL when the clipboard is unavailable', () => {
+    // In-app browsers (Instagram, Facebook) can withhold or reject the clipboard API.
+    expect(html).toContain('function showUrlFallback(');
+    expect(html).toMatch(/if \(!navigator\.clipboard\) return showUrlFallback/);
+    expect(html).toContain('.catch(() => showUrlFallback(url))');
+  });
+});
+
+describe('configurator DOM wiring', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  it('references only element ids that exist in the markup', () => {
+    const declared = new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]!));
+    const referenced = [...html.matchAll(/getElementById\('([^']+)'\)/g)].map((m) => m[1]!);
+
+    expect(referenced.length).toBeGreaterThan(0);
+    for (const id of new Set(referenced)) {
+      expect(declared, `getElementById('${id}') has no matching element`).toContain(id);
+    }
+  });
+
+  it('binds every inline handler to a defined function', () => {
+    const handlers = [...html.matchAll(/on(?:click|change|input)="([a-zA-Z_$][\w$]*)\(/g)]
+      .map((m) => m[1]!);
+
+    expect(handlers.length).toBeGreaterThan(0);
+    for (const fn of new Set(handlers)) {
+      if (fn === 'this') continue;
+      expect(html, `handler ${fn}() is referenced but not defined`).toMatch(
+        new RegExp(`function\\s+${fn}\\s*\\(`),
+      );
+    }
+  });
+});
+
 describe('configurator sponsor link', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 

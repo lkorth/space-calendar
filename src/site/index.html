@@ -45,10 +45,13 @@
     .url-display { font-family: monospace; font-size: 0.8rem; color: #a0a0c0; word-break: break-all; background: #08081a; padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; min-height: 2.5rem; }
     .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
     button { padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; font-weight: 500; }
-    .btn-copy { background: #7060ff; color: white; }
-    .btn-copy:hover { background: #8070ff; }
-    .btn-google { background: #1a1a2e; color: #e0e0e8; border: 1px solid #3a3a6a; }
-    .btn-google:hover { background: #2a2a4e; }
+    .btn-primary { background: #7060ff; color: white; }
+    .btn-primary:hover { background: #8070ff; }
+    .btn-secondary { background: #1a1a2e; color: #e0e0e8; border: 1px solid #3a3a6a; }
+    .btn-secondary:hover { background: #2a2a4e; }
+    #btn-copy { order: 2; }
+    .url-fallback { display: none; margin-top: 0.7rem; font-size: 0.8rem; color: #9090a8; line-height: 1.5; }
+    .url-fallback input { width: 100%; margin-top: 0.4rem; padding: 0.5rem 0.6rem; background: #08081a; border: 1px solid #3a3a6a; border-radius: 4px; color: #a0a0c0; font-family: monospace; font-size: 0.75rem; }
     .empty-msg { color: #6060a0; font-size: 0.9rem; }
     .footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #1a1a2e; display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; }
     .footer-note { font-size: 0.8rem; color: #6060a0; line-height: 1.5; flex: 1 1 18rem; }
@@ -161,8 +164,13 @@
       <div class="output-label">Your Subscription URL</div>
       <div class="url-display" id="url-display"><span class="empty-msg">Select at least one category above</span></div>
       <div class="actions">
-        <button class="btn-copy" id="btn-copy" onclick="copyUrl()" disabled>Copy URL</button>
-        <button class="btn-google" id="btn-google" onclick="addToGoogle()" disabled>Add to Google Calendar</button>
+        <button class="btn-primary" id="btn-apple" onclick="addToApple()" disabled>Add to Apple Calendar</button>
+        <button class="btn-secondary" id="btn-google" onclick="addToGoogle()" disabled>Add to Google Calendar</button>
+        <button class="btn-secondary" id="btn-copy" onclick="copyUrl()" disabled>Copy URL</button>
+      </div>
+      <div class="url-fallback" id="url-fallback">
+        Your browser blocked the clipboard. Select the URL below and copy it manually:
+        <input id="url-fallback-input" type="text" readonly onclick="this.select()" />
       </div>
     </div>
 
@@ -308,6 +316,7 @@
 
       const display = document.getElementById('url-display');
       const btnCopy = document.getElementById('btn-copy');
+      const btnApple = document.getElementById('btn-apple');
       const btnGoogle = document.getElementById('btn-google');
 
       if (categories.length === 0) {
@@ -325,25 +334,72 @@
       }
 
       btnCopy.disabled = !ready;
+      btnApple.disabled = !ready;
       btnGoogle.disabled = !ready;
+      // The URL changes with every selection, so any previously shown fallback is stale.
+      document.getElementById('url-fallback').style.display = 'none';
 
       schedulePreview(categories, globalLat, hemi, clubId, ready);
     }
 
-    function copyUrl() {
-      const url = buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId());
-      navigator.clipboard.writeText(url).then(() => {
-        const btn = document.getElementById('btn-copy');
-        btn.textContent = 'Copied!';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = 'Copy URL'; btn.classList.remove('copied'); }, 2000);
-      });
+    // Apple platforms handle webcal:// natively — one tap opens Calendar with a subscribe
+    // prompt. Elsewhere it usually has no registered handler, so those get Google's web
+    // flow. iPadOS 13+ reports itself as Macintosh, which is harmless: both want webcal://.
+    const IS_APPLE = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+
+    function currentUrl() {
+      return buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId());
+    }
+
+    function webcalUrl() {
+      return currentUrl().replace(/^https:/, 'webcal:');
+    }
+
+    function googleCalendarUrl() {
+      return 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(webcalUrl());
+    }
+
+    function addToApple() {
+      window.location.href = webcalUrl();
     }
 
     function addToGoogle() {
-      const url = buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId()).replace(/^https:\/\//, 'webcal://');
-      const googleUrl = 'https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(url);
-      window.open(googleUrl, '_blank');
+      window.open(googleCalendarUrl(), '_blank');
+    }
+
+    // Lead with the platform's native option and make it the primary action; both stay
+    // available, so a Mac user on Google Calendar is never stuck with the wrong one.
+    (function orderSubscribeButtons() {
+      const apple = document.getElementById('btn-apple');
+      const google = document.getElementById('btn-google');
+      const first = IS_APPLE ? apple : google;
+      const second = IS_APPLE ? google : apple;
+      first.style.order = '0';
+      second.style.order = '1';
+      first.className = 'btn-primary';
+      second.className = 'btn-secondary';
+    })();
+
+    function showUrlFallback(url) {
+      const input = document.getElementById('url-fallback-input');
+      input.value = url;
+      document.getElementById('url-fallback').style.display = 'block';
+      input.focus();
+      input.select();
+    }
+
+    function copyUrl() {
+      const url = currentUrl();
+      const btn = document.getElementById('btn-copy');
+      // In-app browsers (Instagram, Facebook) can withhold the clipboard API or reject the
+      // write. Show the URL for manual copying rather than falsely reporting success.
+      if (!navigator.clipboard) return showUrlFallback(url);
+      navigator.clipboard.writeText(url).then(() => {
+        document.getElementById('url-fallback').style.display = 'none';
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy URL'; btn.classList.remove('copied'); }, 2000);
+      }).catch(() => showUrlFallback(url));
     }
 
     document.querySelectorAll('input[type="checkbox"]').forEach(el => {
