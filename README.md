@@ -46,6 +46,10 @@ Returns `{ "name": "...", "events": [...] }` where each event is a `CalendarEven
 | `tz` | IANA timezone string (e.g. `America/New_York`). Used for contact times in event descriptions. |
 | `club` | Astronomy club ID (e.g. `jgap`). Required for `astronomy-clubs`. |
 
+Responses set `Cache-Control: max-age=3600` and an `ETag`. If you poll the feed, send the
+ETag back as `If-None-Match` and you'll get a `304 Not Modified` instead of the whole
+calendar.
+
 Prefer a real IANA zone name for `tz`. A fixed offset (`UTC+2`, `+02:00`) is accepted, but
 it carries no daylight-saving rules, so times in event descriptions will be an hour off for
 part of the year if your region observes DST.

@@ -48,7 +48,7 @@ export default {
 
     const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
     const cached = await caches.default.match(cacheKey);
-    if (cached) return cached;
+    if (cached) return notModifiedIfMatched(request, cached);
 
     try {
       const { events, cache } = await fetchEvents(params, env);
@@ -56,11 +56,13 @@ export default {
 
       let response: Response;
       if (url.pathname === '/feed.json') {
-        response = new Response(JSON.stringify({ name: calName, events }), {
+        const json = JSON.stringify({ name: calName, events });
+        response = new Response(json, {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'Cache-Control': 'public, max-age=3600',
             'Access-Control-Allow-Origin': '*',
+            ETag: await etagFor(json),
           },
         });
       } else {
@@ -70,6 +72,7 @@ export default {
             'Content-Type': 'text/calendar; charset=utf-8',
             'Cache-Control': 'public, max-age=3600',
             'Content-Disposition': 'attachment; filename="space-calendar.ics"',
+            ETag: await etagFor(ics),
           },
         });
       }
@@ -77,7 +80,7 @@ export default {
       if (cache) {
         ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
       }
-      return response;
+      return notModifiedIfMatched(request, response);
     } catch (err) {
       console.error('Feed error:', err);
       return new Response('Internal server error', { status: 500 });
@@ -117,6 +120,33 @@ function buildCacheKey(request: Request, deployId?: string): Request {
   const url = new URL(request.url);
   if (deployId) url.searchParams.set('_v', deployId);
   return new Request(url.toString());
+}
+
+/** Strong validator over the response body. Feeds are polled far more often than they
+ *  change — some clients ignore max-age entirely and refetch every few minutes — so an
+ *  ETag lets those requests settle for an empty 304 instead of the whole calendar. */
+async function etagFor(body: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body));
+  const hex = Array.from(new Uint8Array(digest).slice(0, 16), (b) => b.toString(16).padStart(2, '0')).join('');
+  return `"${hex}"`;
+}
+
+function notModifiedIfMatched(request: Request, response: Response): Response {
+  const etag = response.headers.get('ETag');
+  if (!etag) return response;
+
+  const ifNoneMatch = request.headers.get('If-None-Match');
+  if (!ifNoneMatch) return response;
+  // A client may send several validators, and a cache may have weakened ours in transit.
+  const matched = ifNoneMatch
+    .split(',')
+    .map((v) => v.trim().replace(/^W\//, ''))
+    .some((v) => v === etag || v === '*');
+  if (!matched) return response;
+
+  const headers = new Headers(response.headers);
+  headers.delete('Content-Disposition');
+  return new Response(null, { status: 304, headers });
 }
 
 function buildCalName(categories: CategorySlug[]): string {

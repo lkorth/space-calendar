@@ -130,7 +130,8 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
 - Merges all events, then either:
   - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
   - `/feed.json` — returns `{ name, events }` as JSON (`Content-Type: application/json`)
-- Sets `Cache-Control: max-age=3600` on both endpoints
+- Sets `Cache-Control: max-age=3600` and a strong `ETag` (SHA-256 of the response body, truncated to 128 bits) on both endpoints, and answers a matching `If-None-Match` with `304 Not Modified`. Some subscribers poll far more often than `max-age` allows — one client in production refetches every ~10 minutes — so the conditional request is what actually keeps repeat polling cheap.
+- `DTSTAMP` is truncated to the start of the UTC day so the serialized body stays byte-identical while content is unchanged, which is what makes the ETag matchable. The period is deliberately much longer than `max-age`: every boundary crossing rewrites `DTSTAMP` and invalidates the ETag with no content change behind it, and at an hour-or-shorter period a client revalidating on `max-age` expiry crosses a boundary every time and never gets a 304. Content changes are carried by the ETag, not `DTSTAMP`, so a mid-day revision still invalidates the cache within the hour.
 
 **Request parameter handling:**
 

@@ -125,3 +125,64 @@ describe('buildICS', () => {
     expect(count).toBe(2);
   });
 });
+
+describe('DTSTAMP stability', () => {
+  const event: CalendarEvent = {
+    uid: 'stamp-test@space-calendar',
+    title: 'Full Moon',
+    start: '2026-03-03T08:45:00Z',
+    end: '2026-03-03T09:45:00Z',
+    allDay: false,
+    description: 'Test.',
+    category: 'moon-phases',
+  };
+
+  it('truncates DTSTAMP to the start of the UTC day', () => {
+    const ics = buildICS([event], 'Test', undefined, new Date('2026-03-03T14:37:52Z'));
+    expect(ics).toContain('DTSTAMP:20260303T000000Z');
+  });
+
+  it('produces a byte-identical body across a cache lifetime, so the ETag can match', () => {
+    const early = buildICS([event], 'Test', undefined, new Date('2026-03-03T00:00:01Z'));
+    const late = buildICS([event], 'Test', undefined, new Date('2026-03-03T23:59:59Z'));
+    expect(early).toBe(late);
+  });
+
+  it('changes the body when event content changes within the same day', () => {
+    // DTSTAMP is day-granular, so it does NOT move on a mid-day revision. The response
+    // ETag is a hash of the whole body, not of DTSTAMP, so a content change still
+    // invalidates it and the client gets a 200 with the new feed rather than a 304.
+    const at = new Date('2026-03-03T14:30:00Z');
+    const before = buildICS([event], 'Test', undefined, at);
+    const edited = buildICS([{ ...event, title: 'Aurora likely — Kp 7' }], 'Test', undefined, at);
+    const added = buildICS([event, { ...event, uid: 'stamp-test-2@space-calendar' }], 'Test', undefined, at);
+    const removed = buildICS([], 'Test', undefined, at);
+
+    expect(edited).not.toBe(before);
+    expect(added).not.toBe(before);
+    expect(removed).not.toBe(before);
+    // ...and the stamp itself is unchanged across all of them.
+    for (const body of [before, edited, added]) {
+      expect(body).toContain('DTSTAMP:20260303T000000Z');
+    }
+  });
+
+  it('advances DTSTAMP at the day boundary', () => {
+    const before = buildICS([event], 'Test', undefined, new Date('2026-03-03T23:59:59Z'));
+    const after = buildICS([event], 'Test', undefined, new Date('2026-03-04T00:00:00Z'));
+    expect(before).not.toBe(after);
+    expect(after).toContain('DTSTAMP:20260304T000000Z');
+  });
+
+  it('uses one DTSTAMP for every event in the feed', () => {
+    const ics = buildICS(
+      [event, { ...event, uid: 'stamp-test-2@space-calendar' }],
+      'Test',
+      undefined,
+      new Date('2026-03-03T14:37:52Z'),
+    );
+    const stamps = [...ics.matchAll(/DTSTAMP:(\d{8}T\d{6}Z)/g)].map((m) => m[1]);
+    expect(stamps).toHaveLength(2);
+    expect(new Set(stamps).size).toBe(1);
+  });
+});

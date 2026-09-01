@@ -22,7 +22,26 @@ function formatContactTime(utcISO: string, tz?: string): string {
   }
 }
 
-export function buildICS(events: CalendarEvent[], calName: string, tz?: string): string {
+/** DTSTAMP marks when this revision of the calendar object was produced. A wall-clock value
+ *  changes the body on every request, which defeats the response ETag and tells clients the
+ *  calendar was revised on every poll, so it is truncated to keep the body byte-identical
+ *  while the content is unchanged.
+ *
+ *  The truncation period is deliberately much longer than max-age. Each boundary crossing
+ *  rewrites DTSTAMP and so invalidates the ETag with no content change behind it, and a
+ *  client revalidating one hour after max-age expiry crosses every boundary of an
+ *  hour-or-shorter period — giving it a 0% conditional-request hit rate. At a day, both a
+ *  max-age-honoring client and one that polls every ten minutes hit >95%. Content changes
+ *  are not carried by DTSTAMP at all: the ETag hashes the whole body, so a mid-day revision
+ *  still invalidates it and the client refetches. */
+function stampForDay(now: Date): Date {
+  const stamp = new Date(now);
+  stamp.setUTCHours(0, 0, 0, 0);
+  return stamp;
+}
+
+export function buildICS(events: CalendarEvent[], calName: string, tz?: string, now: Date = new Date()): string {
+  const dtstamp = formatDateTime(stampForDay(now));
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -37,7 +56,7 @@ export function buildICS(events: CalendarEvent[], calName: string, tz?: string):
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:${event.uid}`);
     lines.push('TRANSP:TRANSPARENT');
-    lines.push(`DTSTAMP:${formatDateTime(new Date())}`);
+    lines.push(`DTSTAMP:${dtstamp}`);
     lines.push(`SUMMARY:${escapeText(event.title)}`);
 
     if (event.allDay) {

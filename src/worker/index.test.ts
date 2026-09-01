@@ -197,6 +197,63 @@ describe('worker request routing', () => {
     expect(res.status).toBe(200);
   });
 
+  it('sets an ETag on the feed', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.headers.get('ETag')).toMatch(/^"[0-9a-f]{32}"$/);
+  });
+
+  it('returns 304 with an empty body when If-None-Match matches', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const url = 'https://space-calendar.workers.dev/feed.ics?c=moon-phases';
+
+    const first = await worker.fetch(makeRequest(url), env, ctx);
+    const etag = first.headers.get('ETag')!;
+
+    const second = await worker.fetch(
+      new Request(url, { headers: { 'If-None-Match': etag } }),
+      env,
+      ctx,
+    );
+    expect(second.status).toBe(304);
+    expect(await second.text()).toBe('');
+    expect(second.headers.get('ETag')).toBe(etag);
+  });
+
+  it('accepts a weakened validator in If-None-Match', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const url = 'https://space-calendar.workers.dev/feed.ics?c=moon-phases';
+
+    const first = await worker.fetch(makeRequest(url), env, ctx);
+    const etag = first.headers.get('ETag')!;
+
+    const second = await worker.fetch(
+      new Request(url, { headers: { 'If-None-Match': `W/${etag}, "other"` } }),
+      env,
+      ctx,
+    );
+    expect(second.status).toBe(304);
+  });
+
+  it('serves the full body when If-None-Match does not match', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      new Request('https://space-calendar.workers.dev/feed.ics?c=moon-phases', {
+        headers: { 'If-None-Match': '"stale"' },
+      }),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('Full Moon');
+  });
+
   it('returns cached response on cache hit without reading KV', async () => {
     const cachedResponse = new Response('CACHED_ICS', {
       headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
