@@ -188,6 +188,20 @@
     let globalLat = null;
     const detectedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+    // A visitor arriving from a campaign lands here with ?utm_source=..., which is carried
+    // into the subscription URL they generate. The worker ignores the parameter, but it
+    // shows up in its logs on every future fetch — so a campaign can be measured by who
+    // actually subscribed and kept syncing, not just who clicked through once.
+    function campaignSource() {
+      const raw = new URLSearchParams(location.search).get('utm_source');
+      if (!raw) return null;
+      // This value is persisted into a subscriber's feed URL indefinitely, so it is
+      // clamped to a conservative character set and length rather than trusted as given.
+      return raw.replace(/[^A-Za-z0-9_.-]/g, '').slice(0, 32) || null;
+    }
+
+    const CAMPAIGN_SOURCE = campaignSource();
+
     function toggleClubsSection(checked) {
       document.getElementById('clubs-section').style.display = checked ? 'block' : 'none';
       update();
@@ -290,6 +304,7 @@
       if (hemi === 'south') url.searchParams.set('hemi', 'south');
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
+      if (CAMPAIGN_SOURCE) url.searchParams.set('utm_source', CAMPAIGN_SOURCE);
       return url.toString();
     }
 

@@ -147,6 +147,7 @@ parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not ge
 | `hemi` | Accepts `s`, `south`, `southern`, any case; anything else is northern |
 | Non-numeric `lat` | Treated as absent rather than `NaN`, which would otherwise fail the latitude/hemisphere cross-check and 400 a working subscription |
 | Fixed-offset `tz` (`Etc/GMT-2`, `UTC+2`, `+02:00`) | Canonicalized to the equivalent `Etc/GMT±N` zone and served as given. These carry no DST rules, so a subscriber whose region observes DST sees contact times drift by an hour for half the year — but the real zone cannot be recovered from an offset (`Etc/GMT-2` is equally consistent with Europe/Kyiv year-round and Europe/Warsaw in July), so guessing would be wrong in the other direction. Logged with `console.warn` so the affected population stays visible in Workers observability |
+| `utm_source` and other unknown parameters | Ignored by the parser, but preserved in the URL. The configurator copies `utm_source` from its own landing URL into the subscription URL it generates, so a campaign shows up in Workers logs on every subsequent fetch — measuring who actually subscribed and kept syncing, not just who clicked. The tag does not change the response body (identical ETag), so its only cost is a separate edge-cache entry per campaign |
 | Unparseable `tz` | Dropped, so contact times fall back to UTC. Previously this reached `tzOffsetHours` as an unvalidated string and silently resolved to longitude 0° for the Milky Way and deep-sky windows |
 
 **Category slugs:**

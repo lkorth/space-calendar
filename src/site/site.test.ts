@@ -50,6 +50,49 @@ describe('configurator subscribe flow', () => {
   });
 });
 
+describe('configurator campaign attribution', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  // Run the real campaignSource() from the page against a stubbed location, so these
+  // assert behavior rather than the presence of a string.
+  function campaignSource(search: string): string | null {
+    const src = /function campaignSource\(\)[\s\S]*?\n    \}/.exec(html)?.[0];
+    expect(src, 'campaignSource() not found in index.html').toBeDefined();
+    return new Function('location', `${src}; return campaignSource();`)({ search }) as string | null;
+  }
+
+  it('picks up utm_source from the landing URL', () => {
+    expect(campaignSource('?utm_source=instagram')).toBe('instagram');
+    expect(campaignSource('?utm_source=instagram-orionids')).toBe('instagram-orionids');
+  });
+
+  it('returns null when there is no campaign', () => {
+    expect(campaignSource('')).toBeNull();
+    expect(campaignSource('?utm_medium=cpc')).toBeNull();
+    expect(campaignSource('?utm_source=')).toBeNull();
+  });
+
+  it('strips characters that should never reach a persisted feed URL', () => {
+    // The value ends up in the subscriber's calendar client indefinitely.
+    expect(campaignSource('?utm_source=insta%20gram')).toBe('instagram');
+    expect(campaignSource('?utm_source=%3Cscript%3E')).toBe('script');
+    expect(campaignSource('?utm_source=%26c%3Devil')).toBe('cevil');
+    expect(campaignSource('?utm_source=%2E%2E%2F%2E%2E')).toBe('....');
+  });
+
+  it('caps the length so a crafted link cannot bloat every feed request', () => {
+    expect(campaignSource(`?utm_source=${'a'.repeat(500)}`)).toHaveLength(32);
+  });
+
+  it('drops a value that sanitizes to nothing', () => {
+    expect(campaignSource('?utm_source=%21%40%23%24')).toBeNull();
+  });
+
+  it('appends utm_source to the generated subscription URL', () => {
+    expect(html).toContain("url.searchParams.set('utm_source', CAMPAIGN_SOURCE)");
+  });
+});
+
 describe('configurator DOM wiring', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 
