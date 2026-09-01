@@ -50,6 +50,11 @@
     .btn-google { background: #1a1a2e; color: #e0e0e8; border: 1px solid #3a3a6a; }
     .btn-google:hover { background: #2a2a4e; }
     .empty-msg { color: #6060a0; font-size: 0.9rem; }
+    .footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #1a1a2e; display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; }
+    .footer-note { font-size: 0.8rem; color: #6060a0; line-height: 1.5; flex: 1 1 18rem; }
+    .btn-sponsor { display: inline-flex; align-items: center; gap: 0.45rem; background: #1a1a2e; color: #c0c0e8; border: 1px solid #3a3a6a; padding: 0.45rem 0.9rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; text-decoration: none; flex-shrink: 0; }
+    .btn-sponsor:hover { background: #2a2a4e; border-color: #bf3989; color: #e0e0e8; }
+    .btn-sponsor svg { color: #db61a2; flex-shrink: 0; }
     .copied { background: #306030 !important; }
     .needs-location { font-size: 0.75rem; color: #5858a0; margin-top: 0.3rem; }
     .preview-body { padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; min-height: 60px; }
@@ -159,6 +164,14 @@
         <button class="btn-copy" id="btn-copy" onclick="copyUrl()" disabled>Copy URL</button>
         <button class="btn-google" id="btn-google" onclick="addToGoogle()" disabled>Add to Google Calendar</button>
       </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-note">Space Calendar is free and open source, with no ads and no accounts. If you find it useful, you can help cover what it costs to run.</div>
+      <a class="btn-sponsor" href="https://github.com/sponsors/lkorth" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Sponsor
+      </a>
     </div>
   </div>
 

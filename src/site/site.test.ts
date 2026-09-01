@@ -24,6 +24,20 @@ describe('configurator', () => {
   });
 });
 
+describe('configurator sponsor link', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  it('points at the GitHub Sponsors profile', () => {
+    expect(html).toContain('https://github.com/sponsors/lkorth');
+  });
+
+  it('opens in a new tab without leaking the opener', () => {
+    const anchor = /<a class="btn-sponsor"[^>]*>/.exec(html)?.[0] ?? '';
+    expect(anchor).toContain('target="_blank"');
+    expect(anchor).toContain('rel="noopener"');
+  });
+});
+
 describe('e2e test coverage', () => {
   it('has a test for every category slug', () => {
     const e2e = readFileSync('src/worker/feed.e2e.test.ts', 'utf-8');
