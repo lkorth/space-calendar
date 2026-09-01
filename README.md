@@ -1,5 +1,7 @@
 # Space Calendar
 
+[![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-db61a2?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/lkorth)
+
 A free, open source space and astronomy calendar you can subscribe to in Google Calendar, Apple Calendar, Outlook, or any app that supports ICS feeds.
 
 ## Why this exists
@@ -72,6 +74,10 @@ Contributions welcome. The most valuable ongoing contribution is maintaining the
 - **`comets.yaml`** — adding notable comets when they're discovered or confirmed as naked-eye visible
 
 For bugs, data corrections, or feature requests, open a pull request or issue.
+
+## Support
+
+Space Calendar is free, has no ads, and requires no account. If it's useful to you, [sponsoring on GitHub](https://github.com/sponsors/lkorth) helps cover what it costs to run.
 
 ## License
 
