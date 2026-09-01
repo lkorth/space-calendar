@@ -118,5 +118,15 @@
     "description": "The Delta Aquariids meteor shower reaches its peak tonight, produced by debris left behind by Comet 96P/Machholz as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 25 meteors per hour (ZHR). Meteors radiate from the constellation Aquarius but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 7% illuminated — near new moon. Dark skies all night make this an excellent year for this shower.",
     "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Southern+delta+Aquariids",
     "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-perseids-2027@space-calendar",
+    "title": "🌠 Perseids Meteor Shower — Peak Night",
+    "start": "2027-08-13",
+    "end": "2027-08-14",
+    "allDay": true,
+    "description": "The Perseids meteor shower reaches its peak tonight, produced by debris left behind by Comet 109P/Swift-Tuttle as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 100 meteors per hour (ZHR). Meteors radiate from the constellation Perseus but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 90% illuminated — near full moon. Bright moonlight will significantly reduce visible meteor counts. Look for bright fireballs that cut through the glare.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Perseids",
+    "category": "meteor-showers"
   }
 ]

@@ -58,5 +58,15 @@
     "description": "On August 24, 2006, the International Astronomical Union voted to reclassify Pluto as a \"dwarf planet\" — removing it from the list of eight official planets in the solar system. The decision introduced a new definition of \"planet\": an object that orbits the Sun, has sufficient mass to be roughly spherical, and has \"cleared the neighborhood\" around its orbit. Pluto fails the third criterion because it shares its orbital region with other Kuiper Belt objects. The vote was controversial and remains debated, but it clarified the taxonomy of our solar system as thousands of similar objects were discovered beyond Neptune.\n",
     "url": "https://www.iau.org/public/themes/pluto/",
     "category": "history"
+  },
+  {
+    "uid": "history-19770820@space-calendar",
+    "title": "50 Years Ago: Voyager 2 Launch — Grand Tour of the Outer Planets (1977)",
+    "start": "2027-08-20",
+    "end": "2027-08-21",
+    "allDay": true,
+    "description": "NASA launched Voyager 2 on August 20, 1977, on a trajectory that would take advantage of a rare planetary alignment to visit Jupiter, Saturn, Uranus, and Neptune in a single mission. It remains the only spacecraft to have visited Uranus and Neptune. Now over 20 billion km from Earth, Voyager 2 crossed into interstellar space in 2018 and continues to transmit data. Its golden record — containing sounds and images of Earth — was designed to be found by another civilization.\n",
+    "url": "https://voyager.jpl.nasa.gov/",
+    "category": "history"
   }
 ]

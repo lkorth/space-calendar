@@ -1,25 +1,5 @@
 [
   {
-    "uid": "moon-phase-2026-02-01T22:09:00.000Z@space-calendar",
-    "title": "🌕 Full Moon — Snow Moon",
-    "start": "2026-02-01T22:09:00.000Z",
-    "end": "2026-02-01T22:09:00.000Z",
-    "allDay": false,
-    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the heavy snowfall common in February in many Indigenous North American traditions. Also called the Hunger Moon.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
-    "uid": "moon-phase-2026-02-17T12:01:00.000Z@space-calendar",
-    "title": "🌑 New Moon",
-    "start": "2026-02-17T12:01:00.000Z",
-    "end": "2026-02-17T12:01:00.000Z",
-    "allDay": false,
-    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
     "uid": "moon-phase-2026-03-03T11:38:00.000Z@space-calendar",
     "title": "🌕 Full Moon — Worm Moon",
     "start": "2026-03-03T11:38:00.000Z",
@@ -366,6 +346,36 @@
     "end": "2027-07-18T15:45:00.000Z",
     "allDay": false,
     "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the time of year when male white-tailed deer begin growing their new antlers in velvet.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-08-02T10:05:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-08-02T10:05:00.000Z",
+    "end": "2027-08-02T10:05:00.000Z",
+    "allDay": false,
+    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-08-17T07:29:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Sturgeon Moon",
+    "start": "2027-08-17T07:29:00.000Z",
+    "end": "2027-08-17T07:29:00.000Z",
+    "allDay": false,
+    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed by Algonquin peoples for the large sturgeon fish of the Great Lakes, most readily caught during August.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-08-31T17:41:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-08-31T17:41:00.000Z",
+    "end": "2027-08-31T17:41:00.000Z",
+    "allDay": false,
+    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
     "url": "https://aa.usno.navy.mil/data/MoonPhases",
     "category": "moon-phases"
   }

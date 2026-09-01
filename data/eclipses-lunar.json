@@ -118,5 +118,29 @@
     ],
     "url": "https://science.nasa.gov/eclipses/",
     "category": "eclipses-lunar"
+  },
+  {
+    "uid": "eclipse-lunar-2027-08-17@space-calendar",
+    "title": "🌕 Penumbral Lunar Eclipse",
+    "start": "2027-08-17T05:25:00Z",
+    "end": "2027-08-17T09:03:00Z",
+    "allDay": false,
+    "description": "A penumbral lunar eclipse is subtle — the Moon passes through Earth's outer shadow (penumbra), causing a slight dimming that requires careful observation to notice.\n\nVisible from: Americas, Pacific.",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2027-08-17T05:25:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2027-08-17T07:14:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2027-08-17T09:03:00Z"
+      }
+    ],
+    "url": "https://science.nasa.gov/eclipses/",
+    "category": "eclipses-lunar"
   }
 ]

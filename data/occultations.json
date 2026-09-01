@@ -1,15 +1,5 @@
 [
   {
-    "uid": "occultation-regulus-2026-02-02@space-calendar",
-    "title": "🌑 Lunar Occultation — Moon covers Regulus",
-    "start": "2026-02-02T08:45:00.000Z",
-    "end": "2026-02-02T09:40:00.000Z",
-    "allDay": false,
-    "description": "The Moon passes directly in front of the star Regulus (magnitude +1.4), briefly hiding it from view. This is a lunar occultation — one of the most dramatic naked-eye astronomical events, since the target disappears almost instantaneously behind the Moon's limb and reappears just as suddenly.\n\nThe just-past-full Moon (98% illuminated) passes in front of Regulus, the brightest star in Leo. The event occurs in daylight for much of the eastern US — use binoculars to find the Moon in the blue sky and watch Regulus blink out at the Moon's dark limb.\n\nVisible from: Eastern North America, including the eastern United States and eastern Canada.\n\nDisappears: 08:45 UTC\nReappears: 09:40 UTC",
-    "url": "https://www.skyandtelescope.com/observing/sky-at-a-glance/",
-    "category": "occultations"
-  },
-  {
     "uid": "occultation-regulus-2026-04-25@space-calendar",
     "title": "🌑 Lunar Occultation — Moon covers Regulus",
     "start": "2026-04-25T05:10:00.000Z",
