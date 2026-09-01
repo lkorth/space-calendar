@@ -283,3 +283,163 @@ describe('Worker feed — static data spot checks', () => {
     expect(res.status).toBe(200);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Conditional requests
+// ---------------------------------------------------------------------------
+
+describe('Worker feed — conditional requests', () => {
+  const params = '?c=moon-phases&tz=America/Chicago';
+
+  // The worker always emits a strong validator, but Cloudflare weakens it to W/"..."
+  // whenever it compresses the response, which depends on the client's Accept-Encoding.
+  // Both forms are accepted here; what matters is that the value round-trips to a 304.
+  const ETAG = /^(?:W\/)?"[0-9a-f]{32}"$/;
+
+  it('sets an ETag on the ICS feed', async () => {
+    const { res } = await getFeed(params, { bypassCache: false });
+    expect(res.headers.get('etag')).toMatch(ETAG);
+  });
+
+  it('sets an ETag on the JSON feed', async () => {
+    const res = await fetch(`${BASE}/feed.json${params}`);
+    expect(res.headers.get('etag')).toMatch(ETAG);
+  });
+
+  it('answers a matching If-None-Match on the JSON feed with 304', async () => {
+    const first = await fetch(`${BASE}/feed.json${params}`);
+    const etag = first.headers.get('etag')!;
+
+    const res = await fetch(`${BASE}/feed.json${params}`, { headers: { 'If-None-Match': etag } });
+    expect(res.status).toBe(304);
+  });
+
+  it('answers a matching If-None-Match with an empty 304', async () => {
+    const { res: first } = await getFeed(params, { bypassCache: false });
+    const etag = first.headers.get('etag')!;
+
+    const res = await fetch(`${BASE}/feed.ics${params}`, { headers: { 'If-None-Match': etag } });
+    expect(res.status).toBe(304);
+    expect(await res.text()).toBe('');
+    expect(res.headers.get('etag')).toBe(etag);
+  });
+
+  it('accepts a validator that a cache has weakened', async () => {
+    const { res: first } = await getFeed(params, { bypassCache: false });
+    const etag = first.headers.get('etag')!;
+
+    const res = await fetch(`${BASE}/feed.ics${params}`, {
+      headers: { 'If-None-Match': `W/${etag}, "other"` },
+    });
+    expect(res.status).toBe(304);
+  });
+
+  it('serves the full body when the validator does not match', async () => {
+    const res = await fetch(`${BASE}/feed.ics${params}`, { headers: { 'If-None-Match': '"stale"' } });
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('BEGIN:VCALENDAR');
+  });
+
+  it('stamps DTSTAMP at the start of the UTC day so the body is stable between changes', async () => {
+    const { body } = await getFeed('?c=moon-phases');
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    expect(body).toContain(`DTSTAMP:${today}T000000Z`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Legacy and malformed subscription URLs
+// ---------------------------------------------------------------------------
+
+describe('Worker feed — legacy category slugs', () => {
+  it('expands sky-events to its replacement categories', async () => {
+    const { res, body } = await getFeed('?c=sky-events');
+    expect(res.status).toBe(200);
+    // Titles are emoji-prefixed, so match on the distinctive words instead.
+    expect(body).toContain('Moon');
+    expect(body).toMatch(/Equinox|Solstice/);
+    expect(body).toContain('Eclipse');
+  });
+
+  it('expands planetary to its replacement categories', async () => {
+    const { res, body } = await getFeed('?c=planetary');
+    expect(res.status).toBe(200);
+    // comets is also in the expansion but is legitimately empty in some windows,
+    // so it is not asserted here.
+    expect(body).toMatch(/Opposition|Elongation/);
+  });
+
+  it('serves the production legacy URL that mixes groups with their own members', async () => {
+    const { res, body } = await getFeed('?c=moon-phases,sky-events,planetary,meteor-showers,launches,history');
+    expect(res.status).toBe(200);
+    // Each UID appears once despite moon-phases and meteor-showers being listed
+    // both directly and via sky-events.
+    const uids = [...body.matchAll(/^UID:(.+)$/gm)].map((m) => m[1]!.trim());
+    expect(uids.length).toBeGreaterThan(0);
+    expect(new Set(uids).size).toBe(uids.length);
+  });
+});
+
+describe('Worker feed — malformed subscription URLs', () => {
+  it('recovers hemi from a double-encoded query tail', async () => {
+    const { body } = await getFeed('?c=solstices-equinoxes%26hemi%3Dsouth');
+    expect(body).toContain('Southern Hemisphere');
+  });
+
+  it('recovers lat from a double-encoded query tail', async () => {
+    // The latitude/hemisphere cross-check can only reject this if lat was parsed.
+    const { res: mismatched } = await getFeed('?c=moon-phases%26lat%3D-45%26hemi%3Dnorth');
+    expect(mismatched.status).toBe(400);
+
+    const { res: consistent } = await getFeed('?c=moon-phases%26lat%3D45%26hemi%3Dnorth');
+    expect(consistent.status).toBe(200);
+  });
+
+  it('recovers tz from a double-encoded query tail', async () => {
+    const encoded = await getFeed('?c=eclipses-lunar%26tz%3DAsia%2FTokyo');
+    const plain = await getFeed('?c=eclipses-lunar&tz=Asia/Tokyo');
+    const utc = await getFeed('?c=eclipses-lunar');
+
+    const contactTime = (ics: string) => /Greatest eclipse: (\d{2}:\d{2} [^\\\r\n]+)/.exec(ics)?.[1];
+    expect(contactTime(encoded.body)).toBeDefined();
+    expect(contactTime(encoded.body)).toBe(contactTime(plain.body));
+    expect(contactTime(encoded.body)).not.toBe(contactTime(utc.body));
+  });
+
+  it('does not reject a non-numeric latitude', async () => {
+    const { res } = await getFeed('?c=moon-phases&lat=not-a-number');
+    expect(res.status).toBe(200);
+  });
+
+  it('accepts every spelling of the southern hemisphere', async () => {
+    for (const hemi of ['south', 'southern', 'S']) {
+      const { body } = await getFeed(`?c=solstices-equinoxes&hemi=${hemi}`);
+      expect(body, `hemi=${hemi}`).toContain('Southern Hemisphere');
+    }
+  });
+});
+
+describe('Worker feed — timezone handling', () => {
+  const contactTime = (ics: string) => /Greatest eclipse: (\d{2}:\d{2} [^\\\r\n]+)/.exec(ics)?.[1];
+
+  it('normalizes every fixed-offset spelling to one zone', async () => {
+    const results = await Promise.all(
+      ['Etc%2FGMT-2', 'UTC%2B2', '%2B02%3A00'].map((tz) => getFeed(`?c=eclipses-lunar&tz=${tz}`)),
+    );
+    const times = results.map((r) => contactTime(r.body));
+    expect(times[0]).toBeDefined();
+    expect(new Set(times).size).toBe(1);
+  });
+
+  it('keeps serving the fixed-offset subscription seen in production', async () => {
+    const { res } = await getFeed(
+      '?c=moon-phases,meteor-showers,eclipses-solar,eclipses-lunar,solstices-equinoxes,conjunctions,comets,mission-milestones&tz=Etc%2FGMT-2',
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it('falls back to UTC for an unparseable timezone', async () => {
+    const { body } = await getFeed('?c=eclipses-lunar&tz=Not%2FATimezone');
+    expect(contactTime(body)).toMatch(/UTC$/);
+  });
+});
