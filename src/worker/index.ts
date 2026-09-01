@@ -10,6 +10,8 @@ import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
 
+export const SITE_URL = 'https://lkorth.github.io/space-calendar/';
+
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
   ...STATIC_CATEGORIES
     .filter((slug) => slug !== 'solstices-equinoxes')
@@ -21,7 +23,10 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === '/') {
-      return Response.redirect('https://space-calendar.pages.dev', 301);
+      // The configurator is published to GitHub Pages by .github/workflows/deploy-site.yml.
+      // This is the domain baked into every subscription URL, so it is the one subscribers
+      // see and share — it must land somewhere real.
+      return Response.redirect(SITE_URL, 301);
     }
 
     if (url.pathname !== '/feed.ics' && url.pathname !== '/feed.json') {
