@@ -44,6 +44,11 @@ Returns `{ "name": "...", "events": [...] }` where each event is a `CalendarEven
 | `lat` | Whole-degree latitude. Required for `aurora` and `aurora-australis`. Use a negative value for southern hemisphere. |
 | `hemi` | `north` (default) or `south`. Affects solstice/equinox event titles and descriptions. |
 | `tz` | IANA timezone string (e.g. `America/New_York`). Used for contact times in event descriptions. |
+| `club` | Astronomy club ID (e.g. `jgap`). Required for `astronomy-clubs`. |
+
+Prefer a real IANA zone name for `tz`. A fixed offset (`UTC+2`, `+02:00`) is accepted, but
+it carries no daylight-saving rules, so times in event descriptions will be an hour off for
+part of the year if your region observes DST.
 
 ## How it works
 

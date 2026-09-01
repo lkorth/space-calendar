@@ -5,6 +5,7 @@ import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts'
 import { milkyWayCategory } from './categories/milky-way.ts';
 import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { missionMilestonesCategory } from './categories/mission-milestones.ts';
+import { isFixedOffsetTimezone, parseParams } from './params.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
@@ -36,6 +37,13 @@ export default {
       if (latIsNorth !== (params.hemisphere === 'northern')) {
         return new Response('Hemisphere and latitude do not match', { status: 400 });
       }
+    }
+
+    if (isFixedOffsetTimezone(params.tz)) {
+      // Carries no DST rules, so contact times drift by an hour for half the year if the
+      // subscriber's region observes DST. Logged rather than corrected because the real
+      // zone cannot be recovered from an offset — see isFixedOffsetTimezone.
+      console.warn('Fixed-offset timezone requested:', params.tz);
     }
 
     const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
@@ -109,24 +117,6 @@ function buildCacheKey(request: Request, deployId?: string): Request {
   const url = new URL(request.url);
   if (deployId) url.searchParams.set('_v', deployId);
   return new Request(url.toString());
-}
-
-function parseParams(url: URL): RequestParams {
-  const rawCategories = (url.searchParams.get('c') ?? '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean) as CategorySlug[];
-
-  const rawLat = url.searchParams.get('lat');
-  const lat = rawLat ? Math.round(parseFloat(rawLat)) : undefined;
-  const tz = url.searchParams.get('tz') ?? undefined;
-
-  const rawHemi = url.searchParams.get('hemi');
-  const hemisphere = rawHemi === 'south' ? 'southern' : 'northern';
-
-  const club = url.searchParams.get('club') ?? undefined;
-
-  return { categories: rawCategories, lat, tz, hemisphere, club };
 }
 
 function buildCalName(categories: CategorySlug[]): string {

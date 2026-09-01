@@ -123,7 +123,7 @@ Aurora keys are keyed by whole-number latitude (e.g., `aurora:45`, `aurora:52`),
 
 Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with identical parameters.
 
-- Parses the `c` query parameter as a comma-separated list of category slugs
+- Parses the `c` query parameter as a comma-separated list of category slugs (see **Request parameter handling** below)
 - Reads each requested static category from KV
 - If `launches` is requested: reads from KV; on cache miss, fetches from Launch Library 2, filters to notable launches, writes to KV with 1-hour TTL
 - If `aurora` is requested: rounds `lat` to the nearest integer, reads `aurora:<lat>` from KV; on cache miss, fetches NOAA SWPC 3-day Kp forecast, computes visibility windows for that latitude, writes to KV with 3–4 hour TTL
@@ -131,6 +131,22 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
   - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
   - `/feed.json` — returns `{ name, events }` as JSON (`Content-Type: application/json`)
 - Sets `Cache-Control: max-age=3600` on both endpoints
+
+**Request parameter handling:**
+
+Subscription URLs live in calendar clients indefinitely and cannot be edited by us, so the
+parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not generate today:
+
+| Input | Handling |
+|-------|----------|
+| Legacy group slugs `sky-events`, `planetary` | Expanded to their replacement slugs via `LEGACY_CATEGORY_ALIASES`, then deduplicated against any explicitly listed members |
+| Unknown slugs | Ignored; the rest of the feed is still served |
+| Double-encoded query tails (`c=moon-phases%26tz%3D...`) | The swallowed `key=value` pairs are split back out and merged in; an explicitly supplied parameter always wins. Seen on links rewritten by ChatGPT |
+| Repeated `?c=` parameters | Concatenated rather than dropped |
+| `hemi` | Accepts `s`, `south`, `southern`, any case; anything else is northern |
+| Non-numeric `lat` | Treated as absent rather than `NaN`, which would otherwise fail the latitude/hemisphere cross-check and 400 a working subscription |
+| Fixed-offset `tz` (`Etc/GMT-2`, `UTC+2`, `+02:00`) | Canonicalized to the equivalent `Etc/GMT±N` zone and served as given. These carry no DST rules, so a subscriber whose region observes DST sees contact times drift by an hour for half the year — but the real zone cannot be recovered from an offset (`Etc/GMT-2` is equally consistent with Europe/Kyiv year-round and Europe/Warsaw in July), so guessing would be wrong in the other direction. Logged with `console.warn` so the affected population stays visible in Workers observability |
+| Unparseable `tz` | Dropped, so contact times fall back to UTC. Previously this reached `tzOffsetHours` as an unvalidated string and silently resolved to longitude 0° for the Milky Way and deep-sky windows |
 
 **Category slugs:**
 
@@ -153,6 +169,11 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
 | `aurora` | Aurora borealis forecasts — requires `&lat=<whole_degree>` |
 | `aurora-australis` | Aurora australis forecasts — requires `&lat=<negative_whole_degree>` |
 | `milky-way` | Milky Way viewing windows |
+| `deep-sky` | Deep sky object visibility |
+| `mission-milestones` | Spacecraft mission milestones (live data) |
+| `astronomy-clubs` | Club event calendars — requires `&club=<id>` |
+
+Retired slugs still honored for existing subscriptions: `sky-events` → `moon-phases`, `meteor-showers`, `solstices-equinoxes`, `eclipses-solar`, `eclipses-lunar`; `planetary` → `oppositions`, `elongations`, `asteroids`, `comets`.
 
 ### 4. Configurator UI (GitHub Pages)
 

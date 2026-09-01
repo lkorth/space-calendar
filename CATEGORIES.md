@@ -5,6 +5,11 @@ This document defines which event types are included in the calendar, which are 
 ## Included Categories
 
 ### Celestial — Sky Events
+> Retired slug: `sky-events` selected this whole table before it was split into one slug per
+> event type. Subscription URLs that still request it are expanded to the five slugs below,
+> so existing subscriptions keep working. Same for `planetary` and the Celestial — Planetary
+> table. See `LEGACY_CATEGORY_ALIASES` in `src/worker/params.ts`.
+
 Events visible to the naked eye that require no special equipment and broadly relevant to skywatchers worldwide. Add `&hemi=south` to your subscription URL for Southern Hemisphere season labeling.
 
 | Emoji | Category | Description |

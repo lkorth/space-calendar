@@ -154,6 +154,49 @@ describe('worker request routing', () => {
     expect(res.headers.get('Cache-Control')).toBeTruthy();
   });
 
+  it('expands legacy group slugs into their replacement categories', async () => {
+    const env = makeEnv({
+      'static:moon-phases': JSON.stringify([moonEvent]),
+      'static:eclipses-lunar': JSON.stringify([eclipseEvent]),
+    });
+    // A subscription URL predating the split of the coarse groups into per-event slugs.
+    // Static categories only — a live slug here would make this unit test hit the network.
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=sky-events,history'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    const body = await res.text();
+    expect(res.status).toBe(200);
+    expect(body).toContain('Full Moon');
+    expect(body).toContain('Total Lunar Eclipse');
+  });
+
+  it('recovers parameters swallowed by a double-encoded URL', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      makeRequest(
+        'https://space-calendar.workers.dev/feed.ics?c=moon-phases%26lat%3D-33%26hemi%3Dsouth%26tz%3DAustralia%2FSydney',
+      ),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    // Without recovery the swallowed lat/hemi never parse, and the negative latitude
+    // would not be checked against the southern hemisphere at all.
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('Full Moon');
+  });
+
+  it('does not 400 on a non-numeric latitude', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&lat=not-a-number'),
+      env,
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(200);
+  });
+
   it('returns cached response on cache hit without reading KV', async () => {
     const cachedResponse = new Response('CACHED_ICS', {
       headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
