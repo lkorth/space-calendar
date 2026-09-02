@@ -443,3 +443,63 @@ describe('Worker feed — timezone handling', () => {
     expect(contactTime(body)).toMatch(/UTC$/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Static assets — the configurator shares the feed's domain
+// ---------------------------------------------------------------------------
+
+describe('Worker site — static assets', () => {
+  it('serves the configurator at the root without redirecting', async () => {
+    // The root previously 301'd to a pages.dev host that no longer resolved. Assets are
+    // matched before the Worker runs, so the page is served directly from this domain.
+    const res = await fetch(`${BASE}/`, { redirect: 'manual' });
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+
+    const body = await res.text();
+    expect(body).toContain('Space Calendar');
+    expect(body).toContain('id="btn-apple"');
+  });
+
+  it('serves the latitude table the page fetches at runtime', async () => {
+    // The configurator resolves zip codes client-side against this file, requested with a
+    // relative URL — so it has to resolve on the same origin as the page.
+    const res = await fetch(`${BASE}/zip-latitudes.json`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('application/json');
+  });
+
+  it('does not publish the site test file', async () => {
+    // src/site/.assetsignore keeps it out of the bundle; GitHub Pages used to serve it.
+    const res = await fetch(`${BASE}/site.test.ts`);
+    expect(res.status).toBe(404);
+  });
+
+  it('does not publish the assetsignore control file', async () => {
+    const res = await fetch(`${BASE}/.assetsignore`);
+    expect(res.status).toBe(404);
+  });
+
+  it('still routes the feed paths to the Worker', async () => {
+    // Assets must not shadow the feed endpoints.
+    const [ics, json] = await Promise.all([
+      fetch(`${BASE}/feed.ics?c=moon-phases`),
+      fetch(`${BASE}/feed.json?c=moon-phases`),
+    ]);
+    expect(ics.headers.get('content-type')).toContain('text/calendar');
+    expect(json.headers.get('content-type')).toContain('application/json');
+  });
+
+  it('404s an unknown path rather than falling back to the page', async () => {
+    // not_found_handling is left at its default, so there is no SPA-style catch-all that
+    // would answer 200 for a mistyped feed URL.
+    const res = await fetch(`${BASE}/not-a-real-path`);
+    expect(res.status).toBe(404);
+  });
+
+  it('accepts a campaign-tagged landing URL', async () => {
+    const res = await fetch(`${BASE}/?utm_source=instagram`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+  });
+});
