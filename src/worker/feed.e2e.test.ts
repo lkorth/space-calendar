@@ -445,6 +445,76 @@ describe('Worker feed — timezone handling', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Subscriber ids
+// ---------------------------------------------------------------------------
+
+describe('Worker feed — subscriber ids', () => {
+  const params = '?c=moon-phases&tz=America/Chicago';
+
+  /** A v7-shaped id the edge has certainly never served before. */
+  function freshSid(): string {
+    const b = crypto.getRandomValues(new Uint8Array(16));
+    const ms = Date.now();
+    b[0] = Math.floor(ms / 0x10000000000) & 0xff;
+    b[1] = Math.floor(ms / 0x100000000) & 0xff;
+    b[2] = (ms >>> 24) & 0xff;
+    b[3] = (ms >>> 16) & 0xff;
+    b[4] = (ms >>> 8) & 0xff;
+    b[5] = ms & 0xff;
+    b[6] = (b[6]! & 0x0f) | 0x70;
+    b[8] = (b[8]! & 0x3f) | 0x80;
+    const hex = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  /** Poll until the shared entry is warm — the worker's cache write is a waitUntil, so
+   *  it lands shortly after the response rather than before it. */
+  async function warmCache(url: string, attempts = 5): Promise<void> {
+    for (let i = 0; i < attempts; i++) {
+      const res = await fetch(url);
+      await res.arrayBuffer();
+      if (res.headers.get('cf-cache-status') === 'HIT') return;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    throw new Error(`no cache HIT for ${url} after ${attempts} attempts`);
+  }
+
+  it('serves an id-tagged subscription exactly like an untagged one', async () => {
+    const tagged = await getFeed(`${params}&sid=${freshSid()}`, { bypassCache: false });
+    const plain = await getFeed(params, { bypassCache: false });
+
+    expect(tagged.res.status).toBe(200);
+    expect(tagged.body).toBe(plain.body);
+    expect(tagged.res.headers.get('etag')).toBe(plain.res.headers.get('etag'));
+  });
+
+  it('serves every subscriber from one cache entry, whatever their id', async () => {
+    // The id is unique per subscriber. If it were part of the cache key, a request under
+    // an id the edge has never seen could only MISS, and the shared entry — the one that
+    // keeps a feed polled by thousands of clients cheap — would never be hit again.
+    await warmCache(`${BASE}/feed.ics${params}`);
+
+    const res = await fetch(`${BASE}/feed.ics${params}&sid=${freshSid()}&utm_source=e2e`);
+    await res.arrayBuffer();
+    expect(res.headers.get('cf-cache-status')).toBe('HIT');
+  });
+
+  it('serves a configurator that tags the URLs it generates', async () => {
+    const html = await (await fetch(`${BASE}/`)).text();
+    expect(html).toContain("url.searchParams.set('sid', SUBSCRIBER_ID)");
+    expect(html).toContain('const SUBSCRIBER_ID = newSubscriberId();');
+
+    // Run the deployed page's own minting function: what ships has to produce a v7,
+    // since the leading timestamp is what dates a subscription in the logs.
+    const src = /function newSubscriberId\(\)[\s\S]*?\n    \}/.exec(html)?.[0];
+    expect(src, 'newSubscriberId() not found in the deployed page').toBeDefined();
+    const id = new Function('crypto', `${src}; return newSubscriberId();`)(crypto) as string;
+    expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(parseInt(id.replace(/-/g, '').slice(0, 12), 16)).toBeCloseTo(Date.now(), -4);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Static assets — the configurator shares the feed's domain
 // ---------------------------------------------------------------------------
 
