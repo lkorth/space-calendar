@@ -6,29 +6,29 @@ A free, open source space and astronomy calendar you can subscribe to in Google 
 
 ## Why this exists
 
-The New York Times used to publish a space calendar — rocket launches, eclipses, meteor showers, and other astronomical events — as a subscribable ICS feed. It was great. They discontinued it.
+The New York Times used to publish a space calendar (rocket launches, eclipses, meteor showers, and other astronomical events) as a subscribable ICS feed, but it was discontinued.
 
-Nothing else fills the gap well. Existing options either cover only one category (launches but no sky events, or sky events but no launches), require multiple separate calendar subscriptions, or don't let you filter out the events you don't care about.
+Nothing else fills the void. Existing options either cover only one category (launches but no sky events, or sky events but no launches), require multiple separate calendar subscriptions, or don't let you filter out the events.
 
-This project fixes that: one calendar feed, your choice of categories, updated automatically.
+This project fixes that, one automatically updating calendar feed with your choice of categories.
 
 ## What's included
 
 You pick which categories you want. Everything appears in a single calendar subscription.
 
-**Sky events** — moon phases, meteor shower peak nights, solar and lunar eclipses, solstices and equinoxes
+**Sky events**: moon phases, meteor shower peak nights, solar and lunar eclipses, solstices and equinoxes
 
-**Planetary events** — oppositions (best viewing nights for Mars, Jupiter, Saturn), Mercury and Venus elongations, notable asteroid close approaches, comets
+**Planetary events**: oppositions (best viewing nights for Mars, Jupiter, Saturn), Mercury and Venus elongations, notable asteroid close approaches, comets
 
-**Rocket launches** — crewed missions, maiden flights, heavy-lift vehicles (Falcon Heavy, Starship, SLS, New Glenn), and flagship science payloads. No Starlink batches.
+**Rocket launches**: crewed missions, maiden flights, heavy-lift vehicles (Falcon Heavy, Starship, SLS, New Glenn), and flagship science payloads. No Starlink batches.
 
-**Space history milestones** — 20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight and astronomy
+**Space history milestones**: 20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight and astronomy
 
-**Aurora borealis** — location-aware forecasts based on NOAA's 3-day Kp index. Enter your zip code and only get notified when a storm is likely visible at your latitude. Note: for same-day alerts, use a real-time app — calendar sync isn't fast enough.
+**Aurora borealis**: location-aware forecasts based on NOAA's 3-day Kp index. Enter your zip code and only get notified when a storm is likely visible at your latitude. Note: for same-day alerts, use a real-time app, since calendar sync isn't fast enough.
 
 ## How to subscribe
 
-Visit the [configurator](https://space-calendar.lukekorth.com/), select your categories, then add it straight to Apple Calendar or Google Calendar — or copy the URL into any app that takes an ICS feed.
+Visit the [configurator](https://space-calendar.lukekorth.com/), select your categories, then add it straight to Apple Calendar or Google Calendar. Or copy the URL into any app that takes an ICS feed.
 
 ## JSON API
 
