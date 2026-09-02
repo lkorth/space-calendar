@@ -28,7 +28,7 @@ You pick which categories you want. Everything appears in a single calendar subs
 
 ## How to subscribe
 
-Visit the [configurator](https://lkorth.github.io/space-calendar/), select your categories, and copy the subscription URL into your calendar app.
+Visit the [configurator](https://space-calendar.lukekorth.com/), select your categories, then add it straight to Apple Calendar or Google Calendar — or copy the URL into any app that takes an ICS feed.
 
 ## JSON API
 

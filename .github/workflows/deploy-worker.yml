@@ -20,7 +20,7 @@ jobs:
       - name: Check if worker-related files changed
         id: changes
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -qE '^(src/worker/|src/shared/|wrangler\.toml|package(-lock)?\.json)'; then
+          if git diff --name-only HEAD^ HEAD | grep -qE '^(src/worker/|src/shared/|src/site/|wrangler\.toml|package(-lock)?\.json)'; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT

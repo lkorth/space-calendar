@@ -6,6 +6,13 @@ routes = [
   { pattern = "space-calendar.lukekorth.com", custom_domain = true }
 ]
 
+# The configurator is served from the same domain as the feed. Static assets are matched
+# before the Worker runs, so page loads never invoke it — those requests are free and
+# unlimited — while /feed.ics and /feed.json fall through to the Worker as usual.
+[assets]
+directory = "./src/site"
+
+
 [observability.logs]
 enabled = true
 invocation_logs = true

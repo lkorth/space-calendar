@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import worker, { SITE_URL } from './index.ts';
+import worker from './index.ts';
 import type { CalendarEvent } from '../shared/models.ts';
 
 beforeEach(() => {
@@ -47,22 +47,17 @@ function makeEnv(store: Record<string, string> = {}) {
 }
 
 describe('worker request routing', () => {
-  it('redirects the root to the configurator', async () => {
+  it('does not handle the site root — static assets serve it first', async () => {
+    // With the [assets] binding, Cloudflare matches static assets before invoking the
+    // Worker, so / never reaches this code in production. Reaching it means no asset
+    // matched, and a 404 is the honest answer — it must not redirect anywhere.
     const res = await worker.fetch(
       makeRequest('https://space-calendar.workers.dev/'),
       makeEnv(),
       { waitUntil: vi.fn() } as unknown as ExecutionContext,
     );
-    expect(res.status).toBe(301);
-    expect(res.headers.get('location')).toBe(SITE_URL);
-  });
-
-  it('points the root redirect at a real, absolute https URL', async () => {
-    // This previously pointed at space-calendar.pages.dev, which no longer resolves, so
-    // the domain in every subscription URL 301'd visitors to a dead host.
-    const target = new URL(SITE_URL);
-    expect(target.protocol).toBe('https:');
-    expect(target.hostname).not.toBe('space-calendar.pages.dev');
+    expect(res.status).toBe(404);
+    expect(res.headers.get('location')).toBeNull();
   });
 
   it('returns 404 for unknown paths', async () => {

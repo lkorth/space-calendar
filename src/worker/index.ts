@@ -10,8 +10,6 @@ import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
 
-export const SITE_URL = 'https://lkorth.github.io/space-calendar/';
-
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
   ...STATIC_CATEGORIES
     .filter((slug) => slug !== 'solstices-equinoxes')
@@ -22,13 +20,8 @@ export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.pathname === '/') {
-      // The configurator is published to GitHub Pages by .github/workflows/deploy-site.yml.
-      // This is the domain baked into every subscription URL, so it is the one subscribers
-      // see and share — it must land somewhere real.
-      return Response.redirect(SITE_URL, 301);
-    }
-
+    // The configurator and its assets are served by the [assets] binding in wrangler.toml,
+    // which is matched before the Worker runs. Anything reaching here matched no asset.
     if (url.pathname !== '/feed.ics' && url.pathname !== '/feed.json') {
       return new Response('Not found', { status: 404 });
     }

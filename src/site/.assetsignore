@@ -1,0 +1,2 @@
+# Tests live beside the code they cover, but must never be published.
+site.test.ts

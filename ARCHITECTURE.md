@@ -177,16 +177,23 @@ parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not ge
 
 Retired slugs still honored for existing subscriptions: `sky-events` → `moon-phases`, `meteor-showers`, `solstices-equinoxes`, `eclipses-solar`, `eclipses-lunar`; `planetary` → `oppositions`, `elongations`, `asteroids`, `comets`.
 
-### 4. Configurator UI (GitHub Pages)
+### 4. Configurator UI (Workers static assets)
 
-A single static HTML page served from `src/site/` via GitHub Pages.
+A single static HTML page in `src/site/`, served as [static assets](https://developers.cloudflare.com/workers/static-assets/) by the same Worker, on the same domain as the feed.
+
+Assets are matched *before* the Worker runs, so a page load never invokes it — those requests are free and unlimited — while `/feed.ics` and `/feed.json` match no asset and fall through to the Worker. `run_worker_first` is deliberately not set: enabling it would put page views in the Worker's logs, but would make every asset request a billable Worker invocation. Page-view analytics belong in a client-side beacon instead; the measurement that matters (who subscribed, with which `utm_source`, and who is still fetching) already reaches the Worker via `/feed.ics`.
+
+`src/site/.assetsignore` keeps `site.test.ts` out of the published bundle.
+
+Serving the configurator and the feed from one domain removes the root redirect entirely — it previously pointed at a `pages.dev` host that no longer resolved.
 
 - Checkbox for each category with a short description
 - Aurora checkbox reveals a zip code / Canadian postal code input field with a note about calendar sync limitations
 - Zip/FSA is looked up against a bundled latitude table (committed to the repo); the resolved whole-degree latitude is encoded into the URL as `&lat=<n>` — the raw zip is never sent to the worker
 - Generates a `webcal://` subscription URL as the user toggles categories
-- Copy-to-clipboard button
-- "Add to Google Calendar" direct link
+- Subscribe buttons for Apple Calendar (`webcal://`) and Google Calendar; the user agent decides which leads
+- Copy URL falls back to a selectable input where the clipboard API is unavailable, as in in-app browsers
+- `utm_source` from the landing URL is carried into the generated subscription URL for campaign attribution
 - No backend required — pure client-side
 
 ### 5. Curated Data Files

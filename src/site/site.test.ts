@@ -24,6 +24,33 @@ describe('configurator', () => {
   });
 });
 
+describe('configurator hosting', () => {
+  const wrangler = readFileSync('wrangler.toml', 'utf-8');
+
+  it('serves the site as static assets from the worker domain', () => {
+    // Same origin as the feed, so there is no redirect to keep in sync.
+    expect(wrangler).toMatch(/\[assets\]/);
+    expect(wrangler).toMatch(/directory\s*=\s*"\.\/src\/site"/);
+  });
+
+  it('does not run the worker ahead of static assets', () => {
+    // run_worker_first would make every page load a billable Worker invocation.
+    // Static asset requests are free and unlimited only while the Worker is not run first.
+    expect(wrangler).not.toContain('run_worker_first');
+  });
+
+  it('keeps the test file out of the published bundle', () => {
+    const ignore = readFileSync('src/site/.assetsignore', 'utf-8');
+    expect(ignore).toContain('site.test.ts');
+  });
+
+  it('has no lingering reference to the old GitHub Pages host', () => {
+    const worker = readFileSync('src/worker/index.ts', 'utf-8');
+    expect(worker).not.toContain('lkorth.github.io');
+    expect(worker).not.toContain('pages.dev');
+  });
+});
+
 describe('configurator subscribe flow', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 
