@@ -120,6 +120,97 @@ describe('configurator campaign attribution', () => {
   });
 });
 
+describe('configurator preview limits', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  // Execute the page's own selection logic rather than assert on its source text.
+  function select(starts: string[], now: string, allDay = false): string[] {
+    const parts = [
+      /const PREVIEW_MAX_EVENTS = \d+;/,
+      /const PREVIEW_MAX_MONTHS = \d+;/,
+      /function previewMonthKey\([\s\S]*?\n    \}/,
+      /function selectPreviewEvents\([\s\S]*?\n    \}/,
+    ].map((re) => {
+      const m = re.exec(html);
+      expect(m, `could not extract ${re}`).not.toBeNull();
+      return m![0];
+    });
+    const events = starts.map((start) => ({ start, allDay }));
+    const fn = new Function(
+      'events',
+      'now',
+      'detectedTZ',
+      `${parts.join('\n')}; return selectPreviewEvents(events, now).map(e => e.start);`,
+    );
+    return fn(events, new Date(now), 'UTC') as string[];
+  }
+
+  function monthsIn(starts: string[]): number {
+    return new Set(starts.map((s) => s.slice(0, 7))).size;
+  }
+
+  it('stops after four month sections', () => {
+    // One event a month for a year: the section limit bites first.
+    const starts = Array.from({ length: 12 }, (_, i) => new Date(Date.UTC(2026, 8 + i, 15)).toISOString());
+    const picked = select(starts, '2026-09-01T00:00:00Z');
+    expect(monthsIn(picked)).toBe(4);
+    expect(picked).toHaveLength(4);
+  });
+
+  it('stops at twenty events when they are densely packed', () => {
+    // 60 consecutive days spans only three months, so the count limit bites first.
+    const starts = Array.from({ length: 60 }, (_, i) => {
+      const d = new Date('2026-09-01T00:00:00Z');
+      d.setUTCDate(d.getUTCDate() + i + 1);
+      return d.toISOString();
+    });
+    const picked = select(starts, '2026-09-01T00:00:00Z');
+    expect(picked).toHaveLength(20);
+    expect(monthsIn(picked)).toBeLessThanOrEqual(4);
+  });
+
+  it('counts months that contain events, not calendar months from today', () => {
+    // The eclipses-only case: nothing for five months, then sparse events. A rolling
+    // four-month window would show nothing at all; four sections still previews them.
+    const starts = [
+      '2027-02-06T00:00:00Z', '2027-08-02T00:00:00Z',
+      '2028-01-12T00:00:00Z', '2028-07-06T00:00:00Z', '2028-12-31T00:00:00Z',
+    ];
+    const picked = select(starts, '2026-09-01T00:00:00Z');
+    expect(picked).toHaveLength(4);
+    expect(picked[0]).toBe('2027-02-06T00:00:00Z');
+    expect(picked.at(-1)).toBe('2028-07-06T00:00:00Z');
+  });
+
+  it('keeps every event within an included section', () => {
+    // A busy fourth month must not be truncated mid-section by the month limit.
+    const starts = [
+      '2026-09-05T00:00:00Z', '2026-10-05T00:00:00Z', '2026-11-05T00:00:00Z',
+      '2026-12-05T00:00:00Z', '2026-12-06T00:00:00Z', '2026-12-07T00:00:00Z',
+      '2027-01-05T00:00:00Z',
+    ];
+    const picked = select(starts, '2026-09-01T00:00:00Z');
+    expect(picked).toHaveLength(6);
+    expect(picked).not.toContain('2027-01-05T00:00:00Z');
+  });
+
+  it('excludes events in the past', () => {
+    const picked = select(['2026-08-31T23:00:00Z', '2026-09-02T00:00:00Z'], '2026-09-01T00:00:00Z');
+    expect(picked).toEqual(['2026-09-02T00:00:00Z']);
+  });
+
+  it('returns nothing when the selection has no upcoming events', () => {
+    expect(select([], '2026-09-01T00:00:00Z')).toEqual([]);
+    expect(select(['2020-01-01T00:00:00Z'], '2026-09-01T00:00:00Z')).toEqual([]);
+  });
+
+  it('shares one month key between selection and rendering', () => {
+    // Two definitions could disagree and draw a fifth heading.
+    expect(html).toContain('const monthKey = previewMonthKey(ev);');
+    expect(html.match(/function previewMonthKey\(/g)).toHaveLength(1);
+  });
+});
+
 describe('configurator DOM wiring', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 

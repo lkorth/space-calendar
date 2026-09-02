@@ -194,6 +194,7 @@ Serving the configurator and the feed from one domain removes the root redirect 
 - Subscribe buttons for Apple Calendar (`webcal://`) and Google Calendar; the user agent decides which leads
 - Copy URL falls back to a selectable input where the clipboard API is unavailable, as in in-app browsers
 - `utm_source` from the landing URL is carried into the generated subscription URL for campaign attribution
+- Live preview of upcoming events, capped at whichever of 4 month sections or 20 events comes first. Sections are months that contain events, not calendar months from today, so a sparse selection (eclipses only, say) still previews its next few months rather than coming up empty
 - No backend required — pure client-side
 
 ### 5. Curated Data Files

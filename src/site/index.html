@@ -202,6 +202,10 @@
 
     const CAMPAIGN_SOURCE = campaignSource();
 
+    // The preview is a sample, not the calendar. Whichever of these bites first wins.
+    const PREVIEW_MAX_EVENTS = 20;
+    const PREVIEW_MAX_MONTHS = 4;
+
     function toggleClubsSection(checked) {
       document.getElementById('clubs-section').style.display = checked ? 'block' : 'none';
       update();
@@ -466,10 +470,42 @@
       }
     }
 
+    // The month heading each event renders under. Selection and rendering must agree on
+    // this, or the preview could count four sections and then draw five.
+    function previewMonthKey(event) {
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric', month: 'long',
+        timeZone: event.allDay ? 'UTC' : (detectedTZ || 'UTC'),
+      }).format(new Date(event.start));
+    }
+
+    // Up to PREVIEW_MAX_MONTHS month sections, or PREVIEW_MAX_EVENTS events, whichever
+    // comes first. Sections are months that actually contain events, not calendar months
+    // from today — a sparse selection still previews four headings' worth rather than
+    // coming up empty because its next event is five months out.
+    // Relies on the feed being ordered by start, which the worker guarantees.
+    function selectPreviewEvents(events, now) {
+      const months = [];
+      const picked = [];
+      for (const event of events) {
+        if (new Date(event.start) < now) continue;
+        const key = previewMonthKey(event);
+        if (!months.includes(key)) {
+          if (months.length === PREVIEW_MAX_MONTHS) break;
+          months.push(key);
+        }
+        picked.push(event);
+        if (picked.length === PREVIEW_MAX_EVENTS) break;
+      }
+      return picked;
+    }
+
     function renderPreviewEvents(events) {
       const now = new Date();
-      const upcoming = events.filter(e => new Date(e.start) >= now).slice(0, 40);
+      const upcoming = selectPreviewEvents(events, now);
       if (upcoming.length === 0) {
+        // Sections are months that contain events, so this is now only reachable when the
+        // selection genuinely has nothing upcoming at all.
         document.getElementById('preview-body').innerHTML = '<span class="preview-msg">No upcoming events for selected categories</span>';
         return;
       }
@@ -479,7 +515,7 @@
       for (const ev of upcoming) {
         const start = new Date(ev.start);
         const tzForEvent = ev.allDay ? 'UTC' : tz;
-        const monthKey = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', timeZone: tzForEvent }).format(start);
+        const monthKey = previewMonthKey(ev);
         if (monthKey !== lastMonthKey) {
           html += `<div class="preview-month-label">${monthKey}</div>`;
           lastMonthKey = monthKey;
