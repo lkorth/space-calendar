@@ -114,8 +114,16 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CategoryRes
   };
 }
 
+/** Parameters that say who is asking rather than what they asked for. They never reach
+ *  the response body, so they are stripped from the cache key: `sid` is unique per
+ *  subscriber, and leaving it in would give every subscriber a private cache entry that
+ *  only they ever hit, turning an edge cache shared by everyone into one that is always
+ *  cold. */
+const IDENTITY_PARAMS = ['sid', 'utm_source'];
+
 function buildCacheKey(request: Request, deployId?: string): Request {
   const url = new URL(request.url);
+  for (const param of IDENTITY_PARAMS) url.searchParams.delete(param);
   if (deployId) url.searchParams.set('_v', deployId);
   return new Request(url.toString());
 }

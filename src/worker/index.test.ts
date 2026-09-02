@@ -286,6 +286,45 @@ describe('worker request routing', () => {
     expect(getSpy).not.toHaveBeenCalled();
   });
 
+  it('shares one cache entry across subscribers with different ids', async () => {
+    // sid is unique per subscriber and never reaches the body. Left in the key, every
+    // subscriber would get a private entry that only they ever hit.
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics?c=moon-phases';
+
+    await worker.fetch(makeRequest(`${base}&sid=01937b2c-0000-7000-8000-aaaaaaaaaaaa`), env, ctx);
+    await worker.fetch(makeRequest(`${base}&sid=01937b2c-1111-7111-9111-bbbbbbbbbbbb&utm_source=instagram`), env, ctx);
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).toBe(keys[1]);
+    expect(keys[0]).not.toContain('sid');
+    expect(keys[0]).not.toContain('utm_source');
+  });
+
+  it('still keys the cache on parameters that change the feed', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+
+    await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&tz=America/Chicago'),
+      env,
+      ctx,
+    );
+    await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases&tz=Europe/Paris'),
+      env,
+      ctx,
+    );
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).not.toBe(keys[1]);
+  });
+
   it('stores response in edge cache after computing', async () => {
     const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
     const waitUntil = vi.fn();

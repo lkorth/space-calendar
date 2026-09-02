@@ -130,6 +130,7 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
 - Merges all events, then either:
   - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
   - `/feed.json` — returns `{ name, events }` as JSON (`Content-Type: application/json`)
+- Looks the request up in the Workers edge cache under a key built from the request URL with the identity-only parameters (`sid`, `utm_source`) removed and the deploy id added, so tracking tags never fragment the shared cache and a deploy never serves a stale body
 - Sets `Cache-Control: max-age=3600` and a strong `ETag` (SHA-256 of the response body, truncated to 128 bits) on both endpoints, and answers a matching `If-None-Match` with `304 Not Modified`. Some subscribers poll far more often than `max-age` allows — one client in production refetches every ~10 minutes — so the conditional request is what actually keeps repeat polling cheap.
 - `DTSTAMP` is truncated to the start of the UTC day so the serialized body stays byte-identical while content is unchanged, which is what makes the ETag matchable. The period is deliberately much longer than `max-age`: every boundary crossing rewrites `DTSTAMP` and invalidates the ETag with no content change behind it, and at an hour-or-shorter period a client revalidating on `max-age` expiry crosses a boundary every time and never gets a 304. Content changes are carried by the ETag, not `DTSTAMP`, so a mid-day revision still invalidates the cache within the hour.
 
@@ -147,7 +148,8 @@ parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not ge
 | `hemi` | Accepts `s`, `south`, `southern`, any case; anything else is northern |
 | Non-numeric `lat` | Treated as absent rather than `NaN`, which would otherwise fail the latitude/hemisphere cross-check and 400 a working subscription |
 | Fixed-offset `tz` (`Etc/GMT-2`, `UTC+2`, `+02:00`) | Canonicalized to the equivalent `Etc/GMT±N` zone and served as given. These carry no DST rules, so a subscriber whose region observes DST sees contact times drift by an hour for half the year — but the real zone cannot be recovered from an offset (`Etc/GMT-2` is equally consistent with Europe/Kyiv year-round and Europe/Warsaw in July), so guessing would be wrong in the other direction. Logged with `console.warn` so the affected population stays visible in Workers observability |
-| `utm_source` and other unknown parameters | Ignored by the parser, but preserved in the URL. The configurator copies `utm_source` from its own landing URL into the subscription URL it generates, so a campaign shows up in Workers logs on every subsequent fetch — measuring who actually subscribed and kept syncing, not just who clicked. The tag does not change the response body (identical ETag), so its only cost is a separate edge-cache entry per campaign |
+| `sid` | Ignored by the parser, but preserved in the URL. The configurator mints a UUIDv7 once per visit and writes it into the subscription URL it generates, so a calendar client replays the same id on every poll and distinct ids in Workers logs count subscriptions rather than requests — without it, one client polling hourly is indistinguishable from a household behind a single IP. A v7 opens with the millisecond it was minted, so a log line also dates the subscription and how long it has been syncing, with no first-seen table to maintain. The rest is random and carries nothing about the visitor |
+| `utm_source` and other unknown parameters | Ignored by the parser, but preserved in the URL. The configurator copies `utm_source` from its own landing URL into the subscription URL it generates, so a campaign shows up in Workers logs on every subsequent fetch — measuring who actually subscribed and kept syncing, not just who clicked |
 | Unparseable `tz` | Dropped, so contact times fall back to UTC. Previously this reached `tzOffsetHours` as an unvalidated string and silently resolved to longitude 0° for the Milky Way and deep-sky windows |
 
 **Category slugs:**
@@ -181,7 +183,7 @@ Retired slugs still honored for existing subscriptions: `sky-events` → `moon-p
 
 A single static HTML page in `src/site/`, served as [static assets](https://developers.cloudflare.com/workers/static-assets/) by the same Worker, on the same domain as the feed.
 
-Assets are matched *before* the Worker runs, so a page load never invokes it — those requests are free and unlimited — while `/feed.ics` and `/feed.json` match no asset and fall through to the Worker. `run_worker_first` is deliberately not set: enabling it would put page views in the Worker's logs, but would make every asset request a billable Worker invocation. Page-view analytics belong in a client-side beacon instead; the measurement that matters (who subscribed, with which `utm_source`, and who is still fetching) already reaches the Worker via `/feed.ics`.
+Assets are matched *before* the Worker runs, so a page load never invokes it — those requests are free and unlimited — while `/feed.ics` and `/feed.json` match no asset and fall through to the Worker. `run_worker_first` is deliberately not set: enabling it would put page views in the Worker's logs, but would make every asset request a billable Worker invocation. Page-view analytics belong in a client-side beacon instead; the measurement that matters (how many distinct subscribers there are and when they subscribed via `sid`, which campaign they came from via `utm_source`, and who is still fetching) already reaches the Worker via `/feed.ics`.
 
 `src/site/.assetsignore` keeps `site.test.ts` out of the published bundle.
 
@@ -194,6 +196,7 @@ Serving the configurator and the feed from one domain removes the root redirect 
 - Subscribe buttons for Apple Calendar (`webcal://`) and Google Calendar; the user agent decides which leads
 - Copy URL falls back to a selectable input where the clipboard API is unavailable, as in in-app browsers
 - `utm_source` from the landing URL is carried into the generated subscription URL for campaign attribution
+- A per-visit `sid` (UUIDv7, so it carries its own mint time) is written into the generated subscription URL, so unique subscribers and subscription age can both be read from Workers logs
 - Live preview of upcoming events, capped at whichever of 4 month sections or 20 events comes first. Sections are months that contain events, not calendar months from today, so a sparse selection (eclipses only, say) still previews its next few months rather than coming up empty
 - No backend required — pure client-side
 

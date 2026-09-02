@@ -202,6 +202,35 @@
 
     const CAMPAIGN_SOURCE = campaignSource();
 
+    // An id minted once per visit and carried into the subscription URL generated from it.
+    // The worker ignores the value, but a calendar client replays it on every poll, so
+    // counting distinct ids in the logs counts subscriptions instead of requests — without
+    // it, one subscriber polling hourly and a household behind one IP look the same.
+    //
+    // UUIDv7: a 48-bit big-endian millisecond timestamp, then random bits. The timestamp
+    // is when the URL was generated, so a single log line says how long that subscription
+    // has been alive — no server-side record of first-seen ids to keep. Built by hand
+    // because crypto.randomUUID() mints v4 only, which carries no time. The random tail
+    // is what makes it unique; it says nothing about the visitor.
+    function newSubscriberId() {
+      const b = crypto.getRandomValues(new Uint8Array(16));
+      const ms = Date.now();
+      b[0] = Math.floor(ms / 0x10000000000) & 0xff;
+      b[1] = Math.floor(ms / 0x100000000) & 0xff;
+      b[2] = (ms >>> 24) & 0xff;
+      b[3] = (ms >>> 16) & 0xff;
+      b[4] = (ms >>> 8) & 0xff;
+      b[5] = ms & 0xff;
+      b[6] = (b[6] & 0x0f) | 0x70;
+      b[8] = (b[8] & 0x3f) | 0x80;
+      const hex = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+      return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) + '-' +
+        hex.slice(16, 20) + '-' + hex.slice(20);
+    }
+
+    // Minted once, so the URL shown, copied and subscribed to in one visit are the same.
+    const SUBSCRIBER_ID = newSubscriberId();
+
     // The preview is a sample, not the calendar. Whichever of these bites first wins.
     const PREVIEW_MAX_EVENTS = 20;
     const PREVIEW_MAX_MONTHS = 4;
@@ -309,6 +338,7 @@
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
       if (CAMPAIGN_SOURCE) url.searchParams.set('utm_source', CAMPAIGN_SOURCE);
+      url.searchParams.set('sid', SUBSCRIBER_ID);
       return url.toString();
     }
 

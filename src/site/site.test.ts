@@ -120,6 +120,72 @@ describe('configurator campaign attribution', () => {
   });
 });
 
+describe('configurator subscriber id', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  // Run the page's own newSubscriberId() rather than assert on its source text. Date is
+  // injected so the timestamp half can be checked against a value we chose.
+  function newSubscriberId(now?: number): string {
+    const src = /function newSubscriberId\(\)[\s\S]*?\n    \}/.exec(html)?.[0];
+    expect(src, 'newSubscriberId() not found in index.html').toBeDefined();
+    const dateStub = now === undefined ? Date : { now: () => now };
+    return new Function('crypto', 'Date', `${src}; return newSubscriberId();`)(crypto, dateStub) as string;
+  }
+
+  /** The 48-bit big-endian millisecond timestamp a v7 UUID opens with. */
+  function timestampOf(uuid: string): number {
+    return parseInt(uuid.replace(/-/g, '').slice(0, 12), 16);
+  }
+
+  const UUID_V7 = /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+  it('mints a v7 UUID', () => {
+    expect(newSubscriberId()).toMatch(UUID_V7);
+  });
+
+  it('mints a different id every time', () => {
+    // Fixing the clock leaves only the random tail to separate them, which is the half
+    // that has to carry uniqueness for everyone who subscribes in the same millisecond.
+    const ids = new Set(Array.from({ length: 50 }, () => newSubscriberId(1_772_000_000_000)));
+    expect(ids.size).toBe(50);
+  });
+
+  it('encodes the mint time, so a log line dates the subscription', () => {
+    for (const now of [1_772_000_000_000, 1_000_000_000_000, 2_500_000_000_000]) {
+      expect(timestampOf(newSubscriberId(now))).toBe(now);
+    }
+    expect(timestampOf(newSubscriberId())).toBeCloseTo(Date.now(), -3);
+  });
+
+  it('orders ids by mint time', () => {
+    // Sortable ids let a log query bucket subscribers by signup date without decoding.
+    const earlier = newSubscriberId(1_772_000_000_000);
+    const later = newSubscriberId(1_772_000_001_000);
+    expect(earlier < later).toBe(true);
+  });
+
+  it('appends the id to the generated subscription URL', () => {
+    expect(html).toContain("url.searchParams.set('sid', SUBSCRIBER_ID)");
+  });
+
+  it('mints the id once per visit, not once per URL built', () => {
+    // The displayed, copied and subscribed-to URLs must agree, and a fresh id on every
+    // checkbox toggle would count one visitor as dozens.
+    expect(html).toContain('const SUBSCRIBER_ID = newSubscriberId();');
+    const buildUrl = /function buildUrl\([\s\S]*?\n    \}/.exec(html)?.[0] ?? '';
+    expect(buildUrl).toContain('SUBSCRIBER_ID');
+    expect(buildUrl).not.toContain('newSubscriberId(');
+  });
+
+  it('leaves the id off the preview request', () => {
+    // The preview is the page talking to itself; only URLs a calendar client polls
+    // should carry an id, or every visitor counts as a subscriber.
+    const buildPreviewUrl = /function buildPreviewUrl\([\s\S]*?\n    \}/.exec(html)?.[0] ?? '';
+    expect(buildPreviewUrl).toContain('/feed.json');
+    expect(buildPreviewUrl).not.toContain('sid');
+  });
+});
+
 describe('configurator preview limits', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 
