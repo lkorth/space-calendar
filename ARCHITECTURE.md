@@ -187,6 +187,8 @@ Assets are matched *before* the Worker runs, so a page load never invokes it —
 
 `src/site/.assetsignore` keeps `site.test.ts` out of the published bundle.
 
+The hero background and the Open Graph cover image are the same photo (`void` from [lukekorth.com's widefield astrophotography portfolio](https://lukekorth.com/portfolio/widefield-astrophotography/)), hotlinked from that site rather than copied into the repo. It serves the images with `Access-Control-Allow-Origin: *` and no referer check, so link-preview crawlers and browsers both load them directly.
+
 Serving the configurator and the feed from one domain removes the root redirect entirely — it previously pointed at a `pages.dev` host that no longer resolved.
 
 - Checkbox for each category with a short description

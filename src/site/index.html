@@ -4,87 +4,192 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Space Calendar — Configure Your Feed</title>
+  <meta name="description" content="A free, subscribable calendar of space and astronomy events — moon phases, eclipses, meteor showers, planetary events, rocket launches, aurora forecasts, and more. Pick your categories and subscribe in any calendar app." />
+  <meta name="theme-color" content="#07070d" />
+  <link rel="canonical" href="https://space-calendar.lukekorth.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Space Calendar" />
+  <meta property="og:title" content="Space Calendar" />
+  <meta property="og:description" content="A free, subscribable calendar of space and astronomy events — moon phases, eclipses, meteor showers, planetary events, rocket launches, aurora forecasts, and more. Pick your categories and subscribe in any calendar app." />
+  <meta property="og:url" content="https://space-calendar.lukekorth.com/" />
+  <meta property="og:image" content="https://lukekorth.com/photos/widefield-astrophotography/void.jpg" />
+  <meta property="og:image:width" content="1800" />
+  <meta property="og:image:height" content="1200" />
+  <meta property="og:image:alt" content="The core of the Milky Way, dense with stars and dust lanes" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Space Calendar" />
+  <meta name="twitter:description" content="A free, subscribable calendar of space and astronomy events. Pick your categories and subscribe in any calendar app." />
+  <meta name="twitter:image" content="https://lukekorth.com/photos/widefield-astrophotography/void.jpg" />
   <style>
+    :root {
+      --bg: #07070d;
+      --bg-raised: #0e0e1b;
+      --bg-inset: #08081a;
+      --border: #1c1c30;
+      --border-strong: #2e2e4c;
+      --text: #e4e4ec;
+      --text-muted: #9494ac;
+      --text-faint: #62628a;
+      --accent: #7c6cff;
+      --accent-strong: #9384ff;
+      --accent-glow: rgba(124, 108, 255, 0.18);
+      --radius: 10px;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #e0e0e8; min-height: 100vh; padding: 2rem 1rem; }
-    .container { max-width: 640px; margin: 0 auto; }
-    .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }
-    h1 { font-size: 1.75rem; font-weight: 700; }
-    .github-link { color: #6060a0; flex-shrink: 0; margin-top: 4px; }
-    .github-link:hover { color: #9090c0; }
-    .subtitle { color: #9090a8; margin-bottom: 2rem; line-height: 1.5; }
-    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin: 1.5rem 0 0.75rem; }
-    .category { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid #1a1a2e; }
-    .category:last-child { border-bottom: none; }
-    .category input[type="checkbox"] { margin-top: 3px; accent-color: #7060ff; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
-    .category label { cursor: pointer; }
-    .category-name { font-weight: 500; }
-    .category-desc { font-size: 0.85rem; color: #8080a0; margin-top: 2px; }
-    .category-desc a { color: #9080ff; }
-    .expandable { display: none; margin-top: 0.75rem; padding: 0.75rem; background: #12122a; border-radius: 6px; border: 1px solid #2a2a4a; }
-    .expandable select { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
-    .expandable select:focus { outline: none; border-color: #7060ff; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-strong); }
+    .container { max-width: 680px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+
+    /* ---- Hero ------------------------------------------------------------- */
+    .hero { position: relative; min-height: clamp(340px, 60vh, 560px); display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; z-index: -2;
+      background: url(https://lukekorth.com/photos/widefield-astrophotography/void.webp) center 62% / cover no-repeat #0a0a14;
+      transform-origin: 50% 60%;
+      animation: hero-drift 70s ease-in-out infinite alternate;
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; z-index: -1;
+      background:
+        linear-gradient(to bottom, rgba(7,7,13,0.1) 0%, rgba(7,7,13,0) 45%, rgba(7,7,13,0.45) 82%, var(--bg) 100%),
+        linear-gradient(to right, rgba(7,7,13,0.42), rgba(7,7,13,0) 60%);
+    }
+    @keyframes hero-drift { from { transform: scale(1); } to { transform: scale(1.07); } }
+    @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } }
+    .hero-inner { width: 100%; max-width: 680px; margin: 0 auto; padding: 1.5rem 1.25rem 2.25rem; }
+    .hero-top { position: absolute; top: 0; left: 0; right: 0; }
+    .hero-top-inner { max-width: 680px; margin: 0 auto; padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(228,228,236,0.7); text-decoration: none; }
+    .github-link { color: rgba(228,228,236,0.7); display: inline-flex; transition: color 0.15s; }
+    .github-link:hover { color: #fff; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #c8c0ff; margin-bottom: 0.9rem; }
+    .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-strong); box-shadow: 0 0 10px 2px var(--accent-glow), 0 0 4px var(--accent-strong); }
+    h1 { font-size: clamp(2.4rem, 7vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; text-shadow: 0 2px 24px rgba(0,0,0,0.6); }
+    .tagline { margin-top: 0.9rem; max-width: 34rem; font-size: 1.05rem; color: #c9c9d8; text-shadow: 0 1px 12px rgba(0,0,0,0.7); }
+    .tagline strong { color: #fff; font-weight: 600; }
+    .photo-credit { position: absolute; right: 0.9rem; bottom: 0.55rem; font-size: 0.66rem; letter-spacing: 0.04em; color: rgba(228,228,236,0.42); text-decoration: none; }
+    .photo-credit:hover { color: rgba(228,228,236,0.8); }
+
+    /* ---- Sections --------------------------------------------------------- */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin: 1.5rem 0 2.25rem; }
+    .step { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.75rem 0.85rem; background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+    .step b { display: block; color: var(--text); font-weight: 600; margin-bottom: 0.1rem; }
+    .step-num { flex-shrink: 0; width: 1.4rem; height: 1.4rem; border-radius: 50%; background: var(--accent-glow); color: #c8c0ff; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-top: 1px; }
+    @media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+
+    .section-label { display: flex; align-items: center; gap: 0.75rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin: 2rem 0 0.75rem; }
+    .section-label::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, var(--border-strong), transparent); }
+    .section-note { font-size: 0.82rem; color: var(--text-muted); margin: -0.25rem 0 0.75rem; }
+
+    /* ---- Category cards --------------------------------------------------- */
+    .category-list { display: flex; flex-direction: column; gap: 0.45rem; }
+    .category { position: relative; display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.8rem 0.95rem; background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s; }
+    .category:hover { border-color: var(--border-strong); }
+    .category:has(input[type="checkbox"]:checked) { border-color: rgba(124,108,255,0.55); background: #111126; box-shadow: 0 0 0 1px rgba(124,108,255,0.12), 0 6px 24px -14px rgba(124,108,255,0.6); }
+    .category:has(input[type="checkbox"]:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .category input[type="checkbox"] { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .category label { display: flex; align-items: flex-start; gap: 0.8rem; flex: 1; cursor: pointer; min-width: 0; }
+    .category-glyph { flex-shrink: 0; width: 2.2rem; height: 2.2rem; border-radius: 8px; background: var(--bg-inset); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem; line-height: 1; transition: border-color 0.15s, background-color 0.15s; }
+    .category:has(input:checked) .category-glyph { background: var(--accent-glow); border-color: rgba(124,108,255,0.4); }
+    .category-text { flex: 1; min-width: 0; }
+    .category-name { font-weight: 600; line-height: 1.3; padding-top: 0.15rem; }
+    .category-desc { font-size: 0.84rem; color: var(--text-muted); margin-top: 0.2rem; line-height: 1.45; }
+    .category-check { flex-shrink: 0; width: 1.25rem; height: 1.25rem; margin-top: 0.3rem; border-radius: 6px; border: 1.5px solid var(--border-strong); background: var(--bg-inset); display: inline-flex; align-items: center; justify-content: center; transition: background-color 0.15s, border-color 0.15s; }
+    .category-check svg { width: 0.8rem; height: 0.8rem; opacity: 0; transform: scale(0.6); transition: opacity 0.12s, transform 0.12s; }
+    .category:has(input:checked) .category-check { background: var(--accent); border-color: var(--accent); }
+    .category:has(input:checked) .category-check svg { opacity: 1; transform: scale(1); }
+    .expandable { display: none; margin-top: 0.75rem; padding: 0.75rem; background: var(--bg-inset); border-radius: 8px; border: 1px solid var(--border); }
+    .expandable select { width: 100%; padding: 0.55rem 0.75rem; background: #0a0a1f; border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text); font-size: 0.9rem; }
+    .expandable select:focus { outline: none; border-color: var(--accent); }
     .expandable select option { background: #0a0a1f; }
-    .location-section { padding: 0.75rem; background: #0d0d20; border-radius: 6px; border: 1px solid #252545; }
-    .location-section input[type="text"], .location-section input[type="number"] { width: 100%; padding: 0.5rem 0.75rem; background: #0a0a1f; border: 1px solid #3a3a6a; border-radius: 4px; color: #e0e0e8; font-size: 0.9rem; }
-    .location-section input[type="text"]:focus, .location-section input[type="number"]:focus { outline: none; border-color: #7060ff; }
-    .hemi-radios { display: flex; gap: 1.25rem; margin-bottom: 0.75rem; }
-    .hemi-radios label { font-size: 0.85rem; color: #9090a8; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; }
-    .hemi-radios input[type="radio"] { accent-color: #7060ff; cursor: pointer; }
+    .needs-location { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #c8c0ff; background: var(--accent-glow); border-radius: 999px; padding: 0.15rem 0.55rem; margin-top: 0.45rem; }
+
+    /* ---- Location --------------------------------------------------------- */
+    .location-section { padding: 1rem; background: var(--bg-raised); border-radius: var(--radius); border: 1px solid var(--border); }
+    .location-section input[type="text"], .location-section input[type="number"] { width: 100%; padding: 0.6rem 0.8rem; background: var(--bg-inset); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text); font-size: 0.92rem; }
+    .location-section input[type="text"]:focus, .location-section input[type="number"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .location-section input::placeholder { color: var(--text-faint); }
+    .hemi-radios { display: flex; gap: 1.25rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .hemi-radios label { font-size: 0.88rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 0.4rem; }
+    .hemi-radios label:has(input:checked) { color: var(--text); }
+    .hemi-radios input[type="radio"] { accent-color: var(--accent); cursor: pointer; width: 15px; height: 15px; }
     .hemi-inputs > div { display: none; }
     .hemi-inputs > div.active { display: block; }
     .geo-row { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-    .btn-location { background: #1a1a2e; color: #9090c0; border: 1px solid #3a3a6a; padding: 0.4rem 0.85rem; font-size: 0.85rem; border-radius: 4px; cursor: pointer; flex-shrink: 0; font-weight: 500; }
-    .btn-location:hover { background: #2a2a4e; color: #c0c0e8; }
-    .geo-or { font-size: 0.8rem; color: #5050a0; flex-shrink: 0; }
-    .geo-note { font-size: 0.78rem; color: #6060a0; margin-top: 0.5rem; line-height: 1.4; display: none; }
-    .location-note { font-size: 0.78rem; color: #6060a0; margin-top: 0.5rem; line-height: 1.4; }
-    .location-note a { color: #9080ff; }
-    .output { margin-top: 2rem; padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; }
-    .output-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin-bottom: 0.5rem; }
-    .url-display { font-family: monospace; font-size: 0.8rem; color: #a0a0c0; word-break: break-all; background: #08081a; padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; min-height: 2.5rem; }
-    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    button { padding: 0.5rem 1rem; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; font-weight: 500; }
-    .btn-primary { background: #7060ff; color: white; }
-    .btn-primary:hover { background: #8070ff; }
-    .btn-secondary { background: #1a1a2e; color: #e0e0e8; border: 1px solid #3a3a6a; }
-    .btn-secondary:hover { background: #2a2a4e; }
-    #btn-copy { order: 2; }
-    .url-fallback { display: none; margin-top: 0.7rem; font-size: 0.8rem; color: #9090a8; line-height: 1.5; }
-    .url-fallback input { width: 100%; margin-top: 0.4rem; padding: 0.5rem 0.6rem; background: #08081a; border: 1px solid #3a3a6a; border-radius: 4px; color: #a0a0c0; font-family: monospace; font-size: 0.75rem; }
-    .empty-msg { color: #6060a0; font-size: 0.9rem; }
-    .footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #1a1a2e; display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; }
-    .footer-note { font-size: 0.8rem; color: #6060a0; line-height: 1.5; flex: 1 1 18rem; }
-    .btn-sponsor { display: inline-flex; align-items: center; gap: 0.45rem; background: #1a1a2e; color: #c0c0e8; border: 1px solid #3a3a6a; padding: 0.45rem 0.9rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500; text-decoration: none; flex-shrink: 0; }
-    .btn-sponsor:hover { background: #2a2a4e; border-color: #bf3989; color: #e0e0e8; }
-    .btn-sponsor svg { color: #db61a2; flex-shrink: 0; }
-    .copied { background: #306030 !important; }
-    .needs-location { font-size: 0.75rem; color: #5858a0; margin-top: 0.3rem; }
-    .preview-body { padding: 1.25rem; background: #0f0f20; border: 1px solid #2a2a4a; border-radius: 8px; min-height: 60px; }
-    .preview-month-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6060a0; margin: 1.25rem 0 0.4rem; }
+    .btn-location { display: inline-flex; align-items: center; gap: 0.45rem; background: var(--bg-inset); color: #c0c0e0; border: 1px solid var(--border-strong); padding: 0.45rem 0.9rem; font-size: 0.85rem; border-radius: 6px; cursor: pointer; flex-shrink: 0; font-weight: 500; transition: background-color 0.15s, border-color 0.15s; }
+    .btn-location:hover { background: #17172c; border-color: var(--accent); color: #fff; }
+    .geo-or { font-size: 0.8rem; color: var(--text-faint); flex-shrink: 0; }
+    .geo-note { font-size: 0.8rem; color: #b8b0ff; margin-top: 0.5rem; line-height: 1.4; display: none; }
+    .location-note { font-size: 0.78rem; color: var(--text-faint); margin-top: 0.5rem; line-height: 1.4; }
+
+    /* ---- Preview ---------------------------------------------------------- */
+    .preview-body { padding: 1.1rem 1.25rem; background: var(--bg-raised); border: 1px solid var(--border); border-radius: var(--radius); min-height: 60px; }
+    .preview-month-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 1.25rem 0 0.4rem; }
     .preview-month-label:first-child { margin-top: 0; }
-    .preview-event { display: flex; gap: 0.75rem; padding: 0.3rem 0; border-bottom: 1px solid #1a1a2e; }
+    .preview-event { display: flex; gap: 0.85rem; padding: 0.38rem 0; border-bottom: 1px solid var(--border); }
     .preview-event:last-child { border-bottom: none; }
-    .preview-event-date { font-size: 0.8rem; color: #6060a0; width: 3.75rem; flex-shrink: 0; font-variant-numeric: tabular-nums; }
-    .preview-event-title { font-size: 0.85rem; color: #c0c0d8; line-height: 1.4; }
-    .preview-msg { font-size: 0.85rem; color: #6060a0; }
-    .preview-loading { font-size: 0.85rem; color: #5050a0; font-style: italic; }
+    .preview-event-date { font-size: 0.8rem; color: var(--text-faint); width: 3.75rem; flex-shrink: 0; font-variant-numeric: tabular-nums; padding-top: 1px; }
+    .preview-event-title { font-size: 0.88rem; color: #cfcfe0; line-height: 1.4; }
+    .preview-msg { font-size: 0.88rem; color: var(--text-faint); }
+    .preview-loading { font-size: 0.88rem; color: var(--text-faint); font-style: italic; }
+
+    /* ---- Output ----------------------------------------------------------- */
+    .output { position: relative; margin-top: 2rem; padding: 1.35rem; background: linear-gradient(160deg, #12122a 0%, #0c0c1c 60%); border: 1px solid rgba(124,108,255,0.3); border-radius: 14px; box-shadow: 0 20px 60px -30px rgba(124,108,255,0.5); overflow: hidden; }
+    .output::before { content: ""; position: absolute; top: -80px; right: -80px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(124,108,255,0.22), transparent 65%); pointer-events: none; }
+    .output-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #b8b0ff; margin-bottom: 0.6rem; }
+    .url-display { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.78rem; color: #b4b4cc; word-break: break-all; background: var(--bg-inset); border: 1px solid var(--border); padding: 0.8rem 0.9rem; border-radius: 8px; margin-bottom: 0.9rem; min-height: 2.5rem; line-height: 1.5; }
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    button { padding: 0.6rem 1.1rem; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; font-family: inherit; transition: background-color 0.15s, border-color 0.15s, transform 0.1s, opacity 0.15s; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button:not(:disabled):active { transform: translateY(1px); }
+    .btn-primary { background: linear-gradient(135deg, #8272ff, #6a58ff); color: #fff; box-shadow: 0 6px 20px -8px rgba(124,108,255,0.8); }
+    .btn-primary:not(:disabled):hover { background: linear-gradient(135deg, #9282ff, #7868ff); }
+    .btn-secondary { background: var(--bg-inset); color: var(--text); border: 1px solid var(--border-strong); }
+    .btn-secondary:not(:disabled):hover { background: #17172c; border-color: var(--accent); }
+    #btn-copy { order: 2; }
+    .url-fallback { display: none; margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .url-fallback input { width: 100%; margin-top: 0.4rem; padding: 0.5rem 0.6rem; background: var(--bg-inset); border: 1px solid var(--border-strong); border-radius: 6px; color: #b4b4cc; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.75rem; }
+    .empty-msg { color: var(--text-faint); font-size: 0.88rem; font-family: system-ui, sans-serif; }
+    .copied { background: #2f7a4a !important; }
+
+    /* ---- Footer ----------------------------------------------------------- */
+    .footer { margin-top: 2.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; }
+    .footer-note { font-size: 0.8rem; color: var(--text-faint); line-height: 1.5; flex: 1 1 18rem; }
+    .btn-sponsor { display: inline-flex; align-items: center; gap: 0.45rem; background: var(--bg-raised); color: #c8c8e8; border: 1px solid var(--border-strong); padding: 0.5rem 0.95rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500; text-decoration: none; flex-shrink: 0; transition: background-color 0.15s, border-color 0.15s; }
+    .btn-sponsor:hover { background: #17172c; border-color: #bf3989; color: #fff; }
+    .btn-sponsor svg { color: #db61a2; flex-shrink: 0; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Space Calendar</h1>
-      <a class="github-link" href="https://github.com/lkorth/space-calendar" aria-label="View on GitHub">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-      </a>
+  <header class="hero">
+    <div class="hero-top">
+      <div class="hero-top-inner">
+        <a class="brand" href="/">Space Calendar</a>
+        <a class="github-link" href="https://github.com/lkorth/space-calendar" aria-label="View on GitHub">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        </a>
+      </div>
     </div>
-    <p class="subtitle">Select the categories you want and subscribe in any calendar app that supports ICS feeds — Google Calendar, Apple Calendar, Outlook, and more.</p>
+    <div class="hero-inner">
+      <div class="eyebrow">Free · Open source · No accounts</div>
+      <h1>The night sky,<br>in your calendar.</h1>
+      <p class="tagline">Moon phases, eclipses, meteor showers, planets, launches, and aurora — <strong>one subscription</strong> that works in Google Calendar, Apple Calendar, Outlook, and anything else that reads ICS feeds.</p>
+    </div>
+    <a class="photo-credit" href="https://lukekorth.com/portfolio/widefield-astrophotography/" target="_blank" rel="noopener">Photo: Luke Korth</a>
+  </header>
+
+  <div class="container">
+    <div class="steps">
+      <div class="step"><span class="step-num">1</span><div><b>Set your location</b>Only needed for aurora and Milky Way events.</div></div>
+      <div class="step"><span class="step-num">2</span><div><b>Pick categories</b>Choose what you'd like to see on your calendar.</div></div>
+      <div class="step"><span class="step-num">3</span><div><b>Subscribe</b>Add the feed to your calendar app and forget about it.</div></div>
+    </div>
 
     <div class="section-label">Your Location</div>
     <div class="location-section">
       <div class="geo-row" style="margin-bottom:0.75rem">
-        <button class="btn-location" type="button" onclick="useGeolocation()">Detect my location</button>
+        <button class="btn-location" type="button" onclick="useGeolocation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Detect my location</button>
         <span class="geo-or">or select your hemisphere</span>
       </div>
       <div class="geo-note" id="geo-note"></div>
@@ -104,60 +209,79 @@
     </div>
 
     <div class="section-label">Sky Events</div>
-    <div class="category"><input type="checkbox" id="moon-phases" value="moon-phases" /><label for="moon-phases"><div class="category-name">Moon Phases</div><div class="category-desc">New moon and full moon</div></label></div>
-    <div class="category"><input type="checkbox" id="meteor-showers" value="meteor-showers" /><label for="meteor-showers"><div class="category-name">Meteor Showers</div><div class="category-desc">Peak activity nights for annual showers</div></label></div>
-    <div class="category"><input type="checkbox" id="eclipses-solar" value="eclipses-solar" /><label for="eclipses-solar"><div class="category-name">Solar Eclipses</div><div class="category-desc">Total, annular, and partial solar eclipses worldwide</div></label></div>
-    <div class="category"><input type="checkbox" id="eclipses-lunar" value="eclipses-lunar" /><label for="eclipses-lunar"><div class="category-name">Lunar Eclipses</div><div class="category-desc">Total, partial, and penumbral lunar eclipses worldwide</div></label></div>
-    <div class="category"><input type="checkbox" id="solstices-equinoxes" value="solstices-equinoxes" /><label for="solstices-equinoxes"><div class="category-name">Solstices & Equinoxes</div><div class="category-desc">The four astronomical seasons</div></label></div>
-    <div class="category">
-      <input type="checkbox" id="aurora" onchange="update()" />
-      <label for="aurora">
-        <div class="category-name">Aurora Forecasts</div>
-        <div class="category-desc">Events when a storm is forecasted to be visible at your latitude, based on NOAA's 3-day Kp forecast. ⚠️ Calendar apps sync every few hours — aurora events 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with <a href="https://www.spaceweatherlive.com/" target="_blank">SpaceWeatherLive</a>.</div>
-        <div class="needs-location">Requires location</div>
-      </label>
+    <div class="category-list">
+      <div class="category"><input type="checkbox" id="moon-phases" value="moon-phases" /><label for="moon-phases"><span class="category-glyph" aria-hidden="true">🌙</span><div class="category-text"><div class="category-name">Moon Phases</div><div class="category-desc">New moon and full moon</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="meteor-showers" value="meteor-showers" /><label for="meteor-showers"><span class="category-glyph" aria-hidden="true">🌠</span><div class="category-text"><div class="category-name">Meteor Showers</div><div class="category-desc">Peak activity nights for annual showers</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="eclipses-solar" value="eclipses-solar" /><label for="eclipses-solar"><span class="category-glyph" aria-hidden="true">🌑</span><div class="category-text"><div class="category-name">Solar Eclipses</div><div class="category-desc">Total, annular, and partial solar eclipses worldwide</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="eclipses-lunar" value="eclipses-lunar" /><label for="eclipses-lunar"><span class="category-glyph" aria-hidden="true">🌘</span><div class="category-text"><div class="category-name">Lunar Eclipses</div><div class="category-desc">Total, partial, and penumbral lunar eclipses worldwide</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="solstices-equinoxes" value="solstices-equinoxes" /><label for="solstices-equinoxes"><span class="category-glyph" aria-hidden="true">🌍</span><div class="category-text"><div class="category-name">Solstices & Equinoxes</div><div class="category-desc">The four astronomical seasons</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category">
+        <input type="checkbox" id="aurora" onchange="update()" />
+        <label for="aurora">
+          <span class="category-glyph" aria-hidden="true">💫</span>
+          <div class="category-text">
+            <div class="category-name">Aurora Forecasts</div>
+            <div class="category-desc">Events when a storm is forecasted to be visible at your latitude, based on NOAA's 3-day Kp forecast. ⚠️ Calendar apps sync every few hours — aurora events 1–3 days out will appear in time, but same-day storms may not. For real-time alerts, supplement with <a href="https://www.spaceweatherlive.com/" target="_blank">SpaceWeatherLive</a>.</div>
+            <div class="needs-location">Requires location</div>
+          </div>
+          <span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+        </label>
+      </div>
     </div>
 
     <div class="section-label">Planetary Events</div>
-    <div class="category"><input type="checkbox" id="oppositions" value="oppositions" /><label for="oppositions"><div class="category-name">Planetary Oppositions</div><div class="category-desc">Best nights to view Mars, Jupiter, Saturn, and more</div></label></div>
-    <div class="category"><input type="checkbox" id="elongations" value="elongations" /><label for="elongations"><div class="category-name">Mercury & Venus Elongations</div><div class="category-desc">Best windows to spot inner planets</div></label></div>
-    <div class="category"><input type="checkbox" id="conjunctions" value="conjunctions" /><label for="conjunctions"><div class="category-name">Planetary Conjunctions</div><div class="category-desc">Close naked-eye planet pairs (≤ 5° apart)</div></label></div>
-    <div class="category"><input type="checkbox" id="alignments" value="alignments" /><label for="alignments"><div class="category-name">Planetary Alignments</div><div class="category-desc">Planet parades, Mars launch windows, and rare planetary events (e.g. Saturn ring plane crossings)</div></label></div>
-    <div class="category"><input type="checkbox" id="occultations" value="occultations" /><label for="occultations"><div class="category-name">Lunar Occultations</div><div class="category-desc">When the Moon passes in front of a bright planet or star</div></label></div>
-    <div class="category"><input type="checkbox" id="asteroids" value="asteroids" /><label for="asteroids"><div class="category-name">Asteroid Close Approaches</div><div class="category-desc">Significant Earth flybys worth tracking</div></label></div>
-    <div class="category"><input type="checkbox" id="comets" value="comets" /><label for="comets"><div class="category-name">Comets</div><div class="category-desc">Perihelion, closest approach, and naked-eye visibility windows</div></label></div>
-
-    <div class="section-label">Launches & History</div>
-    <div class="category"><input type="checkbox" id="launches" value="launches" /><label for="launches"><div class="category-name">Rocket Launches</div><div class="category-desc">Crewed missions, maiden flights, heavy-lift vehicles, and flagship science payloads — no routine launches</div></label></div>
-    <div class="category"><input type="checkbox" id="mission-milestones" value="mission-milestones" /><label for="mission-milestones"><div class="category-name">Mission Milestones</div><div class="category-desc">Gravity assists, orbital insertions, spacecraft arrivals, and notable flybys for active missions</div></label></div>
-    <div class="category"><input type="checkbox" id="history" value="history" /><label for="history"><div class="category-name">Space History Milestones</div><div class="category-desc">20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight</div></label></div>
-
-    <div class="section-label" id="deep-sky-label">Deep Sky</div>
-    <div class="category" id="deep-sky-row"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night — best from mid-northern latitudes</div></label></div>
-    <div class="category"><input type="checkbox" id="milky-way" value="milky-way" /><label for="milky-way"><div class="category-name">Milky Way Viewing Windows</div><div class="category-desc">Nights when the galactic core is above the horizon during astronomical darkness with no moon — requires your location</div></label></div>
-
-    <div class="section-label">Local Clubs</div>
-    <div class="category">
-      <input type="checkbox" id="astronomy-clubs" value="astronomy-clubs" onchange="toggleClubsSection(this.checked)" />
-      <label for="astronomy-clubs" style="flex:1">
-        <div class="category-name">Local Astronomy Club Programs</div>
-        <div class="category-desc">Public observing programs and events from your local astronomy club</div>
-        <div class="expandable" id="clubs-section">
-          <select id="club-select" onchange="update()">
-            <option value="">— select a club —</option>
-            <option value="aaap">Amateur Astronomers Association of Pittsburgh — Pittsburgh, PA</option>
-            <option value="caa">Cuyahoga Astronomical Association — Cleveland, OH</option>
-            <option value="jgap">John Glenn Astronomy Park — New Concord, OH</option>
-            <option value="taaa">Tucson Amateur Astronomy Association — Tucson, AZ</option>
-          </select>
-          <div class="location-note" style="margin-top:0.5rem">
-            Don't see your club? <a href="https://github.com/lkorth/space-calendar/issues" target="_blank">Open an issue</a> or <a href="https://github.com/lkorth/space-calendar/pulls" target="_blank">submit a PR</a> to add it.
-          </div>
-        </div>
-      </label>
+    <div class="category-list">
+      <div class="category"><input type="checkbox" id="oppositions" value="oppositions" /><label for="oppositions"><span class="category-glyph" aria-hidden="true">🪐</span><div class="category-text"><div class="category-name">Planetary Oppositions</div><div class="category-desc">Best nights to view Mars, Jupiter, Saturn, and more</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="elongations" value="elongations" /><label for="elongations"><span class="category-glyph" aria-hidden="true">🌅</span><div class="category-text"><div class="category-name">Mercury & Venus Elongations</div><div class="category-desc">Best windows to spot inner planets</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="conjunctions" value="conjunctions" /><label for="conjunctions"><span class="category-glyph" aria-hidden="true">✨</span><div class="category-text"><div class="category-name">Planetary Conjunctions</div><div class="category-desc">Close naked-eye planet pairs (≤ 5° apart)</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="alignments" value="alignments" /><label for="alignments"><span class="category-glyph" aria-hidden="true">🔭</span><div class="category-text"><div class="category-name">Planetary Alignments</div><div class="category-desc">Planet parades, Mars launch windows, and rare planetary events (e.g. Saturn ring plane crossings)</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="occultations" value="occultations" /><label for="occultations"><span class="category-glyph" aria-hidden="true">🌒</span><div class="category-text"><div class="category-name">Lunar Occultations</div><div class="category-desc">When the Moon passes in front of a bright planet or star</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="asteroids" value="asteroids" /><label for="asteroids"><span class="category-glyph" aria-hidden="true">🪨</span><div class="category-text"><div class="category-name">Asteroid Close Approaches</div><div class="category-desc">Significant Earth flybys worth tracking</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="comets" value="comets" /><label for="comets"><span class="category-glyph" aria-hidden="true">☄️</span><div class="category-text"><div class="category-name">Comets</div><div class="category-desc">Perihelion, closest approach, and naked-eye visibility windows</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
     </div>
 
-    <div class="section-label" style="margin-top:2rem">Preview</div>
+    <div class="section-label">Launches & History</div>
+    <div class="category-list">
+      <div class="category"><input type="checkbox" id="launches" value="launches" /><label for="launches"><span class="category-glyph" aria-hidden="true">🚀</span><div class="category-text"><div class="category-name">Rocket Launches</div><div class="category-desc">Crewed missions, maiden flights, heavy-lift vehicles, and flagship science payloads — no routine launches</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="mission-milestones" value="mission-milestones" /><label for="mission-milestones"><span class="category-glyph" aria-hidden="true">🛰️</span><div class="category-text"><div class="category-name">Mission Milestones</div><div class="category-desc">Gravity assists, orbital insertions, spacecraft arrivals, and notable flybys for active missions</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="history" value="history" /><label for="history"><span class="category-glyph" aria-hidden="true">📜</span><div class="category-text"><div class="category-name">Space History Milestones</div><div class="category-desc">20, 25, 50, 75, and 100-year anniversaries of landmark moments in spaceflight</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+    </div>
+
+    <div class="section-label" id="deep-sky-label">Deep Sky</div>
+    <div class="category-list">
+      <div class="category" id="deep-sky-row"><input type="checkbox" id="deep-sky" value="deep-sky" /><label for="deep-sky"><span class="category-glyph" aria-hidden="true">🗺️</span><div class="category-text"><div class="category-name">Messier Marathon</div><div class="category-desc">The annual new-moon night in March when all 110 Messier objects can be observed in one night — best from mid-northern latitudes</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+      <div class="category"><input type="checkbox" id="milky-way" value="milky-way" /><label for="milky-way"><span class="category-glyph" aria-hidden="true">🌌</span><div class="category-text"><div class="category-name">Milky Way Viewing Windows</div><div class="category-desc">Nights when the galactic core is above the horizon during astronomical darkness with no moon</div><div class="needs-location">Requires location</div></div><span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span></label></div>
+    </div>
+
+    <div class="section-label">Local Clubs</div>
+    <div class="category-list">
+      <div class="category">
+        <input type="checkbox" id="astronomy-clubs" value="astronomy-clubs" onchange="toggleClubsSection(this.checked)" />
+        <label for="astronomy-clubs">
+          <span class="category-glyph" aria-hidden="true">👥</span>
+          <div class="category-text">
+            <div class="category-name">Local Astronomy Club Programs</div>
+            <div class="category-desc">Public observing programs and events from your local astronomy club</div>
+            <div class="expandable" id="clubs-section">
+              <select id="club-select" onchange="update()">
+                <option value="">— select a club —</option>
+                <option value="aaap">Amateur Astronomers Association of Pittsburgh — Pittsburgh, PA</option>
+                <option value="caa">Cuyahoga Astronomical Association — Cleveland, OH</option>
+                <option value="jgap">John Glenn Astronomy Park — New Concord, OH</option>
+                <option value="taaa">Tucson Amateur Astronomy Association — Tucson, AZ</option>
+              </select>
+              <div class="location-note" style="margin-top:0.5rem">
+                Don't see your club? <a href="https://github.com/lkorth/space-calendar/issues" target="_blank">Open an issue</a> or <a href="https://github.com/lkorth/space-calendar/pulls" target="_blank">submit a PR</a> to add it.
+              </div>
+            </div>
+          </div>
+          <span class="category-check"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:2.25rem">Preview</div>
+    <div class="section-note">A sample of what's coming up in your selection, shown in your local time.</div>
     <div class="preview-body" id="preview-body"><span class="preview-msg">Select categories above to preview events</span></div>
 
     <div class="output">

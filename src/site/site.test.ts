@@ -318,6 +318,60 @@ describe('configurator sponsor link', () => {
   });
 });
 
+describe('configurator link preview', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+  const head = html.slice(0, html.indexOf('</head>'));
+
+  function meta(attr: 'property' | 'name', key: string): string | undefined {
+    const re = new RegExp(`<meta\\s+${attr}="${key}"\\s+content="([^"]*)"`);
+    return re.exec(head)?.[1];
+  }
+
+  it('declares Open Graph title, description, url and image', () => {
+    expect(meta('property', 'og:title')).toBe('Space Calendar');
+    expect(meta('property', 'og:description')).toBeTruthy();
+    expect(meta('property', 'og:url')).toBe('https://space-calendar.lukekorth.com/');
+    expect(meta('property', 'og:type')).toBe('website');
+    expect(meta('property', 'og:image')).toBeTruthy();
+  });
+
+  it('uses a large-image Twitter card', () => {
+    expect(meta('name', 'twitter:card')).toBe('summary_large_image');
+    expect(meta('name', 'twitter:image')).toBe(meta('property', 'og:image'));
+  });
+
+  it('points at the full-size cover photo with an absolute URL', () => {
+    // Crawlers ignore relative image URLs. The photo is hotlinked from the portfolio
+    // rather than copied into the repo, so it must be the full https address.
+    expect(meta('property', 'og:image')).toBe(
+      'https://lukekorth.com/photos/widefield-astrophotography/void.jpg',
+    );
+  });
+
+  it('declares the image dimensions so the first share renders a card', () => {
+    // Without them, Facebook renders the first share of a URL without the image.
+    expect(meta('property', 'og:image:width')).toBe('1800');
+    expect(meta('property', 'og:image:height')).toBe('1200');
+  });
+
+  it('has a plain meta description for search results', () => {
+    expect(meta('name', 'description')).toBe(meta('property', 'og:description'));
+  });
+});
+
+describe('configurator hero', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  it('hotlinks the hero background from the portfolio', () => {
+    const src = /\.hero[^{]*\{[^}]*url\(([^)]+)\)/.exec(html)?.[1];
+    expect(src).toBe('https://lukekorth.com/photos/widefield-astrophotography/void.webp');
+  });
+
+  it('credits the photographer', () => {
+    expect(html).toContain('https://lukekorth.com/portfolio/widefield-astrophotography/');
+  });
+});
+
 describe('e2e test coverage', () => {
   it('has a test for every category slug', () => {
     const e2e = readFileSync('src/worker/feed.e2e.test.ts', 'utf-8');
