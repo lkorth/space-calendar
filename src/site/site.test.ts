@@ -359,6 +359,18 @@ describe('configurator link preview', () => {
   });
 });
 
+describe('configurator favicon', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  it('is an inline SVG data URI wrapping an emoji, so there is no icon file to serve', () => {
+    const href = /<link rel="icon" href="([^"]+)"/.exec(html)?.[1];
+    expect(href, 'no <link rel="icon">').toBeTruthy();
+    expect(href).toMatch(/^data:image\/svg\+xml,/);
+    expect(href).toContain('<text');
+    expect(href).toMatch(/\p{Extended_Pictographic}/u);
+  });
+});
+
 describe('configurator hero', () => {
   const html = readFileSync('src/site/index.html', 'utf-8');
 
