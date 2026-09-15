@@ -6,6 +6,7 @@ import { milkyWayCategory } from './categories/milky-way.ts';
 import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { missionMilestonesCategory } from './categories/mission-milestones.ts';
 import { isFixedOffsetTimezone, parseParams } from './params.ts';
+import { recordUsage } from './usage.ts';
 import { STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
@@ -26,65 +27,80 @@ export default {
       return new Response('Not found', { status: 404 });
     }
 
-    const params = parseParams(url);
-    if (params.categories.length === 0) {
-      return new Response('Provide at least one category via ?c=', { status: 400 });
-    }
-    if (params.lat !== undefined && params.lat !== 0) {
-      const latIsNorth = params.lat > 0;
-      if (latIsNorth !== (params.hemisphere === 'northern')) {
-        return new Response('Hemisphere and latitude do not match', { status: 400 });
-      }
-    }
-
-    if (isFixedOffsetTimezone(params.tz)) {
-      // Carries no DST rules, so contact times drift by an hour for half the year if the
-      // subscriber's region observes DST. Logged rather than corrected because the real
-      // zone cannot be recovered from an offset — see isFixedOffsetTimezone.
-      console.warn('Fixed-offset timezone requested:', params.tz);
-    }
-
-    const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
-    const cached = await caches.default.match(cacheKey);
-    if (cached) return notModifiedIfMatched(request, cached);
-
-    try {
-      const { events, cache } = await fetchEvents(params, env);
-      const calName = buildCalName(params.categories);
-
-      let response: Response;
-      if (url.pathname === '/feed.json') {
-        const json = JSON.stringify({ name: calName, events });
-        response = new Response(json, {
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600',
-            'Access-Control-Allow-Origin': '*',
-            ETag: await etagFor(json),
-          },
-        });
-      } else {
-        const ics = buildICS(events, calName, params.tz);
-        response = new Response(ics, {
-          headers: {
-            'Content-Type': 'text/calendar; charset=utf-8',
-            'Cache-Control': 'public, max-age=3600',
-            'Content-Disposition': 'attachment; filename="space-calendar.ics"',
-            ETag: await etagFor(ics),
-          },
-        });
-      }
-
-      if (cache) {
-        ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
-      }
-      return notModifiedIfMatched(request, response);
-    } catch (err) {
-      console.error('Feed error:', err);
-      return new Response('Internal server error', { status: 500 });
-    }
+    const { response, cacheHit } = await serveFeed(request, url, env, ctx);
+    recordUsage(env, request, { status: response.status, cacheHit });
+    return response;
   },
 };
+
+/** Build the feed response. Split from fetch() so every outcome — cache hit, 400, 500 —
+ *  passes through one place where its usage row is written. */
+async function serveFeed(
+  request: Request,
+  url: URL,
+  env: Env,
+  ctx: ExecutionContext,
+): Promise<{ response: Response; cacheHit: boolean }> {
+  const reply = (response: Response, cacheHit = false) => ({ response, cacheHit });
+
+  const params = parseParams(url);
+  if (params.categories.length === 0) {
+    return reply(new Response('Provide at least one category via ?c=', { status: 400 }));
+  }
+  if (params.lat !== undefined && params.lat !== 0) {
+    const latIsNorth = params.lat > 0;
+    if (latIsNorth !== (params.hemisphere === 'northern')) {
+      return reply(new Response('Hemisphere and latitude do not match', { status: 400 }));
+    }
+  }
+
+  if (isFixedOffsetTimezone(params.tz)) {
+    // Carries no DST rules, so contact times drift by an hour for half the year if the
+    // subscriber's region observes DST. Logged rather than corrected because the real
+    // zone cannot be recovered from an offset — see isFixedOffsetTimezone.
+    console.warn('Fixed-offset timezone requested:', params.tz);
+  }
+
+  const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
+  const cached = await caches.default.match(cacheKey);
+  if (cached) return reply(notModifiedIfMatched(request, cached), true);
+
+  try {
+    const { events, cache } = await fetchEvents(params, env);
+    const calName = buildCalName(params.categories);
+
+    let response: Response;
+    if (url.pathname === '/feed.json') {
+      const json = JSON.stringify({ name: calName, events });
+      response = new Response(json, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+          'Access-Control-Allow-Origin': '*',
+          ETag: await etagFor(json),
+        },
+      });
+    } else {
+      const ics = buildICS(events, calName, params.tz);
+      response = new Response(ics, {
+        headers: {
+          'Content-Type': 'text/calendar; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600',
+          'Content-Disposition': 'attachment; filename="space-calendar.ics"',
+          ETag: await etagFor(ics),
+        },
+      });
+    }
+
+    if (cache) {
+      ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+    }
+    return reply(notModifiedIfMatched(request, response));
+  } catch (err) {
+    console.error('Feed error:', err);
+    return reply(new Response('Internal server error', { status: 500 }));
+  }
+}
 
 async function fetchEvents(params: RequestParams, env: Env): Promise<CategoryResult> {
   // Build the category map per-request so hemisphere-aware categories get the right params

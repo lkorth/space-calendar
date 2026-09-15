@@ -20,6 +20,9 @@ export interface Env {
   LL2_API_KEY?: string;
   /** Git SHA injected at deploy time — changing it busts the edge cache */
   DEPLOY_ID?: string;
+  /** Workers Analytics Engine dataset that receives one row per feed request. Optional so
+   *  local dev and tests run without it. */
+  USAGE?: AnalyticsEngineDataset;
 }
 
 export interface CategoryResult {

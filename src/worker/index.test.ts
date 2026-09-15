@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import worker from './index.ts';
 import type { CalendarEvent } from '../shared/models.ts';
+import type { Env } from './types.ts';
 
 beforeEach(() => {
   vi.stubGlobal('caches', {
@@ -396,5 +397,55 @@ describe('JSON feed (/feed.json)', () => {
     expect(body.events).toHaveLength(2);
     expect(body.events[0]!.uid).toBe(moonEvent.uid);
     expect(body.events[1]!.uid).toBe(eclipseEvent.uid);
+  });
+});
+
+describe('usage recording', () => {
+  function makeEnvWithUsage(store: Record<string, string> = {}) {
+    const writeDataPoint = vi.fn();
+    const env = { ...makeEnv(store), USAGE: { writeDataPoint } } as unknown as Env;
+    return { env, writeDataPoint };
+  }
+  const ctx = () => ({ waitUntil: vi.fn() }) as unknown as ExecutionContext;
+  const sid = '01937b2c-0000-7000-8000-aaaaaaaaaaaa';
+
+  it('writes one row per feed request, carrying the sid and the outcome', async () => {
+    const { env, writeDataPoint } = makeEnvWithUsage({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+
+    const res = await worker.fetch(
+      makeRequest(`https://space-calendar.workers.dev/feed.ics?c=moon-phases&sid=${sid}`),
+      env,
+      ctx(),
+    );
+
+    expect(res.status).toBe(200);
+    expect(writeDataPoint).toHaveBeenCalledTimes(1);
+    const point = writeDataPoint.mock.calls[0]![0];
+    expect(point.indexes).toEqual([sid]);
+    expect(point.doubles[0]).toBe(200);
+  });
+
+  it('records edge cache hits too, marked as such', async () => {
+    // Most polls are cache hits. Skipping them would undercount every subscriber whose
+    // client refetches inside the max-age window — which is most of them.
+    (caches.default.match as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('CACHED_ICS'));
+    const { env, writeDataPoint } = makeEnvWithUsage();
+
+    await worker.fetch(makeRequest(`https://space-calendar.workers.dev/feed.ics?c=moon-phases&sid=${sid}`), env, ctx());
+
+    expect(writeDataPoint).toHaveBeenCalledTimes(1);
+    const point = writeDataPoint.mock.calls[0]![0];
+    expect(point.doubles[point.doubles.length - 1]).toBe(1);
+  });
+
+  it('records rejected feed requests but not unknown paths', async () => {
+    const { env, writeDataPoint } = makeEnvWithUsage();
+
+    await worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics'), env, ctx());
+    expect(writeDataPoint).toHaveBeenCalledTimes(1);
+    expect(writeDataPoint.mock.calls[0]![0].doubles[0]).toBe(400);
+
+    await worker.fetch(makeRequest('https://space-calendar.workers.dev/robots.txt'), env, ctx());
+    expect(writeDataPoint).toHaveBeenCalledTimes(1);
   });
 });

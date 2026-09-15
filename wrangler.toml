@@ -20,3 +20,7 @@ invocation_logs = true
 [[kv_namespaces]]
 binding = "CALENDAR_KV"
 id = "759d32e9e73443319985fbf1078cf70b"
+
+[[analytics_engine_datasets]]
+binding = "USAGE"
+dataset = "space_calendar_usage"
