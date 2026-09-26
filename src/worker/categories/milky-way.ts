@@ -210,6 +210,21 @@ export function milkyWayWindowForNight(dateUTC: Date, lat: number, lon: number):
   return { hours: overlap, startHour: windowStart, endHour: windowEnd };
 }
 
+/** UTC midnights for every night in the rolling window: 6 months back through 1 year
+ *  ahead, the same window the pipeline uses for static categories. A calendar-year window
+ *  would leave northern subscribers with nothing upcoming from mid-August (when the core
+ *  season ends) until January, and southern subscribers without their December–February
+ *  nights at year end. */
+export function nightsInWindow(now: Date): Date[] {
+  const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 6, now.getUTCDate()));
+  const last = new Date(Date.UTC(now.getUTCFullYear() + 1, now.getUTCMonth(), now.getUTCDate()));
+  const nights: Date[] = [];
+  for (let d = first; d <= last; d = new Date(d.getTime() + 24 * 60 * 60 * 1000)) {
+    nights.push(d);
+  }
+  return nights;
+}
+
 // ---------------------------------------------------------------------------
 // Category
 // ---------------------------------------------------------------------------
@@ -227,11 +242,9 @@ export const milkyWayCategory: Category = {
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const lon = tzOffsetHours(tz) * 15;
-    const year = new Date().getUTCFullYear();
-    const dayMs = 24 * 60 * 60 * 1000;
 
     const events: CalendarEvent[] = [];
-    for (let d = new Date(Date.UTC(year, 0, 1)); d.getUTCFullYear() === year; d = new Date(d.getTime() + dayMs)) {
+    for (const d of nightsInWindow(new Date())) {
       const window = milkyWayWindowForNight(d, lat, lon);
       if (!window || window.hours < MIN_DARK_HOURS) continue;
 

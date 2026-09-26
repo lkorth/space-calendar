@@ -86,7 +86,7 @@ No astronomical calculations are performed — all data is consumed from public 
 | `generate-weekly.yml` | Weekly (Sunday) | Asteroid close approaches, comets |
 | `generate-on-change.yml` | Push to main (YAML changed) | History (if `history.yaml` changed), Comets (if `comets.yaml` changed) |
 
-**Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching.
+**Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching, and Milky Way viewing windows are computed over the full rolling window so the next season is always in the feed — from Columbus, OH, for example, the season ends in mid-August, and a calendar-year window would show nothing upcoming until January.
 
 **API sources:**
 - [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar eclipses, solstices, equinoxes (lunar eclipse and planetary phenomena endpoints do not exist in USNO's API)

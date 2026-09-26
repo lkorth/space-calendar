@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   coreMaxAlt,
   coreHoursAboveAlt,
@@ -7,6 +7,7 @@ import {
   tzOffsetHours,
   milkyWayCategory,
   minCoreAltDeg,
+  nightsInWindow,
 } from './milky-way.ts';
 
 // ---------------------------------------------------------------------------
@@ -263,6 +264,24 @@ function makeEnv(store: Record<string, string> = {}) {
   };
 }
 
+describe('nightsInWindow', () => {
+  const now = new Date('2026-09-26T15:30:00Z');
+
+  it('starts at UTC midnight 6 months back and ends at UTC midnight 1 year ahead', () => {
+    const nights = nightsInWindow(now);
+    expect(nights[0]!.toISOString()).toBe('2026-03-26T00:00:00.000Z');
+    expect(nights[nights.length - 1]!.toISOString()).toBe('2027-09-26T00:00:00.000Z');
+  });
+
+  it('returns consecutive days across the year boundary', () => {
+    const nights = nightsInWindow(now);
+    for (let i = 1; i < nights.length; i++) {
+      expect(nights[i]!.getTime() - nights[i - 1]!.getTime()).toBe(24 * 60 * 60 * 1000);
+    }
+    expect(nights.map((d) => d.toISOString().slice(0, 10))).toContain('2027-01-01');
+  });
+});
+
 describe('milkyWayCategory.fetch', () => {
   it('returns empty array when lat is not provided', async () => {
     const { events } = await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'] });
@@ -333,5 +352,28 @@ describe('milkyWayCategory.fetch', () => {
     const env = makeEnv();
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect(events.every((e) => e.title === '🌌 Milky Way Viewing')).toBe(true);
+  });
+
+  describe('rolling window', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-09-26T15:30:00Z'));
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    // Columbus, OH: the northern season ends in mid-August, so late in the year the feed
+    // must already carry next spring's nights rather than stopping at December 31.
+    it("includes next year's season for a northern subscriber late in the year", async () => {
+      const { events } = await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, tz: 'America/New_York' });
+      expect(events.some((e) => e.start.startsWith('2027-'))).toBe(true);
+    });
+
+    it('keeps past nights from the last 6 months and nothing older', async () => {
+      const { events } = await milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, tz: 'America/New_York' });
+      expect(events.some((e) => e.start.startsWith('2026-07-'))).toBe(true);
+      expect(events.every((e) => e.start >= '2026-03-26')).toBe(true);
+    });
   });
 });
