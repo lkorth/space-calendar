@@ -350,6 +350,8 @@ Severity language maps to Kp level: Kp 5–6 = Moderate, Kp 7 = Strong, Kp 8 = S
 
 If the launch window is instantaneous, the event duration is set to 30 minutes as a minimum so it is visible on a calendar. If a window closes and the launch slips to a later window or date, the event is updated accordingly.
 
+Launches whose date Launch Library 2 only knows to the quarter, half-year, year, fiscal year, or decade are omitted. LL2 places these on the last day of the period, which would stack many unrelated launches onto one misleading date (e.g. June 30). They appear once LL2 narrows the date to a month or finer. Month-precision launches are included and placed on the last day of that month.
+
 **Title format:**
 ```
 Falcon Heavy | Europa Clipper

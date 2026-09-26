@@ -77,6 +77,8 @@ Not every launch — only those with broad public interest. The goal is signal, 
 - **Heavy-lift launches** — Falcon Heavy, Starship, SLS, New Glenn, Vulcan Centaur, and equivalent vehicles
 - **Flagship science & exploration payloads** — NASA Discovery/New Frontiers/Flagship-class missions, major space telescopes, planetary probes, lunar and Mars landers, and international equivalents (ESA, JAXA, ISRO, CNSA)
 
+Launches without a target month (only a quarter, half-year, year, or fiscal year) are excluded until their date firms up.
+
 ### Mission Milestones (🛸)
 Significant mid-mission events for active spacecraft — gravity assists, orbital insertions, arrivals, and major flybys. Not every mission event, only those with genuine public interest. Includes:
 

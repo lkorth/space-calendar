@@ -5,6 +5,7 @@ export interface LL2Launch {
   name: string;
   status: { abbrev: string; name: string };
   net: string;
+  net_precision?: { id: number; name: string; abbrev: string; description: string } | null;
   window_start: string;
   window_end: string | null;
   rocket: { configuration: { name: string; full_name: string } };
@@ -25,6 +26,20 @@ export interface LL2Response {
   count: number;
   next: string | null;
   results: LL2Launch[];
+}
+
+/**
+ * LL2 precision IDs run from 0 (Second) through 5 (Day), 6 (Week), 7 (Month), then
+ * coarser buckets: quarters (8–11), halves (12–13), Year (14), Fiscal Year (15), Decade (16).
+ * Coarse launches have their NET set to the last day of the period, which piles them onto
+ * a single misleading date (e.g. June 30), so they are dropped until LL2 narrows the date.
+ */
+const MONTH_PRECISION_ID = 7;
+
+/** Whether the launch date is known to at least the month */
+export function hasUsableDate(launch: LL2Launch): boolean {
+  if (!launch.net_precision) return true;
+  return launch.net_precision.id <= MONTH_PRECISION_ID;
 }
 
 /** Criteria that make a launch notable enough to include */
@@ -85,5 +100,5 @@ export async function fetchUpcomingLaunches(apiKey?: string): Promise<LL2Launch[
     url = data.next;
   }
 
-  return results.filter(isNotable);
+  return results.filter((launch) => hasUsableDate(launch) && isNotable(launch));
 }

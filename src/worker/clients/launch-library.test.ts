@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { isNotable, fetchUpcomingLaunches } from './launch-library.ts';
+import { isNotable, hasUsableDate, fetchUpcomingLaunches } from './launch-library.ts';
 import type { LL2Launch } from './launch-library.ts';
 
 function makeLaunch(overrides: Partial<LL2Launch> = {}): LL2Launch {
@@ -80,7 +80,55 @@ describe('isNotable', () => {
   });
 });
 
+describe('hasUsableDate', () => {
+  const precision = (id: number, name: string) => ({ id, name, abbrev: name, description: '' });
+
+  it('includes launches with day-or-finer precision', () => {
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(0, 'Second') }))).toBe(true);
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(5, 'Day') }))).toBe(true);
+  });
+
+  it('includes launches with week precision', () => {
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(6, 'Week') }))).toBe(true);
+  });
+
+  it('includes launches with month precision', () => {
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(7, 'Month') }))).toBe(true);
+  });
+
+  it('excludes launches with quarter, half-year, year, fiscal-year, or decade precision', () => {
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(9, 'Quarter 2') }))).toBe(false);
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(12, 'Year Half 1') }))).toBe(false);
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(14, 'Year') }))).toBe(false);
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(15, 'Fiscal Year') }))).toBe(false);
+    expect(hasUsableDate(makeLaunch({ net_precision: precision(16, 'Decade') }))).toBe(false);
+  });
+
+  it('includes launches with no precision reported', () => {
+    expect(hasUsableDate(makeLaunch({ net_precision: null }))).toBe(true);
+    expect(hasUsableDate(makeLaunch())).toBe(true);
+  });
+});
+
 describe('fetchUpcomingLaunches', () => {
+  it('drops notable launches whose date is coarser than month precision', async () => {
+    const heavy = { configuration: { name: 'Falcon Heavy', full_name: 'Falcon Heavy' } };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        count: 2,
+        next: null,
+        results: [
+          makeLaunch({ id: 'month', rocket: heavy, net_precision: { id: 7, name: 'Month', abbrev: 'M', description: '' } }),
+          makeLaunch({ id: 'fy', rocket: heavy, net_precision: { id: 15, name: 'Fiscal Year', abbrev: 'FY', description: '' } }),
+        ],
+      }),
+    }));
+    const result = await fetchUpcomingLaunches();
+    expect(result?.map((l) => l.id)).toEqual(['month']);
+  });
+
   it('returns null on 429 instead of throwing', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 429 }));
     const result = await fetchUpcomingLaunches();

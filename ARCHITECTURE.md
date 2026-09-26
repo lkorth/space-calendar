@@ -125,7 +125,7 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
 
 - Parses the `c` query parameter as a comma-separated list of category slugs (see **Request parameter handling** below)
 - Reads each requested static category from KV
-- If `launches` is requested: reads from KV; on cache miss, fetches from Launch Library 2, filters to notable launches, writes to KV with 1-hour TTL
+- If `launches` is requested: reads from KV; on cache miss, fetches from Launch Library 2, filters to notable launches with at least month-level date precision, writes to KV with 1-hour TTL
 - If `aurora` is requested: rounds `lat` to the nearest integer, reads `aurora:<lat>` from KV; on cache miss, fetches NOAA SWPC 3-day Kp forecast, computes visibility windows for that latitude, writes to KV with 3–4 hour TTL
 - Merges all events, then either:
   - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
