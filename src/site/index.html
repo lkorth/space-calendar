@@ -311,6 +311,9 @@
   <script>
     const WORKER_BASE = 'https://space-calendar.lukekorth.com';
     let globalLat = null;
+    // Only known when the location came from geolocation or the zip lookup. Without it the
+    // worker estimates longitude from the timezone, so manual latitude entry still works.
+    let globalLon = null;
     const detectedTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     // A visitor arriving from a campaign lands here with ?utm_source=..., which is carried
@@ -374,29 +377,33 @@
       document.getElementById('loc-north').classList.toggle('active', hemi === 'north');
       document.getElementById('loc-south').classList.toggle('active', hemi === 'south');
       globalLat = null;
+      globalLon = null;
       update();
     }
 
     async function onZipInput(value) {
       value = value.trim().toUpperCase();
-      if (!value) { globalLat = null; update(); return; }
-      const lat = await lookupLatitude(value);
-      globalLat = lat !== null ? Math.round(lat) : null;
+      if (!value) { globalLat = null; globalLon = null; update(); return; }
+      const loc = await lookupLocation(value);
+      globalLat = loc?.lat ?? null;
+      globalLon = loc?.lon ?? null;
       update();
     }
 
-    async function lookupLatitude(zip) {
+    async function lookupLocation(zip) {
       try {
         const res = await fetch('zip-latitudes.json');
         const db = await res.json();
         const key = zip.replace(/\s+/g, '').toUpperCase().slice(0, zip.length >= 5 && /^\d/.test(zip) ? 5 : 3);
-        return db[key] ?? null;
+        const entry = db[key];
+        return entry ? { lat: entry[0], lon: entry[1] } : null;
       } catch { return null; }
     }
 
     function onLatInput(value) {
       const parsed = parseInt(value.trim());
       globalLat = (!isNaN(parsed) && parsed >= -90 && parsed <= 90) ? parsed : null;
+      globalLon = null;
       update();
     }
 
@@ -412,6 +419,7 @@
           const radio = document.querySelector(`input[name="hemi"][value="${hemi}"]`);
           if (radio) { radio.checked = true; onHemiChange(hemi); }
           globalLat = lat;
+          globalLon = Math.round(pos.coords.longitude);
           if (hemi === 'south') document.getElementById('lat-input').value = lat;
           const dir = lat >= 0 ? 'N' : 'S';
           showGeoNote(`Detected: ${Math.abs(lat)}°${dir} — ${hemi === 'north' ? 'Northern' : 'Southern'} Hemisphere`);
@@ -453,12 +461,13 @@
       return cats;
     }
 
-    function buildUrl(categories, lat, hemi, clubId) {
+    function buildUrl(categories, lat, lon, hemi, clubId) {
       const url = new URL('/feed.ics', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
       const hasMilkyWay = categories.includes('milky-way');
       if ((hasAurora || hasMilkyWay) && lat !== null) url.searchParams.set('lat', lat);
+      if (hasMilkyWay && lat !== null && lon !== null) url.searchParams.set('lon', lon);
       if (hemi === 'south') url.searchParams.set('hemi', 'south');
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
@@ -504,7 +513,7 @@
       } else if (clubsSelected && clubId === null) {
         display.innerHTML = '<span class="empty-msg">Select an astronomy club above</span>';
       } else {
-        display.textContent = buildUrl(categories, globalLat, hemi, clubId);
+        display.textContent = buildUrl(categories, globalLat, globalLon, hemi, clubId);
       }
 
       btnCopy.disabled = !ready;
@@ -513,7 +522,7 @@
       // The URL changes with every selection, so any previously shown fallback is stale.
       document.getElementById('url-fallback').style.display = 'none';
 
-      schedulePreview(categories, globalLat, hemi, clubId, ready);
+      schedulePreview(categories, globalLat, globalLon, hemi, clubId, ready);
     }
 
     // Apple platforms handle webcal:// natively — one tap opens Calendar with a subscribe
@@ -522,7 +531,7 @@
     const IS_APPLE = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
 
     function currentUrl() {
-      return buildUrl(getSelectedCategories(), globalLat, getHemi(), getClubId());
+      return buildUrl(getSelectedCategories(), globalLat, globalLon, getHemi(), getClubId());
     }
 
     function webcalUrl() {
@@ -585,12 +594,13 @@
     let _previewTimer = null;
     let _previewCtrl = null;
 
-    function buildPreviewUrl(categories, lat, hemi, clubId) {
+    function buildPreviewUrl(categories, lat, lon, hemi, clubId) {
       const url = new URL('/feed.json', WORKER_BASE);
       url.searchParams.set('c', categories.join(','));
       const hasAurora = categories.includes('aurora') || categories.includes('aurora-australis');
       const hasMilkyWay = categories.includes('milky-way');
       if ((hasAurora || hasMilkyWay) && lat !== null) url.searchParams.set('lat', lat);
+      if (hasMilkyWay && lat !== null && lon !== null) url.searchParams.set('lon', lon);
       if (hemi === 'south') url.searchParams.set('hemi', 'south');
       if (categories.includes('astronomy-clubs') && clubId) url.searchParams.set('club', clubId);
       if (detectedTZ) url.searchParams.set('tz', detectedTZ);
@@ -599,7 +609,7 @@
 
     function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-    function schedulePreview(categories, lat, hemi, clubId, ready) {
+    function schedulePreview(categories, lat, lon, hemi, clubId, ready) {
       clearTimeout(_previewTimer);
       if (_previewCtrl) { _previewCtrl.abort(); _previewCtrl = null; }
       const body = document.getElementById('preview-body');
@@ -608,13 +618,13 @@
         return;
       }
       body.innerHTML = '<span class="preview-loading">Loading…</span>';
-      _previewTimer = setTimeout(() => fetchPreview(categories, lat, hemi, clubId), 400);
+      _previewTimer = setTimeout(() => fetchPreview(categories, lat, lon, hemi, clubId), 400);
     }
 
-    async function fetchPreview(categories, lat, hemi, clubId) {
+    async function fetchPreview(categories, lat, lon, hemi, clubId) {
       _previewCtrl = new AbortController();
       try {
-        const res = await fetch(buildPreviewUrl(categories, lat, hemi, clubId), { signal: _previewCtrl.signal });
+        const res = await fetch(buildPreviewUrl(categories, lat, lon, hemi, clubId), { signal: _previewCtrl.signal });
         if (!res.ok) throw new Error(String(res.status));
         const { events } = await res.json();
         renderPreviewEvents(events);

@@ -3,9 +3,11 @@
  *
  * Data source: https://download.geonames.org/export/zip/ (public domain)
  *
- * Output format: { "10001": 41, "90210": 34, "T2P": 51, ... }
- *   - US: 5-digit zip code → whole-number latitude
- *   - CA: 3-character FSA (Forward Sortation Area) → whole-number latitude
+ * Output format: { "10001": [41, -74], "90210": [34, -118], "T2P": [51, -114], ... }
+ *   - US: 5-digit zip code → whole-number [latitude, longitude]
+ *   - CA: 3-character FSA (Forward Sortation Area) → whole-number [latitude, longitude]
+ *
+ * Whole degrees are all the feed needs, and keep the location in a subscription URL coarse.
  *
  * Run once and commit the output:
  *   npm run generate-zip-latitudes
@@ -44,30 +46,29 @@ async function downloadZip(url: string): Promise<Uint8Array> {
 function parseGeoNames(
   text: string,
   keyFn: (code: string) => string,
-): Map<string, number[]> {
-  const acc = new Map<string, number[]>();
+): Map<string, [number, number][]> {
+  const acc = new Map<string, [number, number][]>();
   for (const line of text.split('\n')) {
     const parts = line.split('\t');
     if (parts.length < 10) continue;
     const postalCode = parts[1] ?? '';
-    const latStr = parts[9] ?? '';
-    if (!postalCode || !latStr) continue;
-    const lat = parseFloat(latStr);
-    if (isNaN(lat)) continue;
+    const lat = parseFloat(parts[9] ?? '');
+    const lon = parseFloat(parts[10] ?? '');
+    if (!postalCode || isNaN(lat) || isNaN(lon)) continue;
     const key = keyFn(postalCode);
     if (!key) continue;
     const existing = acc.get(key);
     if (existing) {
-      existing.push(lat);
+      existing.push([lat, lon]);
     } else {
-      acc.set(key, [lat]);
+      acc.set(key, [[lat, lon]]);
     }
   }
   return acc;
 }
 
 async function main() {
-  const lookup: Record<string, number> = {};
+  const lookup: Record<string, [number, number]> = {};
 
   for (const source of SOURCES) {
     console.log(`\nProcessing ${source.isCA ? 'Canada' : 'US'}...`);
@@ -81,10 +82,10 @@ async function main() {
     const entries = parseGeoNames(text, source.keyFn);
 
     let count = 0;
-    for (const [key, lats] of entries) {
+    for (const [key, points] of entries) {
       // Average across all entries for the same key, then round to whole degree
-      const avg = lats.reduce((a, b) => a + b, 0) / lats.length;
-      lookup[key] = Math.round(avg);
+      const avg = (i: 0 | 1) => points.reduce((sum, p) => sum + p[i], 0) / points.length;
+      lookup[key] = [Math.round(avg(0)), Math.round(avg(1))];
       count++;
     }
     console.log(`  → ${count} unique ${source.isCA ? 'FSA' : 'zip'} entries`);

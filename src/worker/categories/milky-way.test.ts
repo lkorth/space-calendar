@@ -207,7 +207,13 @@ function sunAltitudeDeg(dateUTC: Date, hourUTC: number, lat: number, lon: number
 }
 
 describe('astronomical twilight threshold', () => {
-  it('opens the window only once the sun crosses 18° below the horizon', () => {
+  // The window edges must land on the moment the limiting condition flips, not on the
+  // nearest scan sample. A window that ends on a sample boundary can run up to a full
+  // scan step past astronomical dawn, telling subscribers the sky is dark when it is not.
+  // Tolerance covers the difference between this test's sun model and the worker's.
+  const TOLERANCE_DEG = 0.5;
+
+  it('opens the window when the sun crosses 18° below the horizon at dusk', () => {
     // 30°S, new moon (June 15, 2026): confirmed sun-limited window start at this
     // latitude/date (core and moon are already satisfied well before the sun is).
     const date = new Date(Date.UTC(2026, 5, 15));
@@ -215,14 +221,25 @@ describe('astronomical twilight threshold', () => {
     expect(result).not.toBeNull();
 
     const atStart = sunAltitudeDeg(date, result!.startHour, -30, 0);
-    const justBeforeStart = sunAltitudeDeg(date, result!.startHour - 0.25, -30, 0);
+    expect(Math.abs(atStart + 18)).toBeLessThan(TOLERANCE_DEG);
+  });
 
-    // The included sample must already be at/past -18°; the excluded sample
-    // one step earlier must not yet be. A regression to -12° or -6° would put
-    // both readings on the same side of that threshold.
-    expect(atStart).toBeLessThanOrEqual(-18);
-    expect(atStart).toBeGreaterThan(-21.5); // stays within one scan step of -18°
-    expect(justBeforeStart).toBeGreaterThan(-18);
+  it('closes the window when the sun climbs past 18° below the horizon at dawn', () => {
+    // 40°N, 4°W (Madrid), April 15, 2027: the core rises late and the window is cut off
+    // by astronomical dawn.
+    const date = new Date(Date.UTC(2027, 3, 15));
+    const result = milkyWayWindowForNight(date, 40, -4);
+    expect(result).not.toBeNull();
+
+    const atEnd = sunAltitudeDeg(date, result!.endHour, 40, -4);
+    expect(Math.abs(atEnd + 18)).toBeLessThan(TOLERANCE_DEG);
+  });
+
+  it('reports hours matching the span between start and end', () => {
+    for (const [lat, lon, day] of [[40, -4, '2027-04-15'], [-30, 150, '2027-06-05'], [-34, 18, '2027-07-02']] as const) {
+      const w = milkyWayWindowForNight(new Date(`${day}T00:00:00Z`), lat, lon)!;
+      expect(w.hours).toBeCloseTo(w.endHour - w.startHour, 2);
+    }
   });
 });
 
@@ -295,7 +312,7 @@ describe('milkyWayCategory.fetch', () => {
 
   it('returns cached result without recomputing', async () => {
     const cached = [{ uid: 'cached', title: '🌌 Cached', category: 'milky-way' }];
-    const env = makeEnv({ 'milky-way:45': JSON.stringify(cached) });
+    const env = makeEnv({ 'milky-way:45:0': JSON.stringify(cached) });
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect(events).toEqual(cached);
   });
@@ -331,18 +348,18 @@ describe('milkyWayCategory.fetch', () => {
     const env = makeEnv();
     await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect((env.CALENDAR_KV.put as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(
-      'milky-way:45',
+      'milky-way:45:0',
       expect.any(String),
       { expirationTtl: 86400 },
     );
   });
 
   it('versions the KV key with the deploy ID', async () => {
-    const env = { ...makeEnv({ 'milky-way:45': 'written by a previous deploy' }), DEPLOY_ID: 'abc1234' };
+    const env = { ...makeEnv({ 'milky-way:45:0': 'written by a previous deploy' }), DEPLOY_ID: 'abc1234' };
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect(events.length).toBeGreaterThan(0);
     expect((env.CALENDAR_KV.put as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(
-      'milky-way:45:abc1234',
+      'milky-way:45:0:abc1234',
       expect.any(String),
       { expirationTtl: 86400 },
     );
@@ -352,6 +369,44 @@ describe('milkyWayCategory.fetch', () => {
     const env = makeEnv();
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
     expect(events.every((e) => e.title === '🌌 Milky Way Viewing')).toBe(true);
+  });
+
+  describe('observer longitude', () => {
+    const put = (env: ReturnType<typeof makeEnv>) => env.CALENDAR_KV.put as ReturnType<typeof vi.fn>;
+
+    it('uses the lon parameter when present', async () => {
+      // Columbus, OH sits at -83°, 8° west of the -75° its timezone implies, so every
+      // window starts 32 minutes (8° × 4 min) later in UTC than the tz estimate.
+      const [fromTz, fromLon] = await Promise.all([
+        milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, tz: 'America/New_York' }),
+        milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, lon: -83, tz: 'America/New_York' }),
+      ]);
+      const tzByUid = new Map(fromTz.events.map((e) => [e.uid, e]));
+      const shared = fromLon.events.filter((e) => tzByUid.has(e.uid));
+      expect(shared.length).toBeGreaterThan(0);
+      for (const e of shared) {
+        const shiftMin = (new Date(e.start).getTime() - new Date(tzByUid.get(e.uid)!.start).getTime()) / 60000;
+        expect(shiftMin).toBeGreaterThan(25);
+        expect(shiftMin).toBeLessThan(40);
+      }
+    });
+
+    it('falls back to the timezone estimate when lon is absent', async () => {
+      const [fromTz, fromEquivalentLon] = await Promise.all([
+        milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, tz: 'America/Denver' }),
+        milkyWayCategory.fetch(makeEnv(), { categories: ['milky-way'], lat: 40, lon: -105 }),
+      ]);
+      expect(fromTz.events).toEqual(fromEquivalentLon.events);
+    });
+
+    it('keys the KV cache by the longitude actually used', async () => {
+      const withLon = makeEnv();
+      const withTz = makeEnv();
+      await milkyWayCategory.fetch(withLon, { categories: ['milky-way'], lat: 40, lon: -83, tz: 'America/New_York' });
+      await milkyWayCategory.fetch(withTz, { categories: ['milky-way'], lat: 40, tz: 'America/Denver' });
+      expect(put(withLon)).toHaveBeenCalledWith('milky-way:40:-83', expect.any(String), { expirationTtl: 86400 });
+      expect(put(withTz)).toHaveBeenCalledWith('milky-way:40:-105', expect.any(String), { expirationTtl: 86400 });
+    });
   });
 
   describe('rolling window', () => {

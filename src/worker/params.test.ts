@@ -205,6 +205,22 @@ describe('parseParams', () => {
     expect(paramsOf('?c=moon-phases&lat=-33.4&hemi=south').lat).toBe(-33);
   });
 
+  it('rounds longitude to a whole degree', () => {
+    expect(paramsOf('?c=milky-way&lat=40&lon=-83.0').lon).toBe(-83);
+    expect(paramsOf('?c=milky-way&lat=40&lon=-82.6').lon).toBe(-83);
+    expect(paramsOf('?c=milky-way&lat=-34&hemi=south&lon=151.2').lon).toBe(151);
+  });
+
+  it('treats a missing, non-numeric or out-of-range longitude as absent', () => {
+    // Absent falls back to the timezone-derived estimate, which every subscription
+    // generated before lon existed still relies on.
+    expect(paramsOf('?c=milky-way&lat=40').lon).toBeUndefined();
+    expect(paramsOf('?c=milky-way&lat=40&lon=abc').lon).toBeUndefined();
+    expect(paramsOf('?c=milky-way&lat=40&lon=').lon).toBeUndefined();
+    expect(paramsOf('?c=milky-way&lat=40&lon=181').lon).toBeUndefined();
+    expect(paramsOf('?c=milky-way&lat=40&lon=-181').lon).toBeUndefined();
+  });
+
   it('concatenates repeated c parameters', () => {
     expect(paramsOf('?c=moon-phases&c=comets').categories).toEqual(['moon-phases', 'comets']);
   });

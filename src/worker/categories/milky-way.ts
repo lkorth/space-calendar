@@ -104,8 +104,13 @@ function moonPosition(jd: number): { ra: number; dec: number } {
   };
 }
 
+// Sidereal time advances this much faster than UT; one sidereal hour is ~10 s shorter.
+const SIDEREAL_RATE = 1.00273790935;
+
 function transitUT(raHours: number, jd: number, lon: number): number {
-  return (((raHours - gmst0h(jd) - lon / 15) % 24) + 24) % 24;
+  // gmst0h is sidereal time at 0h UT, so the sidereal hours until transit must be
+  // converted to UT hours. Skipping this shifts transits late by up to ~4 minutes.
+  return ((((raHours - gmst0h(jd) - lon / 15) % 24) + 24) % 24) / SIDEREAL_RATE;
 }
 
 // Returns the half-window in hours (0..12) for an object at `dec` to be above `alt` at `lat`.
@@ -183,31 +188,52 @@ export function milkyWayWindowForNight(dateUTC: Date, lat: number, lon: number):
   const coreRise = ((coreTransit - coreHW) % 24 + 24) % 24;
   const coreSet = ((coreTransit + coreHW) % 24 + 24) % 24;
 
+  const qualifies = (absoluteH: number): boolean => {
+    const h = ((absoluteH % 24) + 24) % 24;
+    const isDark = sunHW === null ? true : inWindow(h, darkStart, darkEnd);
+    const coreUp = inWindow(h, coreRise, coreSet);
+    const moonDown = moonNeverRises ? true : !inWindow(h, moonRise, moonSet);
+    return isDark && coreUp && moonDown;
+  };
+
   // Scan the 24h period centered on core transit so any midnight-spanning window is
   // encountered as a single contiguous stretch rather than split at h=0.
   const scanStart = ((coreTransit - 12) % 24 + 24) % 24;
   const step = 0.25;
   let overlap = 0;
-  let windowStart = -1;
-  let windowEnd = -1;
+  let firstSample = -1;
+  let lastSample = -1;
 
   for (let i = 0; i < 24 / step; i++) {
-    const h = (scanStart + i * step) % 24;
     const absoluteH = scanStart + i * step;
-
-    const isDark = sunHW === null ? true : inWindow(h, darkStart, darkEnd);
-    const coreUp = inWindow(h, coreRise, coreSet);
-    const moonDown = moonNeverRises ? true : !inWindow(h, moonRise, moonSet);
-
-    if (isDark && coreUp && moonDown) {
+    if (qualifies(absoluteH)) {
       overlap += step;
-      if (windowStart < 0) windowStart = absoluteH;
-      windowEnd = absoluteH + step;
+      if (firstSample < 0) firstSample = absoluteH;
+      lastSample = absoluteH;
     }
   }
 
   if (overlap === 0) return null;
-  return { hours: overlap, startHour: windowStart, endHour: windowEnd };
+
+  // The scan only locates each edge to within one step; ending the window a full step
+  // after the last dark sample could run it up to 15 minutes past astronomical dawn.
+  // Bisect the step on each side to find where the condition actually flips.
+  const windowStart = qualifies(firstSample - step) ? firstSample : findEdge(qualifies, firstSample, firstSample - step);
+  const windowEnd = qualifies(lastSample + step) ? lastSample + step : findEdge(qualifies, lastSample, lastSample + step);
+  const hours = overlap - step + (firstSample - windowStart) + (windowEnd - lastSample);
+
+  return { hours, startHour: windowStart, endHour: windowEnd };
+}
+
+/** Bisect between an hour where `test` holds and one where it does not, returning the
+ *  crossing to within a second. */
+function findEdge(test: (h: number) => boolean, inside: number, outside: number): number {
+  while (Math.abs(outside - inside) > 1 / 3600) {
+    const mid = (inside + outside) / 2;
+    if (test(mid)) inside = mid;
+    else outside = mid;
+  }
+  return (inside + outside) / 2;
 }
 
 /** UTC midnights for every night in the rolling window: 6 months back through 1 year
@@ -237,11 +263,13 @@ export const milkyWayCategory: Category = {
     if (lat === undefined) return { events: [], cache: true };
     if (coreMaxAlt(lat) < minCoreAltDeg(lat)) return { events: [], cache: true };
 
-    const kvKey = liveKvKey(env, `milky-way:${lat}`);
+    // Subscriptions generated before the configurator sent lon only carry tz, and those
+    // URLs cannot be updated, so the timezone estimate stays as the fallback.
+    const lon = params.lon ?? tzOffsetHours(tz) * 15;
+
+    const kvKey = liveKvKey(env, `milky-way:${lat}:${lon}`);
     const cached = await env.CALENDAR_KV.get(kvKey);
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
-
-    const lon = tzOffsetHours(tz) * 15;
 
     const events: CalendarEvent[] = [];
     for (const d of nightsInWindow(new Date())) {

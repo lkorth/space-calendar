@@ -326,6 +326,38 @@ describe('worker request routing', () => {
     expect(keys[0]).not.toBe(keys[1]);
   });
 
+  it('serves Milky Way windows to subscription URLs generated before lon existed', async () => {
+    // The exact shape the configurator produced before it sent lon. Those URLs live in
+    // calendar clients and cannot be updated, so they must keep resolving longitude from
+    // tz — giving the same windows as an explicit lon at the zone's standard meridian.
+    const legacy = 'https://space-calendar.workers.dev/feed.json?c=milky-way&lat=40&tz=America/New_York&sid=0190d0c0-0000-7000-8000-000000000000';
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+
+    const legacyRes = await worker.fetch(makeRequest(legacy), makeEnv(), ctx);
+    const explicitRes = await worker.fetch(makeRequest(`${legacy}&lon=-75`), makeEnv(), ctx);
+    expect(legacyRes.status).toBe(200);
+
+    const { events } = (await legacyRes.json()) as { events: CalendarEvent[] };
+    const { events: explicit } = (await explicitRes.json()) as { events: CalendarEvent[] };
+    expect(events.length).toBeGreaterThan(0);
+    expect(events.every((e) => e.title === '🌌 Milky Way Viewing')).toBe(true);
+    expect(events).toEqual(explicit);
+  });
+
+  it('keys the cache on lon, so a precise subscription never gets a tz-estimated body', async () => {
+    const env = makeEnv();
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics?c=milky-way&lat=40&tz=America/New_York';
+
+    await worker.fetch(makeRequest(base), env, ctx);
+    await worker.fetch(makeRequest(`${base}&lon=-83`), env, ctx);
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).not.toBe(keys[1]);
+  });
+
   it('stores response in edge cache after computing', async () => {
     const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
     const waitUntil = vi.fn();

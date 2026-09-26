@@ -86,7 +86,7 @@ No astronomical calculations are performed — all data is consumed from public 
 | `generate-weekly.yml` | Weekly (Sunday) | Asteroid close approaches, comets |
 | `generate-on-change.yml` | Push to main (YAML changed) | History (if `history.yaml` changed), Comets (if `comets.yaml` changed) |
 
-**Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching, and Milky Way viewing windows are computed over the full rolling window so the next season is always in the feed — from Columbus, OH, for example, the season ends in mid-August, and a calendar-year window would show nothing upcoming until January.
+**Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching, and Milky Way viewing windows are computed over the full rolling window so the next season is always in the feed — at 40°N, for example, the season ends in mid-August, and a calendar-year window would show nothing upcoming until January.
 
 **API sources:**
 - [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar eclipses, solstices, equinoxes (lunar eclipse and planetary phenomena endpoints do not exist in USNO's API)
@@ -114,7 +114,7 @@ Outputs: one JSON file per category written to `data/`, then:
 | `launches:<deploy>` | Launch Library 2 API | 1 hour |
 | `mission-milestones:<deploy>` | Launch Library 2 events API | 1 hour |
 | `aurora:<lat>:<deploy>` / `aurora-australis:<lat>:<deploy>` | NOAA SWPC 3-day Kp forecast | 3–4 hours |
-| `milky-way:<lat>:<deploy>` | Computed in the worker | 24 hours |
+| `milky-way:<lat>:<lon>:<deploy>` | Computed in the worker | 24 hours |
 | `astronomy-clubs:<id>:<deploy>` | Club website / iCal feed | 6 hours |
 
 Aurora keys are keyed by whole-number latitude (e.g., `aurora:45:<deploy>`, `aurora:52:<deploy>`), so all subscribers within the same latitude degree share a single cached forecast. This limits the total number of aurora cache entries to ~40 for all of North America (25°N–65°N).
@@ -150,6 +150,7 @@ parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not ge
 | Repeated `?c=` parameters | Concatenated rather than dropped |
 | `hemi` | Accepts `s`, `south`, `southern`, any case; anything else is northern |
 | Non-numeric `lat` | Treated as absent rather than `NaN`, which would otherwise fail the latitude/hemisphere cross-check and 400 a working subscription |
+| `lon` | Rounded to a whole degree like `lat`, keeping the location in the URL coarse (~100 km). Non-numeric or outside ±180 is treated as absent. Only Milky Way uses it; when absent, longitude is estimated from the standard UTC offset of `tz` (offset × 15°), which is what every subscription generated before `lon` existed relies on. That estimate is the center of the timezone, so a subscriber near its edge sees windows shifted — Madrid at -4° is estimated at 15° (Central European Time), putting its windows ~76 minutes early |
 | Fixed-offset `tz` (`Etc/GMT-2`, `UTC+2`, `+02:00`) | Canonicalized to the equivalent `Etc/GMT±N` zone and served as given. These carry no DST rules, so a subscriber whose region observes DST sees contact times drift by an hour for half the year — but the real zone cannot be recovered from an offset (`Etc/GMT-2` is equally consistent with Europe/Kyiv year-round and Europe/Warsaw in July), so guessing would be wrong in the other direction. Logged with `console.warn` so the affected population stays visible in Workers observability |
 | `sid` | Ignored by the parser, but preserved in the URL. The configurator mints a UUIDv7 once per visit and writes it into the subscription URL it generates, so a calendar client replays the same id on every poll and distinct ids in the usage dataset count subscriptions rather than requests — without it, one client polling hourly is indistinguishable from a household behind a single IP. A v7 opens with the millisecond it was minted, so a log line also dates the subscription and how long it has been syncing, with no first-seen table to maintain. The rest is random and carries nothing about the visitor |
 | `utm_source` and other unknown parameters | Ignored by the parser, but preserved in the URL. The configurator copies `utm_source` from its own landing URL into the subscription URL it generates, so a campaign shows up in the usage dataset on every subsequent fetch — measuring who actually subscribed and kept syncing, not just who clicked |
@@ -196,7 +197,7 @@ Serving the configurator and the feed from one domain removes the root redirect 
 
 - Checkbox for each category with a short description
 - Aurora checkbox reveals a zip code / Canadian postal code input field with a note about calendar sync limitations
-- Zip/FSA is looked up against a bundled latitude table (committed to the repo); the resolved whole-degree latitude is encoded into the URL as `&lat=<n>` — the raw zip is never sent to the worker
+- Zip/FSA is looked up against a bundled table of whole-degree `[lat, lon]` pairs (`zip-latitudes.json`, committed to the repo); the resolved latitude is encoded into the URL as `&lat=<n>`, plus `&lon=<n>` when Milky Way is selected — the raw zip is never sent to the worker. "Detect my location" rounds the browser's position the same way. Manually entered southern-hemisphere latitudes carry no longitude, so the worker falls back to the timezone estimate
 - Generates a `webcal://` subscription URL as the user toggles categories
 - Subscribe buttons for Apple Calendar (`webcal://`) and Google Calendar; the user agent decides which leads
 - Copy URL falls back to a selectable input where the clipboard API is unavailable, as in in-app browsers

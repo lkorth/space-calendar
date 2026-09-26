@@ -119,6 +119,14 @@ function parseLat(raw: string | null): number | undefined {
   return Number.isFinite(parsed) ? Math.round(parsed) : undefined;
 }
 
+/** Rounded to a whole degree like lat, which keeps the location in the URL coarse (~100 km).
+ *  Anything unusable is treated as absent so the category falls back to the tz estimate. */
+function parseLon(raw: string | null): number | undefined {
+  if (raw === null) return undefined;
+  const parsed = parseFloat(raw);
+  return Number.isFinite(parsed) && Math.abs(parsed) <= 180 ? Math.round(parsed) : undefined;
+}
+
 export function parseParams(url: URL): RequestParams {
   const searchParams = recoverEmbeddedParams(url.searchParams);
 
@@ -126,6 +134,7 @@ export function parseParams(url: URL): RequestParams {
     // Repeated ?c= parameters are concatenated rather than dropped.
     categories: parseCategories(searchParams.getAll('c').join(',')),
     lat: parseLat(searchParams.get('lat')),
+    lon: parseLon(searchParams.get('lon')),
     tz: normalizeTimezone(searchParams.get('tz') ?? undefined),
     hemisphere: parseHemisphere(searchParams.get('hemi')),
     club: searchParams.get('club')?.trim() || undefined,

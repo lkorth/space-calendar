@@ -398,3 +398,69 @@ describe('e2e test coverage', () => {
     }
   });
 });
+
+describe('configurator location', () => {
+  const html = readFileSync('src/site/index.html', 'utf-8');
+
+  function pageFunction(name: string, deps: Record<string, unknown>): (...args: unknown[]) => unknown {
+    const src = new RegExp(`(async )?function ${name}\\([\\s\\S]*?\\n    \\}`).exec(html)?.[0];
+    expect(src, `${name}() not found in index.html`).toBeDefined();
+    return new Function(...Object.keys(deps), `${src}; return ${name};`)(...Object.values(deps));
+  }
+
+  const urlDeps = {
+    WORKER_BASE: 'https://space-calendar.lukekorth.com',
+    detectedTZ: 'America/New_York',
+    CAMPAIGN_SOURCE: null,
+    SUBSCRIBER_ID: 'sid',
+  };
+
+  for (const name of ['buildUrl', 'buildPreviewUrl']) {
+    describe(name, () => {
+      const build = (categories: string[], lat: number | null, lon: number | null) =>
+        new URL(pageFunction(name, urlDeps)(categories, lat, lon, 'north', null) as string).searchParams;
+
+      it('sends lon for Milky Way when the location is known', () => {
+        const params = build(['milky-way'], 40, -83);
+        expect(params.get('lat')).toBe('40');
+        expect(params.get('lon')).toBe('-83');
+      });
+
+      it('omits lon when only the latitude is known, leaving the worker to use tz', () => {
+        const params = build(['milky-way'], -34, null);
+        expect(params.get('lat')).toBe('-34');
+        expect(params.has('lon')).toBe(false);
+      });
+
+      it('omits lon when no selected category uses it', () => {
+        // Aurora visibility depends on latitude alone; a finer location than a
+        // category needs should not end up in the URL.
+        expect(build(['aurora'], 45, -93).has('lon')).toBe(false);
+        expect(build(['moon-phases'], 45, -93).has('lon')).toBe(false);
+      });
+    });
+  }
+
+  describe('zip lookup', () => {
+    const db = JSON.parse(readFileSync('src/site/zip-latitudes.json', 'utf-8')) as Record<string, unknown>;
+
+    it('stores a whole-degree [lat, lon] pair for every code', () => {
+      const invalid = Object.entries(db).filter(([, value]) => {
+        if (!Array.isArray(value) || value.length !== 2) return true;
+        const [lat, lon] = value as number[];
+        return !Number.isInteger(lat) || Math.abs(lat!) > 90 || !Number.isInteger(lon) || Math.abs(lon!) > 180;
+      });
+      expect(Object.keys(db).length).toBeGreaterThan(40_000);
+      expect(invalid).toEqual([]);
+    });
+
+    it('resolves US zip codes and Canadian FSAs to a location', async () => {
+      const lookupLocation = pageFunction('lookupLocation', {
+        fetch: () => Promise.resolve({ json: () => Promise.resolve(db) }),
+      });
+      expect(await lookupLocation('43215')).toEqual({ lat: 40, lon: -83 }); // Columbus, OH
+      expect(await lookupLocation('T2P 1J9')).toEqual({ lat: 51, lon: -114 }); // Calgary, AB
+      expect(await lookupLocation('00000')).toBeNull();
+    });
+  });
+});

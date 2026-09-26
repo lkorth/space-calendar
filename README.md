@@ -43,7 +43,8 @@ Returns `{ "name": "...", "events": [...] }` where each event is a `CalendarEven
 | Parameter | Description |
 |-----------|-------------|
 | `c` | Comma-separated category slugs (required). Same slugs as the ICS feed. |
-| `lat` | Whole-degree latitude. Required for `aurora` and `aurora-australis`. Use a negative value for southern hemisphere. |
+| `lat` | Whole-degree latitude. Required for `aurora`, `aurora-australis` and `milky-way`. Use a negative value for southern hemisphere. |
+| `lon` | Whole-degree longitude, negative west of Greenwich. Optional; used by `milky-way` to time viewing windows. When omitted, longitude is estimated from `tz`. |
 | `hemi` | `north` (default) or `south`. Affects solstice/equinox event titles and descriptions. |
 | `tz` | IANA timezone string (e.g. `America/New_York`). Used for contact times in event descriptions. |
 | `club` | Astronomy club ID (e.g. `jgap`). Required for `astronomy-clubs`. |
