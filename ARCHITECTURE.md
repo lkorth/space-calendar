@@ -108,16 +108,18 @@ Outputs: one JSON file per category written to `data/`, then:
 
 ### 2. Cloudflare KV Store
 
-Three types of entries:
-
 | Key pattern | Source | TTL |
 |-------------|--------|-----|
 | `static:<category>` | Generated on pipeline schedule by GitHub Actions | No expiry — overwritten on each run |
-| `launches` | Launch Library 2 API | 1 hour |
-| `aurora:<lat>` | NOAA SWPC 3-day Kp forecast | 3–4 hours |
-| `astronomy-clubs:<id>` | Club website / iCal feed | 6 hours |
+| `launches:<deploy>` | Launch Library 2 API | 1 hour |
+| `mission-milestones:<deploy>` | Launch Library 2 events API | 1 hour |
+| `aurora:<lat>:<deploy>` / `aurora-australis:<lat>:<deploy>` | NOAA SWPC 3-day Kp forecast | 3–4 hours |
+| `milky-way:<lat>:<deploy>` | Computed in the worker | 24 hours |
+| `astronomy-clubs:<id>:<deploy>` | Club website / iCal feed | 6 hours |
 
-Aurora keys are keyed by whole-number latitude (e.g., `aurora:45`, `aurora:52`), so all subscribers within the same latitude degree share a single cached forecast. This limits the total number of aurora cache entries to ~40 for all of North America (25°N–65°N).
+Aurora keys are keyed by whole-number latitude (e.g., `aurora:45:<deploy>`, `aurora:52:<deploy>`), so all subscribers within the same latitude degree share a single cached forecast. This limits the total number of aurora cache entries to ~40 for all of North America (25°N–65°N).
+
+`<deploy>` is the `DEPLOY_ID` var (short git SHA) set by `worker:deploy`. Every key the worker writes itself is suffixed with it, so a new deploy never reads events serialized by older code: changes to filtering or the event shape take effect immediately instead of after the old entries' TTL, and a format change can't break parsing. The first request after a deploy refetches from the upstream API; old entries expire via their TTL. `static:*` keys are written by the pipeline, not the worker, and are not versioned. The same `DEPLOY_ID` is also part of the edge-cache key.
 
 ### 3. Cloudflare Worker
 
@@ -126,7 +128,7 @@ Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with 
 - Parses the `c` query parameter as a comma-separated list of category slugs (see **Request parameter handling** below)
 - Reads each requested static category from KV
 - If `launches` is requested: reads from KV; on cache miss, fetches from Launch Library 2, filters to notable launches with at least month-level date precision, writes to KV with 1-hour TTL
-- If `aurora` is requested: rounds `lat` to the nearest integer, reads `aurora:<lat>` from KV; on cache miss, fetches NOAA SWPC 3-day Kp forecast, computes visibility windows for that latitude, writes to KV with 3–4 hour TTL
+- If `aurora` is requested: rounds `lat` to the nearest integer, reads `aurora:<lat>:<deploy>` from KV; on cache miss, fetches NOAA SWPC 3-day Kp forecast, computes visibility windows for that latitude, writes to KV with 3–4 hour TTL
 - Merges all events, then either:
   - `/feed.ics` — serializes to an ICS document (`Content-Type: text/calendar`)
   - `/feed.json` — returns `{ name, events }` as JSON (`Content-Type: application/json`)

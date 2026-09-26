@@ -318,6 +318,17 @@ describe('milkyWayCategory.fetch', () => {
     );
   });
 
+  it('versions the KV key with the deploy ID', async () => {
+    const env = { ...makeEnv({ 'milky-way:45': 'written by a previous deploy' }), DEPLOY_ID: 'abc1234' };
+    const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });
+    expect(events.length).toBeGreaterThan(0);
+    expect((env.CALENDAR_KV.put as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(
+      'milky-way:45:abc1234',
+      expect.any(String),
+      { expirationTtl: 86400 },
+    );
+  });
+
   it('event titles are "🌌 Milky Way Viewing"', async () => {
     const env = makeEnv();
     const { events } = await milkyWayCategory.fetch(env, { categories: ['milky-way'], lat: 45 });

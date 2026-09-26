@@ -1,5 +1,6 @@
 import type { CalendarEvent } from '../../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
+import { liveKvKey } from '../cache.ts';
 
 // Galactic center (Sagittarius A*): RA 17h 45m 40s, Dec -29° 00' 28"
 const GC_RA_H = 17 + 45 / 60 + 40 / 3600;
@@ -221,7 +222,7 @@ export const milkyWayCategory: Category = {
     if (lat === undefined) return { events: [], cache: true };
     if (coreMaxAlt(lat) < minCoreAltDeg(lat)) return { events: [], cache: true };
 
-    const kvKey = `milky-way:${lat}`;
+    const kvKey = liveKvKey(env, `milky-way:${lat}`);
     const cached = await env.CALENDAR_KV.get(kvKey);
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 

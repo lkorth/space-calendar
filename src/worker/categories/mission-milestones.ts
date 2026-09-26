@@ -2,6 +2,7 @@ import { fetchUpcomingEvents } from '../clients/ll2-events.ts';
 import type { LL2Event } from '../clients/ll2-events.ts';
 import type { CalendarEvent } from '../../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
+import { liveKvKey } from '../cache.ts';
 
 const KV_KEY = 'mission-milestones';
 const TTL_SECONDS = 60 * 60; // 1 hour
@@ -10,14 +11,15 @@ export const missionMilestonesCategory: Category = {
   slug: 'mission-milestones',
 
   async fetch(env: Env, _params: RequestParams): Promise<CategoryResult> {
-    const cached = await env.CALENDAR_KV.get(KV_KEY);
+    const kvKey = liveKvKey(env, KV_KEY);
+    const cached = await env.CALENDAR_KV.get(kvKey);
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
     const ll2Events = await fetchUpcomingEvents(env.LL2_API_KEY);
     if (ll2Events === null) return { events: [], cache: false };
 
     const events = ll2Events.map(toCalendarEvent);
-    await env.CALENDAR_KV.put(KV_KEY, JSON.stringify(events), {
+    await env.CALENDAR_KV.put(kvKey, JSON.stringify(events), {
       expirationTtl: TTL_SECONDS,
     });
     return { events, cache: true };

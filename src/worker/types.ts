@@ -18,7 +18,7 @@ export interface Env {
   CALENDAR_KV: KVNamespace;
   /** Optional API key for Launch Library 2 higher rate limits */
   LL2_API_KEY?: string;
-  /** Git SHA injected at deploy time — changing it busts the edge cache */
+  /** Git SHA injected at deploy time — changing it busts the edge cache and live-category KV entries */
   DEPLOY_ID?: string;
   /** Workers Analytics Engine dataset that receives one row per feed request. Optional so
    *  local dev and tests run without it. */

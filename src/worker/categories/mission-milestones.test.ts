@@ -152,6 +152,15 @@ describe('missionMilestonesCategory cache flag', () => {
     expect(kv.put).toHaveBeenCalledWith('mission-milestones', '[]', { expirationTtl: 3600 });
   });
 
+  it('versions the KV key with the deploy ID', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeLL2Response([makeEvent()])));
+    const kv = makeKV({ 'mission-milestones': 'written by a previous deploy' });
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace, DEPLOY_ID: 'abc1234' };
+    const result = await missionMilestonesCategory.fetch(env, { categories: ['mission-milestones'] });
+    expect(result.events).toHaveLength(1);
+    expect(kv.put).toHaveBeenCalledWith('mission-milestones:abc1234', expect.any(String), { expirationTtl: 3600 });
+  });
+
   it('end date rolls over correctly at month boundary', () => {
     const event = toCalendarEvent(makeEvent({ date: '2026-11-30T00:00:00Z' }));
     expect(event.start).toBe('2026-11-30');

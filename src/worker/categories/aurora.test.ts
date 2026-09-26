@@ -81,6 +81,20 @@ describe('auroraCategory (Northern)', () => {
     );
   });
 
+  it('versions the KV key with the deploy ID', async () => {
+    const kv = makeKV();
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace, DEPLOY_ID: 'abc1234' };
+    await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    expect(kv.put).toHaveBeenCalledWith('aurora:45:abc1234', expect.any(String), expect.anything());
+  });
+
+  it('ignores KV entries written by a previous deploy', async () => {
+    const kv = makeKV({ 'aurora:45:old5678': 'not parseable by this deploy' });
+    const env = { CALENDAR_KV: kv as unknown as KVNamespace, DEPLOY_ID: 'abc1234' };
+    await auroraCategory.fetch(env, { categories: ['aurora'], lat: 45 });
+    expect(fetch).toHaveBeenCalled();
+  });
+
   it('rounds latitude to the nearest integer for cache key', async () => {
     const kv = makeKV();
     const env = { CALENDAR_KV: kv as unknown as KVNamespace };

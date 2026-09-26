@@ -1,5 +1,6 @@
 import type { CalendarEvent } from '../../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
+import { liveKvKey } from '../cache.ts';
 
 const TTL_SECONDS = 60 * 60 * 6; // 6 hours
 
@@ -400,7 +401,7 @@ export const astronomyClubsCategory: Category = {
     const club = CLUBS.find((c) => c.id === params.club);
     if (!club) return { events: [], cache: true };
 
-    const kvKey = `astronomy-clubs:${club.id}`;
+    const kvKey = liveKvKey(env, `astronomy-clubs:${club.id}`);
     const cached = await env.CALENDAR_KV.get(kvKey);
     if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 

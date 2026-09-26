@@ -1,6 +1,7 @@
 import { fetchKpForecast, kpThresholdForLatitude } from '../clients/noaa.ts';
 import type { CalendarEvent } from '../../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from '../types.ts';
+import { liveKvKey } from '../cache.ts';
 
 const TTL_SECONDS = 60 * 60 * 4; // 4 hours
 
@@ -18,7 +19,7 @@ function makeAuroraCategory(hemisphere: 'northern' | 'southern'): Category {
 
       // For australis, the lat param will be a negative number (e.g. -45 for New Zealand).
       // kpThresholdForLatitude uses the absolute value so the thresholds mirror each other.
-      const kvKey = `${slug}:${lat}`;
+      const kvKey = liveKvKey(env, `${slug}:${lat}`);
       const cached = await env.CALENDAR_KV.get(kvKey);
       if (cached) return { events: JSON.parse(cached) as CalendarEvent[], cache: true };
 
