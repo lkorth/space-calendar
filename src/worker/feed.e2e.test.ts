@@ -181,6 +181,55 @@ describe('Worker feed — events', () => {
     expect(body).not.toContain('BEGIN:VEVENT');
   });
 
+  describe('milky-way longitude', () => {
+    type Event = { uid: string; start: string };
+    async function milkyWay(params: string): Promise<{ status: number; events: Event[] }> {
+      const res = await fetch(`${BASE}/feed.json?c=milky-way${params}&_bust=${Date.now()}`);
+      const { events } = (await res.json()) as { events: Event[] };
+      return { status: res.status, events };
+    }
+
+    // Madrid is at 4°W but on Central European Time, whose standard offset implies 15°E,
+    // so the timezone estimate places its windows ~76 minutes too early.
+    const madrid = '&lat=40&hemi=north&tz=Europe/Madrid';
+
+    it('shifts windows to the subscriber longitude when lon is given', async () => {
+      const [estimated, exact] = await Promise.all([milkyWay(madrid), milkyWay(`${madrid}&lon=-4`)]);
+      const estimatedByUid = new Map(estimated.events.map((e) => [e.uid, e]));
+      const shared = exact.events.filter((e) => estimatedByUid.has(e.uid));
+      expect(shared.length).toBeGreaterThan(0);
+      for (const e of shared) {
+        const shiftMin = (Date.parse(e.start) - Date.parse(estimatedByUid.get(e.uid)!.start)) / 60000;
+        expect(shiftMin).toBeGreaterThan(65);
+        expect(shiftMin).toBeLessThan(90);
+      }
+    });
+
+    it('falls back to the timezone estimate for an unusable lon instead of rejecting the feed', async () => {
+      const [estimated, nonNumeric, outOfRange] = await Promise.all([
+        milkyWay(madrid),
+        milkyWay(`${madrid}&lon=abc`),
+        milkyWay(`${madrid}&lon=999`),
+      ]);
+      expect(nonNumeric.status).toBe(200);
+      expect(outOfRange.status).toBe(200);
+      expect(estimated.events.length).toBeGreaterThan(0);
+      expect(nonNumeric.events).toEqual(estimated.events);
+      expect(outOfRange.events).toEqual(estimated.events);
+    });
+
+    it('covers the rolling window rather than just the calendar year', async () => {
+      // At 30°S the core is up at night for most of the year, so a year-ahead window
+      // always reaches well past 8 months out. A calendar-year window stops at Dec 31,
+      // which is under 8 months away from May onward.
+      const { events } = await milkyWay('&lat=-30&hemi=south&tz=Australia/Sydney');
+      const starts = events.map((e) => Date.parse(e.start));
+      const day = 24 * 60 * 60 * 1000;
+      expect(Math.max(...starts)).toBeGreaterThan(Date.now() + 240 * day);
+      expect(Math.min(...starts)).toBeGreaterThan(Date.now() - 186 * day);
+    });
+  });
+
   it('returns 400 when lat and hemi contradict each other', async () => {
     const { res } = await getFeed('?c=moon-phases&lat=-45&hemi=north');
     expect(res.status).toBe(400);
@@ -537,6 +586,14 @@ describe('Worker site — static assets', () => {
     const res = await fetch(`${BASE}/zip-latitudes.json`);
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('application/json');
+  });
+
+  it('serves [lat, lon] pairs, matching what the deployed page expects', async () => {
+    // The page reads entry[0] and entry[1]; a stale latitude-only table would silently
+    // drop lon from every zip-based Milky Way subscription.
+    const db = (await (await fetch(`${BASE}/zip-latitudes.json`)).json()) as Record<string, unknown>;
+    expect(db['80301']).toEqual([40, -105]); // Boulder, CO
+    expect(db['T2P']).toEqual([51, -114]); // Calgary, AB
   });
 
   it('does not publish the site test file', async () => {
