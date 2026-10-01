@@ -1,15 +1,5 @@
 [
   {
-    "uid": "season-equinox-3-2026@space-calendar",
-    "title": "🌸 March Equinox — Vernal Equinox (Northern Hemisphere)",
-    "start": "2026-03-20T14:46:00.000Z",
-    "end": "2026-03-20T14:46:00.000Z",
-    "allDay": false,
-    "description": "The Sun crosses the celestial equator today, rising almost exactly due east and setting almost exactly due west — as close to true east and west as it gets all year. In the Northern Hemisphere days are now growing longer by about 3 minutes each day; in the Southern Hemisphere, shortening.\n\nThis moment marks the astronomical start of spring in the Northern Hemisphere and autumn in the Southern. Ancient monuments from Stonehenge to the Pyramid of Chichén Itzá were oriented to mark it — evidence of how reliably humans have tracked this turning point for thousands of years.",
-    "url": "https://aa.usno.navy.mil/data/EarthSeasons",
-    "category": "solstices-equinoxes"
-  },
-  {
     "uid": "season-solstice-6-2026@space-calendar",
     "title": "☀️ June Solstice — Summer Solstice (Northern Hemisphere)",
     "start": "2026-06-21T08:24:00.000Z",
@@ -56,6 +46,16 @@
     "end": "2027-06-21T14:11:00.000Z",
     "allDay": false,
     "description": "The Sun rises at its northernmost point on the horizon and follows its highest arc across the midday sky — today is the longest day of the year in the Northern Hemisphere. North of the Arctic Circle the Sun doesn't set at all. In the Southern Hemisphere this is the winter solstice and the shortest day.\n\nAfter today, days begin shortening — slowly at first, then more rapidly. Despite being the longest day, the hottest days of summer typically lag 4–6 weeks behind: land and ocean keep absorbing heat long after the solstice. Stonehenge's main axis aligns with the midsummer sunrise, and cultures worldwide have marked this turning point for thousands of years.",
+    "url": "https://aa.usno.navy.mil/data/EarthSeasons",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "season-equinox-9-2027@space-calendar",
+    "title": "🍂 September Equinox — Autumnal Equinox (Northern Hemisphere)",
+    "start": "2027-09-23T06:02:00.000Z",
+    "end": "2027-09-23T06:02:00.000Z",
+    "allDay": false,
+    "description": "The Sun crosses the celestial equator moving southward, once again rising nearly due east and setting nearly due west. From today, nights in the Northern Hemisphere grow longer by about 3 minutes each day until the December solstice.\n\nNotice the angle of midday sunlight today compared to the June solstice — the difference makes the seasonal shift concrete. Many harvest festivals cluster around this time: across temperate cultures worldwide, the Sun's southward march reliably signaled the end of the growing season.",
     "url": "https://aa.usno.navy.mil/data/EarthSeasons",
     "category": "solstices-equinoxes"
   }

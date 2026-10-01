@@ -48,5 +48,15 @@
     "description": "Jupiter rises at sunset and dominates the night sky — the brightest point of light after the Moon on most nights. Binoculars reveal all four Galilean moons (Io, Europa, Ganymede, Callisto) as a chain of tiny points on either side of the disk; watch them shift position night to night. A small telescope at 60× or more shows the dark equatorial cloud bands and, with patience, the Great Red Spot rotating across the face every ten hours.\n\nOpposition is Jupiter's best night of the year, though it remains excellent for weeks before and after — its disk doesn't change dramatically in apparent size over that window.",
     "url": "https://solarsystem.nasa.gov/planets/jupiter/overview/",
     "category": "oppositions"
+  },
+  {
+    "uid": "opposition-neptune-2027-09-29@space-calendar",
+    "title": "🔭 Neptune at Opposition — Closest & Brightest",
+    "start": "2027-09-29",
+    "end": "2027-09-30",
+    "allDay": true,
+    "description": "Neptune reaches opposition — its closest approach to Earth this year, still nearly 4.4 billion km away. At magnitude ~7.8 it's invisible to the naked eye; binoculars show it as an extremely faint blue-grey point. A telescope at 150× or more reveals a tiny disk about 2.3 arcseconds across.\n\nNeptune moves so slowly (one full orbit in 165 years) that a star chart is essential to distinguish it from background stars. It was discovered in 1846 through pure mathematical prediction, the first planet found by calculation rather than observation.",
+    "url": "https://solarsystem.nasa.gov/planets/neptune/overview/",
+    "category": "oppositions"
   }
 ]

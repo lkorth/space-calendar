@@ -100,6 +100,16 @@
     "category": "elongations"
   },
   {
+    "uid": "elongation-mercury-greatest-elongation-east-2027-09-25@space-calendar",
+    "title": "🔭 Mercury at Greatest Eastern Elongation — Evening Star",
+    "start": "2027-09-25",
+    "end": "2027-09-26",
+    "allDay": true,
+    "description": "Mercury reaches its greatest angular separation from the Sun (26.3°) — the best window to spot the innermost planet this apparition. Look west after sunset: Mercury appears as a bright, steady point low in the western sky after sunset.\n\nAt 26.3°, this is a favorable elongation — Mercury stands well clear of the twilight glow and is easier to spot than usual. A binocular target even for casual observers. Mercury never rises far from the Sun; it always stays close to the horizon near sunrise or sunset and is only visible for a brief window each apparition.",
+    "url": "https://aa.usno.navy.mil/data/planets",
+    "category": "elongations"
+  },
+  {
     "uid": "elongation-venus-greatest-elongation-west-2027-01-04@space-calendar",
     "title": "🔭 Venus at Greatest Western Elongation — Morning Star",
     "start": "2027-01-04",

@@ -1,45 +1,5 @@
 [
   {
-    "uid": "eclipse-lunar-2026-03-03@space-calendar",
-    "title": "🌕 Total Lunar Eclipse — Blood Moon",
-    "start": "2026-03-03T08:45:00Z",
-    "end": "2026-03-03T14:23:00Z",
-    "allDay": false,
-    "description": "During a total lunar eclipse, Earth passes directly between the Sun and Moon, casting its full shadow (umbra) across the lunar surface. The Moon turns a deep red or orange — a \"Blood Moon\" — caused by sunlight bending through Earth's atmosphere and scattering onto the Moon's surface.\n\nVisible from: Americas, Asia, Australia, Pacific. Safe to observe with the naked eye from anywhere on the night side of Earth.",
-    "contactTimes": [
-      {
-        "label": "P1 — penumbral begins",
-        "utc": "2026-03-03T08:45:00Z"
-      },
-      {
-        "label": "U1 — partial begins",
-        "utc": "2026-03-03T09:51:00Z"
-      },
-      {
-        "label": "U2 — totality begins",
-        "utc": "2026-03-03T11:04:00Z"
-      },
-      {
-        "label": "Greatest eclipse",
-        "utc": "2026-03-03T11:34:00Z"
-      },
-      {
-        "label": "U3 — totality ends",
-        "utc": "2026-03-03T12:03:00Z"
-      },
-      {
-        "label": "U4 — partial ends",
-        "utc": "2026-03-03T13:17:00Z"
-      },
-      {
-        "label": "P4 — penumbral ends",
-        "utc": "2026-03-03T14:23:00Z"
-      }
-    ],
-    "url": "https://science.nasa.gov/eclipses/",
-    "category": "eclipses-lunar"
-  },
-  {
     "uid": "eclipse-lunar-2026-08-28@space-calendar",
     "title": "🌕 Partial Lunar Eclipse",
     "start": "2026-08-28T01:26:00Z",

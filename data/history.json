@@ -1,15 +1,5 @@
 [
   {
-    "uid": "history-19260316@space-calendar",
-    "title": "100 Years Ago: Goddard's Rocket — First Liquid-Fueled Rocket Launch (1926)",
-    "start": "2026-03-16",
-    "end": "2026-03-17",
-    "allDay": true,
-    "description": "On March 16, 1926, physicist Robert Goddard launched the world's first liquid-fueled rocket from a field in Auburn, Massachusetts. The crude device — fueled by liquid oxygen and gasoline — flew for 2.5 seconds and reached an altitude of 12 meters. It was derided at the time, but Goddard's work laid the engineering foundation for everything that followed: the V-2 rocket, the Saturn V, and every liquid-fueled launch vehicle in use today. He patented more than 200 rocket-related inventions in his lifetime.\n",
-    "url": "https://www.nasa.gov/history/dr-robert-h-goddard-american-rocketry-pioneer/",
-    "category": "history"
-  },
-  {
     "uid": "history-19760720@space-calendar",
     "title": "50 Years Ago: Viking 1 — First Successful Landing on Mars (1976)",
     "start": "2026-07-20",
@@ -66,6 +56,16 @@
     "end": "2027-08-21",
     "allDay": true,
     "description": "NASA launched Voyager 2 on August 20, 1977, on a trajectory that would take advantage of a rare planetary alignment to visit Jupiter, Saturn, Uranus, and Neptune in a single mission. It remains the only spacecraft to have visited Uranus and Neptune. Now over 20 billion km from Earth, Voyager 2 crossed into interstellar space in 2018 and continues to transmit data. Its golden record — containing sounds and images of Earth — was designed to be found by another civilization.\n",
+    "url": "https://voyager.jpl.nasa.gov/",
+    "category": "history"
+  },
+  {
+    "uid": "history-19770905@space-calendar",
+    "title": "50 Years Ago: Voyager 1 Launch — Now the Most Distant Human-Made Object (1977)",
+    "start": "2027-09-05",
+    "end": "2027-09-06",
+    "allDay": true,
+    "description": "Voyager 1 launched on September 5, 1977, just 16 days after its twin. Though launched second, it flew a faster trajectory and overtook Voyager 2 in 1998. It crossed into interstellar space in 2012 and is now the most distant human-made object ever built — over 23 billion km from the Sun and still operating. Its famous \"Pale Blue Dot\" photograph of Earth, taken in 1990 at Carl Sagan's request, remains one of the most profound images ever made.\n",
     "url": "https://voyager.jpl.nasa.gov/",
     "category": "history"
   }

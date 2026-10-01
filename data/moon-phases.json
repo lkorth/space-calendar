@@ -1,25 +1,5 @@
 [
   {
-    "uid": "moon-phase-2026-03-03T11:38:00.000Z@space-calendar",
-    "title": "🌕 Full Moon — Worm Moon",
-    "start": "2026-03-03T11:38:00.000Z",
-    "end": "2026-03-03T11:38:00.000Z",
-    "allDay": false,
-    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nNamed for the earthworms that emerge as the ground begins to thaw in early spring. Also called the Crow Moon, Crust Moon, or Sap Moon.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
-    "uid": "moon-phase-2026-03-19T01:23:00.000Z@space-calendar",
-    "title": "🌑 New Moon",
-    "start": "2026-03-19T01:23:00.000Z",
-    "end": "2026-03-19T01:23:00.000Z",
-    "allDay": false,
-    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
-    "url": "https://aa.usno.navy.mil/data/MoonPhases",
-    "category": "moon-phases"
-  },
-  {
     "uid": "moon-phase-2026-04-02T02:12:00.000Z@space-calendar",
     "title": "🌕 Full Moon — Pink Moon",
     "start": "2026-04-02T02:12:00.000Z",
@@ -374,6 +354,26 @@
     "title": "🌑 New Moon",
     "start": "2027-08-31T17:41:00.000Z",
     "end": "2027-08-31T17:41:00.000Z",
+    "allDay": false,
+    "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-09-15T23:03:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Harvest Moon",
+    "start": "2027-09-15T23:03:00.000Z",
+    "end": "2027-09-15T23:03:00.000Z",
+    "allDay": false,
+    "description": "The Moon rises at sunset and is visible all night, fully illuminated by the Sun. The bright light washes out fainter stars and deep-sky objects, but the Moon itself is a spectacular sight — especially near the horizon due to the Moon illusion.\n\nThe full moon nearest to the September equinox. It rises near sunset for several consecutive nights, historically extending the daylight hours available for bringing in the harvest.",
+    "url": "https://aa.usno.navy.mil/data/MoonPhases",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-09-30T02:36:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-09-30T02:36:00.000Z",
+    "end": "2027-09-30T02:36:00.000Z",
     "allDay": false,
     "description": "The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.",
     "url": "https://aa.usno.navy.mil/data/MoonPhases",
