@@ -50,6 +50,16 @@
     "category": "oppositions"
   },
   {
+    "uid": "opposition-saturn-2027-10-18@space-calendar",
+    "title": "🔭 Saturn at Opposition — Closest & Brightest",
+    "start": "2027-10-18",
+    "end": "2027-10-19",
+    "allDay": true,
+    "description": "Saturn rises at sunset and is visible all night — the ringed planet at its closest and brightest. Even a 30× telescope clearly shows the rings, separated from the disk by the dark Cassini Division. The moon Titan is visible as a faint golden point nearby.\n\nSaturn's ring tilt changes over its 29-year orbit, ranging from nearly edge-on (rings barely a line) to tilted at 27° (rings at their most spectacular). In 2025 the rings passed through edge-on and are now opening again — check the current ring tilt to know what the eyepiece view will show.",
+    "url": "https://solarsystem.nasa.gov/planets/saturn/overview/",
+    "category": "oppositions"
+  },
+  {
     "uid": "opposition-neptune-2027-09-29@space-calendar",
     "title": "🔭 Neptune at Opposition — Closest & Brightest",
     "start": "2027-09-29",

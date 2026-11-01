@@ -1,15 +1,5 @@
 [
   {
-    "uid": "occultation-regulus-2026-04-25@space-calendar",
-    "title": "🌑 Lunar Occultation — Moon covers Regulus",
-    "start": "2026-04-25T05:10:00.000Z",
-    "end": "2026-04-25T06:05:00.000Z",
-    "allDay": false,
-    "description": "The Moon passes directly in front of the star Regulus (magnitude +1.4), briefly hiding it from view. This is a lunar occultation — one of the most dramatic naked-eye astronomical events, since the target disappears almost instantaneously behind the Moon's limb and reappears just as suddenly.\n\nThe waning gibbous Moon (67% illuminated) occults Regulus in the pre-dawn sky. Regulus vanishes behind the Moon's bright limb and reappears from the dark limb, making the reappearance sudden and dramatic. Best viewed from a dark site before morning twilight brightens the sky.\n\nVisible from: Central and eastern North America, parts of Europe.\n\nDisappears: 05:10 UTC\nReappears: 06:05 UTC",
-    "url": "https://www.skyandtelescope.com/observing/sky-at-a-glance/",
-    "category": "occultations"
-  },
-  {
     "uid": "occultation-venus-2026-06-17@space-calendar",
     "title": "🌑 Lunar Occultation — Moon covers Venus",
     "start": "2026-06-17T20:10:00.000Z",
