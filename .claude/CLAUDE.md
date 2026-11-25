@@ -86,6 +86,10 @@ Any change to worker routing, new categories, or new validation rules requires e
 3. Verify the new behavior manually against the live endpoint.
 4. Add e2e tests — commit.
 
+## Branching
+
+Always develop and commit on `main`. Create a branch only when explicitly working on a pull request.
+
 ## Commit message style
 
 - Do **not** mention test counts in commit messages (e.g. "Adds 7 tests", "200 tests passing"). Tests are an implementation detail — the commit message should describe what changed and why, not how many tests verify it.
