@@ -5,6 +5,7 @@
  * Requires the worker to be deployed and KV populated by the pipeline.
  */
 import { describe, it, expect } from 'vitest';
+import { jgapInSeason } from './categories/jgap-season.ts';
 
 const BASE = 'https://space-calendar.lukekorth.com';
 
@@ -235,11 +236,12 @@ describe('Worker feed — events', () => {
     expect(res.status).toBe(400);
   });
 
-  it('astronomy-clubs jgap returns at least one event', async () => {
+  it('astronomy-clubs jgap returns at least one event in season', async () => {
     const { res, body } = await getFeed('?c=astronomy-clubs&club=jgap');
     expect(res.status).toBe(200);
-    expect(body).toContain('BEGIN:VEVENT');
-    expect(body).toContain('🔭');
+    expect(body).toContain('X-WR-CALNAME:Astronomy Club');
+    if (jgapInSeason(new Date())) expect(body).toContain('BEGIN:VEVENT');
+    for (const event of extractEvents(body)) expect(event).toContain('SUMMARY:🔭');
   });
 
   it('launches returns at least one event', async () => {

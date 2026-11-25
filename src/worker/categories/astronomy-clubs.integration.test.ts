@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { fetchPageText, parseJgapEvents, CLUBS } from './astronomy-clubs.ts';
+import { jgapInSeason } from './jgap-season.ts';
 
 describe('JGAP scraper — live page', () => {
-  it('parses at least one event from the live registration page', async () => {
+  it('parses at least one event from the live registration page in season', async () => {
     const jgap = CLUBS.find((c) => c.id === 'jgap')!;
     const text = await fetchPageText(jgap.scrapeUrl);
     const events = parseJgapEvents(text);
-    expect(events.length).toBeGreaterThan(0);
+    if (jgapInSeason(new Date())) expect(events.length).toBeGreaterThan(0);
   }, 15000);
 
   it('all parsed events have titles, valid UTC dates, and end after start', async () => {

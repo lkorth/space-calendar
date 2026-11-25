@@ -327,7 +327,7 @@ export const CLUBS: Club[] = [
   {
     id: 'jgap',
     name: 'John Glenn Astronomy Park',
-    location: 'New Concord, OH',
+    location: 'Logan, OH',
     websiteUrl: 'https://jgap.info/',
     scrapeUrl: 'https://registration.jgap.org/',
     parseEvents: parseJgapEvents,
