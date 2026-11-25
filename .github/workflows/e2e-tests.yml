@@ -1,0 +1,24 @@
+name: E2E Tests
+
+# Runs against the live worker. Deploy Worker starts it after each deploy.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run feed e2e tests
+        run: npm run test:e2e

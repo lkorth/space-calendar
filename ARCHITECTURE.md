@@ -123,6 +123,8 @@ Aurora keys are keyed by whole-number latitude (e.g., `aurora:45:<deploy>`, `aur
 
 `deploy-worker.yml` deploys after the Test workflow passes on `main`, but only if worker files changed since the commit of its last successful run. It compares the full range rather than the last commit, so a push of several commits, or a commit whose earlier tests or deploy failed, still ships. If it cannot find that commit, it deploys. A manual run always deploys.
 
+After a deploy, `deploy-worker.yml` starts `e2e-tests.yml`, which tests the live worker. It is a separate workflow so that a failing test, which often means an outside service is unavailable, does not mark the deploy as failed and cause the next push to deploy again.
+
 ### 3. Cloudflare Worker
 
 Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with identical parameters.
