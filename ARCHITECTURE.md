@@ -121,6 +121,8 @@ Aurora keys are keyed by whole-number latitude (e.g., `aurora:45:<deploy>`, `aur
 
 `<deploy>` is the `DEPLOY_ID` var (short git SHA) set by `worker:deploy`. Every key the worker writes itself is suffixed with it, so a new deploy never reads events serialized by older code: changes to filtering or the event shape take effect immediately instead of after the old entries' TTL, and a format change can't break parsing. The first request after a deploy refetches from the upstream API; old entries expire via their TTL. `static:*` keys are written by the pipeline, not the worker, and are not versioned. The same `DEPLOY_ID` is also part of the edge-cache key.
 
+`deploy-worker.yml` deploys after the Test workflow passes on `main`, but only if worker files changed since the commit of its last successful run. It compares the full range rather than the last commit, so a push of several commits, or a commit whose earlier tests or deploy failed, still ships. If it cannot find that commit, it deploys. A manual run always deploys.
+
 ### 3. Cloudflare Worker
 
 Handles `GET /feed.ics?c=<categories>&lat=<latitude>` and `GET /feed.json` with identical parameters.

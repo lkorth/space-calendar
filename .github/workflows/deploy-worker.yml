@@ -7,6 +7,10 @@ on:
     types: [completed]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read # to look up the last successful run
+
 jobs:
   deploy:
     # For workflow_run: only proceed if tests passed. workflow_dispatch always runs.
@@ -15,16 +19,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
+      # Compares with the commit of the last successful run of this workflow, not HEAD^: a
+      # push can hold several commits, and a commit whose tests or deploy failed is still
+      # waiting to ship. Every successful run either deployed or found nothing to deploy, so
+      # everything up to its commit is live. When the base is unknown, deploy.
       - name: Check if worker-related files changed
         id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -qE '^(src/worker/|src/shared/|src/site/|wrangler\.toml|package(-lock)?\.json)'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+          base=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/deploy-worker.yml/runs?branch=main&status=success&per_page=1" --jq '.workflow_runs[0].head_sha // empty') || base=''
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "No usable base commit (got '$base'), deploying"
+            changed=true
+          elif git diff --name-only "$base" HEAD | grep -E '^(src/worker/|src/shared/|src/site/|wrangler\.toml|package(-lock)?\.json|\.github/workflows/deploy-worker\.yml)'; then
+            echo "Worker files changed since $base"
+            changed=true
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No worker files changed since $base"
+            changed=false
           fi
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
         if: steps.changes.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
