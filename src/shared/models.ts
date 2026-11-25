@@ -78,6 +78,13 @@ export const STATIC_CATEGORIES: CategorySlug[] = [
 /** Categories fetched live by the worker on each request */
 export const LIVE_CATEGORIES: CategorySlug[] = ['launches', 'mission-milestones', 'aurora', 'aurora-australis', 'milky-way', 'astronomy-clubs'];
 
+/** Slugs the feed used to offer and no longer does. Subscription URLs live in calendar
+ *  clients and cannot be edited by us, so a subscription to nothing but retired slugs is
+ *  served an empty calendar rather than the 400 an unknown slug gets. When removing a slug
+ *  from the lists above, add it here. If other categories replace it, alias it in
+ *  LEGACY_CATEGORY_ALIASES instead. */
+export const RETIRED_CATEGORIES: readonly string[] = [];
+
 // ---------------------------------------------------------------------------
 // Pipeline interfaces
 // ---------------------------------------------------------------------------

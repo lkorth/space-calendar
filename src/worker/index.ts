@@ -7,7 +7,7 @@ import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { missionMilestonesCategory } from './categories/mission-milestones.ts';
 import { isFixedOffsetTimezone, parseParams } from './params.ts';
 import { recordUsage } from './usage.ts';
-import { STATIC_CATEGORIES } from '../shared/models.ts';
+import { LIVE_CATEGORIES, RETIRED_CATEGORIES, STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
 import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
 
@@ -16,6 +16,8 @@ const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
     .filter((slug) => slug !== 'solstices-equinoxes')
     .map((slug) => [slug, makeStaticCategory(slug)] as [CategorySlug, Category]),
 ]);
+
+const KNOWN_CATEGORIES: ReadonlySet<string> = new Set([...STATIC_CATEGORIES, ...LIVE_CATEGORIES]);
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -43,8 +45,14 @@ async function serveFeed(
 ): Promise<{ response: Response; cacheHit: boolean }> {
   const reply = (response: Response, cacheHit = false) => ({ response, cacheHit });
 
-  const params = parseParams(url);
-  if (params.categories.length === 0) {
+  const parsed = parseParams(url);
+  // An unknown slug never contributes events. Dropping it here rather than in fetchEvents
+  // also keeps it out of the calendar name and the cache key, where every made-up slug
+  // would otherwise be a fresh, uncacheable variant of the same feed.
+  const params = { ...parsed, categories: parsed.categories.filter((slug) => KNOWN_CATEGORIES.has(slug)) };
+  const onlyRetired =
+    params.categories.length === 0 && parsed.categories.some((slug) => RETIRED_CATEGORIES.includes(slug));
+  if (params.categories.length === 0 && !onlyRetired) {
     return reply(new Response('Provide at least one category via ?c=', { status: 400 }));
   }
   if (params.lat !== undefined && params.lat !== 0) {
@@ -61,7 +69,7 @@ async function serveFeed(
     console.warn('Fixed-offset timezone requested:', params.tz);
   }
 
-  const cacheKey = buildCacheKey(request, env.DEPLOY_ID);
+  const cacheKey = buildCacheKey(url, params, env.DEPLOY_ID);
   const cached = await caches.default.match(cacheKey);
   if (cached) return reply(notModifiedIfMatched(request, cached), true);
 
@@ -130,18 +138,38 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CategoryRes
   };
 }
 
-/** Parameters that say who is asking rather than what they asked for. They never reach
- *  the response body, so they are stripped from the cache key: `sid` is unique per
- *  subscriber, and leaving it in would give every subscriber a private cache entry that
- *  only they ever hit, turning an edge cache shared by everyone into one that is always
- *  cold. */
-const IDENTITY_PARAMS = ['sid', 'utm_source'];
+/** How each request parameter enters the edge-cache key; undefined leaves it out.
+ *
+ *  Typed over every RequestParams field so that adding one without deciding its place here
+ *  fails to compile. A parameter that shapes the body but is missing from the key would
+ *  serve one subscriber's feed to another. `club` only shapes the astronomy-clubs
+ *  category, so it is keyed only with it. */
+const CACHE_KEY_PARTS: Record<keyof RequestParams, (params: RequestParams) => string | undefined> = {
+  categories: (p) => p.categories.join(','),
+  lat: (p) => p.lat?.toString(),
+  lon: (p) => p.lon?.toString(),
+  tz: (p) => p.tz,
+  hemisphere: (p) => p.hemisphere ?? 'northern',
+  club: (p) => (p.categories.includes('astronomy-clubs') ? p.club : undefined),
+};
 
-function buildCacheKey(request: Request, deployId?: string): Request {
-  const url = new URL(request.url);
-  for (const param of IDENTITY_PARAMS) url.searchParams.delete(param);
-  if (deployId) url.searchParams.set('_v', deployId);
-  return new Request(url.toString());
+/** The edge-cache key: the path plus the parameters, rebuilt from what parseParams
+ *  understood rather than copied from the request URL.
+ *
+ *  Copying the URL keyed the cache on anything a caller appended — `&_bust=<timestamp>`,
+ *  junk parameters, a lat spelled 45.2 instead of 45 — so each variant missed the cache and
+ *  rebuilt the feed from KV. It also leaves out who is asking: `sid` is unique per
+ *  subscriber, and keying on it would give everyone a private entry that only they ever
+ *  hit. Category order stays in the key because it shapes the body: it orders the calendar
+ *  name and events that start at the same moment. */
+function buildCacheKey(url: URL, params: RequestParams, deployId?: string): Request {
+  const key = new URL(url.pathname, url.origin);
+  for (const [name, part] of Object.entries(CACHE_KEY_PARTS)) {
+    const value = part(params);
+    if (value !== undefined) key.searchParams.set(name, value);
+  }
+  if (deployId) key.searchParams.set('_v', deployId);
+  return new Request(key.toString());
 }
 
 /** Strong validator over the response body. Feeds are polled far more often than they
@@ -172,7 +200,8 @@ function notModifiedIfMatched(request: Request, response: Response): Response {
 }
 
 function buildCalName(categories: CategorySlug[]): string {
-  if (categories.length > 2) return 'Space Calendar';
+  // Empty when every category the subscription asked for has been retired.
+  if (categories.length === 0 || categories.length > 2) return 'Space Calendar';
   const labels: Record<CategorySlug, string> = {
     'moon-phases': 'Moon Phases',
     'meteor-showers': 'Meteor Showers',

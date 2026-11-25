@@ -1,4 +1,5 @@
 import type { CategorySlug } from '../shared/models.ts';
+import { CLUBS } from './categories/astronomy-clubs.ts';
 import type { Hemisphere, RequestParams } from './types.ts';
 
 /** Category slugs that older subscription URLs still request, mapped to the slugs that
@@ -66,7 +67,11 @@ export function normalizeTimezone(raw: string | undefined): string | undefined {
     }
   }
 
-  return isValidTimezone(trimmed) ? trimmed : undefined;
+  // Zone names are case-insensitive to Intl and many have aliases. Resolving to one name
+  // per zone keeps spellings of the same zone from splitting the cache key.
+  return isValidTimezone(trimmed)
+    ? new Intl.DateTimeFormat('en-US', { timeZone: trimmed }).resolvedOptions().timeZone
+    : undefined;
 }
 
 /** Recover parameters that a double-encoded URL swallowed into another value.
@@ -116,7 +121,8 @@ function parseLat(raw: string | null): number | undefined {
   const parsed = parseFloat(raw);
   // A non-numeric lat is treated as absent rather than NaN, which would otherwise fail
   // the hemisphere cross-check in the worker and 400 an otherwise valid subscription.
-  return Number.isFinite(parsed) ? Math.round(parsed) : undefined;
+  // Out of range is absent too, like lon — which also bounds the cache key's lat.
+  return Number.isFinite(parsed) && Math.abs(parsed) <= 90 ? Math.round(parsed) : undefined;
 }
 
 /** Rounded to a whole degree like lat, which keeps the location in the URL coarse (~100 km).
@@ -125,6 +131,13 @@ function parseLon(raw: string | null): number | undefined {
   if (raw === null) return undefined;
   const parsed = parseFloat(raw);
   return Number.isFinite(parsed) && Math.abs(parsed) <= 180 ? Math.round(parsed) : undefined;
+}
+
+/** An unknown club never contributes events, so it is treated as absent. That also bounds
+ *  the cache key, where every made-up id would otherwise be a fresh variant of one feed. */
+function parseClub(raw: string | null): string | undefined {
+  const id = raw?.trim();
+  return CLUBS.some((club) => club.id === id) ? id : undefined;
 }
 
 export function parseParams(url: URL): RequestParams {
@@ -137,6 +150,6 @@ export function parseParams(url: URL): RequestParams {
     lon: parseLon(searchParams.get('lon')),
     tz: normalizeTimezone(searchParams.get('tz') ?? undefined),
     hemisphere: parseHemisphere(searchParams.get('hemi')),
-    club: searchParams.get('club')?.trim() || undefined,
+    club: parseClub(searchParams.get('club')),
   };
 }

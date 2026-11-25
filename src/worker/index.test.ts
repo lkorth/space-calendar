@@ -3,6 +3,12 @@ import worker from './index.ts';
 import type { CalendarEvent } from '../shared/models.ts';
 import type { Env } from './types.ts';
 
+// RETIRED_CATEGORIES is empty until a category is retired, so give it an entry to test with.
+vi.mock('../shared/models.ts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../shared/models.ts')>()),
+  RETIRED_CATEGORIES: ['retired-category'],
+}));
+
 beforeEach(() => {
   vi.stubGlobal('caches', {
     default: {
@@ -303,6 +309,103 @@ describe('worker request routing', () => {
     expect(keys[0]).toBe(keys[1]);
     expect(keys[0]).not.toContain('sid');
     expect(keys[0]).not.toContain('utm_source');
+  });
+
+  it('ignores cache busters and other parameters that do not change the feed', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics';
+
+    for (const query of [
+      '?c=moon-phases&lat=45',
+      '?c=moon-phases&lat=45&_bust=1790858467157',
+      '?c=moon-phases&lat=45.2&whatever=1',
+      '?c=moon-phases,not-a-real-slug&lat=45',
+      '?c=moon-phases&lat=45&club=jgap',
+    ]) {
+      await worker.fetch(makeRequest(base + query), env, ctx);
+    }
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(new Set(keys).size).toBe(1);
+  });
+
+  it('rejects a feed whose every category is unknown', async () => {
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=not-a-real-category'),
+      makeEnv(),
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(400);
+    expect(caches.default.match).not.toHaveBeenCalled();
+  });
+
+  it('serves an empty calendar to a subscription whose only category was retired', async () => {
+    const res = await worker.fetch(
+      makeRequest('https://space-calendar.workers.dev/feed.ics?c=retired-category'),
+      makeEnv(),
+      { waitUntil: vi.fn() } as unknown as ExecutionContext,
+    );
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain('BEGIN:VCALENDAR');
+    expect(body).toContain('X-WR-CALNAME:Space Calendar');
+    expect(body).not.toContain('BEGIN:VEVENT');
+  });
+
+  it('drops a retired category from a feed that still has live ones', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics?c=moon-phases';
+    const res = await worker.fetch(makeRequest(`${base},retired-category`), env, ctx);
+    await worker.fetch(makeRequest(base), env, ctx);
+
+    expect(await res.text()).toContain('X-WR-CALNAME:Moon Phases');
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).toBe(keys[1]);
+  });
+
+  it('keeps the ICS and JSON feeds in separate cache entries', async () => {
+    const env = makeEnv({ 'static:moon-phases': JSON.stringify([moonEvent]) });
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    await worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.ics?c=moon-phases'), env, ctx);
+    await worker.fetch(makeRequest('https://space-calendar.workers.dev/feed.json?c=moon-phases'), env, ctx);
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).not.toBe(keys[1]);
+  });
+
+  it('keys the cache on club only for the astronomy-clubs category', async () => {
+    const env = makeEnv();
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics?c=astronomy-clubs';
+    await worker.fetch(makeRequest(`${base}&club=jgap`), env, ctx);
+    await worker.fetch(makeRequest(`${base}&club=caa`), env, ctx);
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(keys[0]).not.toBe(keys[1]);
+  });
+
+  it('shares one cache entry across unknown clubs', async () => {
+    const env = makeEnv();
+    const ctx = { waitUntil: vi.fn() } as unknown as ExecutionContext;
+    const base = 'https://space-calendar.workers.dev/feed.ics?c=astronomy-clubs';
+    for (const query of ['', '&club=made-up', '&club=also-made-up']) {
+      await worker.fetch(makeRequest(base + query), env, ctx);
+    }
+
+    const keys = (caches.default.match as ReturnType<typeof vi.fn>).mock.calls.map(
+      ([key]) => (key as Request).url,
+    );
+    expect(new Set(keys).size).toBe(1);
   });
 
   it('still keys the cache on parameters that change the feed', async () => {

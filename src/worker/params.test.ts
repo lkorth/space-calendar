@@ -64,6 +64,14 @@ describe('normalizeTimezone', () => {
     expect(normalizeTimezone('  America/Denver  ')).toBe('America/Denver');
   });
 
+  it('resolves every spelling of a zone to one name', () => {
+    // Zone names are case-insensitive to Intl, so each casing would otherwise be a separate
+    // cache entry for the same feed.
+    expect(normalizeTimezone('america/denver')).toBe('America/Denver');
+    expect(normalizeTimezone('AMERICA/DENVER')).toBe('America/Denver');
+    expect(normalizeTimezone('etc/gmt-2')).toBe('Etc/GMT-2');
+  });
+
   it('only ever returns zones Intl accepts', () => {
     for (const raw of ['America/Chicago', 'UTC+2', '-5', '+00:00', 'Etc/GMT-2']) {
       expect(isValidTimezone(normalizeTimezone(raw)!)).toBe(true);
@@ -200,6 +208,12 @@ describe('parseParams', () => {
     expect(paramsOf('?c=moon-phases&lat=').lat).toBeUndefined();
   });
 
+  it('treats an out-of-range latitude as absent', () => {
+    expect(paramsOf('?c=moon-phases&lat=91').lat).toBeUndefined();
+    expect(paramsOf('?c=moon-phases&lat=-1e9').lat).toBeUndefined();
+    expect(paramsOf('?c=moon-phases&lat=-90&hemi=south').lat).toBe(-90);
+  });
+
   it('rounds latitude to a whole degree', () => {
     expect(paramsOf('?c=moon-phases&lat=44.6').lat).toBe(45);
     expect(paramsOf('?c=moon-phases&lat=-33.4&hemi=south').lat).toBe(-33);
@@ -236,5 +250,10 @@ describe('parseParams', () => {
 
   it('treats a blank club as absent', () => {
     expect(paramsOf('?c=astronomy-clubs&club=').club).toBeUndefined();
+  });
+
+  it('keeps a known club and treats an unknown one as absent', () => {
+    expect(paramsOf('?c=astronomy-clubs&club=%20jgap%20').club).toBe('jgap');
+    expect(paramsOf('?c=astronomy-clubs&club=made-up').club).toBeUndefined();
   });
 });
