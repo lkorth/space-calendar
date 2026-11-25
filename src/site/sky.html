@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What's in the sky — Space Calendar</title>
+  <meta name="description" content="Browse upcoming moon phases, meteor showers, eclipses, planets, Milky Way nights, aurora and launches. No account and nothing to install." />
+  <meta name="theme-color" content="#07070d" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
+  <link rel="canonical" href="https://space-calendar.lukekorth.com/sky" />
+  <style>
+    :root {
+      --bg: #07070d; --bg-raised: #0e0e1b; --bg-inset: #08081a; --border: #1c1c30; --border-strong: #2e2e4c;
+      --text: #e4e4ec; --text-muted: #9494ac; --text-faint: #7878a0; --accent: #7c6cff; --accent-strong: #9384ff;
+      --accent-glow: rgba(124, 108, 255, 0.18); --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--bg); scroll-padding-top: 4rem; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-strong); }
+    .container { max-width: 680px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+    .brand { display: inline-block; padding: 1.1rem 0; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(228,228,236,0.7); text-decoration: none; }
+    h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; }
+    .where { margin-top: 0.4rem; color: var(--text-muted); font-size: 0.92rem; }
+    button { font: inherit; font-size: 0.9rem; font-weight: 600; border-radius: 8px; padding: 0.6rem 1.1rem; min-height: 44px; border: 1px solid var(--border-strong); background: var(--bg-inset); color: var(--text); cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn-primary { background: linear-gradient(135deg, #8272ff, #6a58ff); border-color: transparent; color: #fff; }
+    .add { margin-top: 1.1rem; }
+    .add-options { display: none; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .add-options.open { display: flex; }
+    .add-note { display: none; width: 100%; font-size: 0.8rem; color: var(--text-muted); word-break: break-all; }
+    .filters { position: sticky; top: 0; z-index: 1; display: flex; gap: 0.4rem; overflow-x: auto; margin: 1.4rem -1.25rem 0; padding: 0.6rem 1.25rem; background: var(--bg); border-bottom: 1px solid var(--border); scrollbar-width: none; }
+    .filters button { flex-shrink: 0; border-radius: 999px; padding: 0.35rem 0.85rem; font-weight: 500; color: var(--text-muted); }
+    .filters button[aria-pressed="true"] { background: var(--accent-glow); border-color: rgba(124,108,255,0.55); color: #fff; }
+    .month { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 1.6rem 0 0.4rem; }
+    details { border-bottom: 1px solid var(--border); }
+    summary { display: flex; gap: 0.85rem; padding: 0.7rem 0; cursor: pointer; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    .date { width: 3.6rem; flex-shrink: 0; font-size: 0.84rem; color: var(--text-faint); font-variant-numeric: tabular-nums; padding-top: 2px; }
+    .title { flex: 1; min-width: 0; }
+    .time { display: block; font-size: 0.82rem; color: var(--text-muted); }
+    .more { padding: 0 0 1rem 4.45rem; font-size: 0.9rem; color: #c3c3d4; }
+    .more p { margin-bottom: 0.7rem; white-space: pre-line; overflow-wrap: anywhere; }
+    .msg { margin-top: 1.5rem; color: var(--text-muted); }
+    .earlier { margin-top: 1.2rem; }
+    .footer { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 0.84rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="brand" href="/">Space Calendar</a>
+    <h1>What's in the sky</h1>
+    <p class="where" id="where"></p>
+
+    <div class="add">
+      <button class="btn-primary" id="btn-add" aria-expanded="false" aria-controls="add-options">Add to my calendar</button>
+      <div class="add-options" id="add-options">
+        <button id="btn-apple">Apple Calendar</button>
+        <button id="btn-google">Google Calendar</button>
+        <button id="btn-copy">Copy URL</button>
+        <span class="add-note" id="add-note"></span>
+      </div>
+    </div>
+
+    <div class="filters" id="filters" role="group" aria-label="Show"></div>
+    <button class="earlier" id="btn-earlier" hidden>Show earlier events</button>
+    <div id="events" aria-live="polite"><p class="msg">Loading…</p></div>
+
+    <p class="footer">Want different events? <a href="/">Choose your own</a>.</p>
+  </div>
+
+  <script>
+    const FEED_BASE = location.origin;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+    // What each filter shows. Groups marked `place` need a location to mean anything; those
+    // marked `live` come from outside services, so they load apart from the rest.
+    const GROUPS = [
+      { name: 'Moon', categories: ['moon-phases'] },
+      { name: 'Eclipses', categories: ['eclipses-lunar', 'eclipses-solar'] },
+      { name: 'Meteors', categories: ['meteor-showers'] },
+      { name: 'Planets', categories: ['oppositions', 'elongations', 'conjunctions', 'alignments'] },
+      { name: 'Seasons', categories: ['solstices-equinoxes'] },
+      { name: 'Milky Way', categories: ['milky-way'], place: true },
+      { name: 'Aurora', categories: ['aurora'], place: true, live: true },
+      { name: 'Launches', categories: ['launches'], live: true },
+    ];
+
+    let allEvents = [];
+    let activeGroup = null;
+    let showEarlier = false;
+
+    function readPlace(search) {
+      const params = new URLSearchParams(search);
+      const read = (name, limit) => {
+        const raw = params.get(name);
+        const value = raw === null || raw.trim() === '' ? NaN : Number(raw);
+        return Number.isFinite(value) && Math.abs(value) <= limit ? Math.round(value) : null;
+      };
+      const lat = read('lat', 90);
+      const lon = read('lon', 180);
+      return lat === null || lon === null ? null : { lat, lon };
+    }
+
+    function categoriesFor(place, groups) {
+      return groups
+        .filter((g) => place || !g.place)
+        .flatMap((g) => g.categories)
+        .map((c) => (c === 'aurora' && place.lat < 0 ? 'aurora-australis' : c));
+    }
+
+    function feedUrl(path, place, categories) {
+      const url = new URL(path, FEED_BASE);
+      url.searchParams.set('c', categories.join(','));
+      if (place) {
+        url.searchParams.set('lat', place.lat);
+        url.searchParams.set('lon', place.lon);
+        if (place.lat < 0) url.searchParams.set('hemi', 'south');
+      }
+      url.searchParams.set('tz', tz);
+      return url;
+    }
+
+    // Local midnight for an all-day event, so "today" still counts as upcoming all day.
+    function isPast(event, now) {
+      const end = event.allDay ? new Date(event.end + 'T00:00:00') : new Date(event.end);
+      return end < now;
+    }
+
+    function formatDate(event, options) {
+      return new Intl.DateTimeFormat('en-US', { ...options, timeZone: event.allDay ? 'UTC' : tz }).format(new Date(event.start));
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function clock(iso) {
+      return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: tz }).format(new Date(iso));
+    }
+
+    function eventHtml(event) {
+      const day = formatDate(event, { month: 'short', day: 'numeric' });
+      const weekday = formatDate(event, { weekday: 'short' });
+      const span = event.allDay ? '' : event.end > event.start ? `${clock(event.start)} – ${clock(event.end)}` : clock(event.start);
+      const contacts = (event.contactTimes || []).map((c) => `${esc(c.label)}: ${clock(c.utc)}`).join('\n');
+      const link = /^https:\/\//.test(event.url || '') ? `<p><a href="${esc(event.url)}" target="_blank" rel="noopener">Read more</a></p>` : '';
+      return `<details><summary><span class="date">${day}</span><span class="title">${esc(event.title)}` +
+        `<span class="time">${weekday}${span ? ' · ' + span : ''}</span></span></summary>` +
+        `<div class="more"><p>${esc(event.description)}</p>${contacts ? `<p>${contacts}</p>` : ''}${link}</div></details>`;
+    }
+
+    function render() {
+      const now = new Date();
+      const group = GROUPS.find((g) => g.name === activeGroup);
+      const matching = allEvents.filter((e) => !group || group.categories.includes(e.category.replace('-australis', '')));
+      const past = matching.filter((e) => isPast(e, now));
+      const shown = showEarlier ? matching : matching.filter((e) => !isPast(e, now));
+      document.getElementById('btn-earlier').hidden = showEarlier || past.length === 0;
+
+      let html = '';
+      let month = null;
+      for (const event of shown) {
+        const label = formatDate(event, { month: 'long', year: 'numeric' });
+        if (label !== month) {
+          html += `<h2 class="month">${label}</h2>`;
+          month = label;
+        }
+        html += eventHtml(event);
+      }
+      document.getElementById('events').innerHTML = html || '<p class="msg">Nothing coming up here yet.</p>';
+    }
+
+    function renderFilters(place) {
+      const bar = document.getElementById('filters');
+      const names = ['All', ...GROUPS.filter((g) => place || !g.place).map((g) => g.name)];
+      bar.innerHTML = names
+        .map((name) => `<button aria-pressed="${name === (activeGroup || 'All')}" data-group="${name}">${name}</button>`)
+        .join('');
+      bar.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => {
+        activeGroup = button.dataset.group === 'All' ? null : button.dataset.group;
+        renderFilters(place);
+        render();
+      }));
+    }
+
+    // UUIDv7, so a subscription made here is counted the same way as one from the
+    // configurator. See newSubscriberId() in index.html.
+    function subscriberId() {
+      const b = crypto.getRandomValues(new Uint8Array(16));
+      const ms = Date.now();
+      for (let i = 0; i < 6; i++) b[i] = Math.floor(ms / 2 ** (8 * (5 - i))) & 0xff;
+      b[6] = (b[6] & 0x0f) | 0x70;
+      b[8] = (b[8] & 0x3f) | 0x80;
+      const hex = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+      return [hex.slice(0, 8), hex.slice(8, 12), hex.slice(12, 16), hex.slice(16, 20), hex.slice(20)].join('-');
+    }
+
+    function subscribeUrl(place, sid) {
+      const url = feedUrl('/feed.ics', place, categoriesFor(place, GROUPS));
+      url.searchParams.set('utm_source', 'wall-calendar');
+      url.searchParams.set('sid', sid);
+      return url.toString();
+    }
+
+    const place = readPlace(location.search);
+    const SUBSCRIBE_URL = subscribeUrl(place, subscriberId());
+    const WEBCAL_URL = SUBSCRIBE_URL.replace(/^https?:/, 'webcal:');
+
+    document.getElementById('where').textContent = place
+      ? `For ${Math.abs(place.lat)}°${place.lat < 0 ? 'S' : 'N'} ${Math.abs(place.lon)}°${place.lon < 0 ? 'W' : 'E'}, in your local time`
+      : 'In your local time';
+
+    document.getElementById('btn-add').addEventListener('click', (e) => {
+      const open = document.getElementById('add-options').classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', String(open));
+    });
+    document.getElementById('btn-apple').addEventListener('click', () => { location.href = WEBCAL_URL; });
+    document.getElementById('btn-google').addEventListener('click', () => {
+      window.open('https://calendar.google.com/calendar/r?cid=' + encodeURIComponent(WEBCAL_URL), '_blank');
+    });
+    document.getElementById('btn-copy').addEventListener('click', async () => {
+      const note = document.getElementById('add-note');
+      note.style.display = 'block';
+      try {
+        await navigator.clipboard.writeText(SUBSCRIBE_URL);
+        note.textContent = 'Copied.';
+      } catch {
+        note.textContent = SUBSCRIBE_URL; // in-app browsers can withhold the clipboard
+      }
+    });
+    document.getElementById('btn-earlier').addEventListener('click', () => { showEarlier = true; render(); });
+
+    renderFilters(place);
+    async function load(groups) {
+      const res = await fetch(feedUrl('/feed.json', place, categoriesFor(place, groups)));
+      if (!res.ok) throw new Error(String(res.status));
+      const { events } = await res.json();
+      allEvents = [...allEvents, ...events].sort((a, b) => new Date(a.start) - new Date(b.start));
+      render();
+    }
+
+    // A slow launch or aurora service must not hold up the events on the wall calendar.
+    load(GROUPS.filter((g) => !g.live)).catch(() => {
+      document.getElementById('events').innerHTML = '<p class="msg">Could not load events. Reload the page to try again.</p>';
+    });
+    for (const group of GROUPS.filter((g) => g.live && (place || !g.place))) load([group]).catch(() => {});
+  </script>
+</body>
+</html>

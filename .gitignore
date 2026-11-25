@@ -2,3 +2,4 @@
 .mcp.json
 node_modules
 .wrangler
+src/site/wall-calendar.js

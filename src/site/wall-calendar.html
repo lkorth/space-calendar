@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make a wall calendar — Space Calendar</title>
+  <meta name="description" content="A year of moon phases, daylight, eclipses and meteor showers for your location, as an SVG to print or laser engrave." />
+  <meta name="theme-color" content="#07070d" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪐</text></svg>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Space Calendar" />
+  <meta property="og:title" content="A year of sky, as a wall calendar" />
+  <meta property="og:description" content="Moon phases, daylight, eclipses and meteor showers for one place, to print or laser engrave." />
+  <link rel="canonical" href="https://space-calendar.lukekorth.com/wall-calendar" />
+  <style>
+    :root {
+      --bg: #07070d; --bg-raised: #0e0e1b; --bg-inset: #08081a; --border: #1c1c30; --border-strong: #2e2e4c;
+      --text: #e4e4ec; --text-muted: #9494ac; --accent: #7c6cff; --accent-strong: #9384ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: var(--bg); }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-strong); }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 1.25rem 4rem; }
+    .brand { display: inline-block; padding: 1.1rem 0; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(228,228,236,0.7); text-decoration: none; }
+    h1 { font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; }
+    .intro { margin: 0.5rem 0 1.4rem; color: var(--text-muted); }
+    details { padding: 1rem; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 10px; }
+    summary { cursor: pointer; font-weight: 600; }
+    summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .fields { margin-top: 0.9rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; }
+    label { display: block; font-size: 0.82rem; color: var(--text-muted); }
+    select, input:not([type="checkbox"]) { width: 100%; margin-top: 0.25rem; padding: 0.6rem 0.75rem; min-height: 44px; background: var(--bg-inset); border: 1px solid var(--border-strong); border-radius: 6px; color: var(--text); font: inherit; }
+    .check { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem; font-size: 0.92rem; cursor: pointer; }
+    .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+    button { font: inherit; font-size: 0.9rem; font-weight: 600; border-radius: 8px; padding: 0.6rem 1.1rem; min-height: 44px; border: 1px solid var(--border-strong); background: var(--bg-inset); color: var(--text); cursor: pointer; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button:not(:disabled):hover { border-color: var(--accent); }
+    :is(button, select, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn-primary { background: linear-gradient(135deg, #8272ff, #6a58ff); border-color: transparent; color: #fff; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .note { margin-top: 0.8rem; min-height: 1.5em; overflow-wrap: anywhere; font-size: 0.88rem; color: var(--text-muted); }
+    #drawing svg { display: block; width: 100%; height: auto; margin-top: 1rem; border: 1px solid var(--border-strong); border-radius: 8px; }
+    .tips { margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted); }
+    .tips p { margin-bottom: 0.5rem; }
+    @page { size: landscape; margin: 0; }
+    @media print {
+      html, body { background: #fff; }
+      .container > :not(#drawing) { display: none; }
+      .container { max-width: none; padding: 0; }
+      #drawing svg { margin: 0 auto; border: 0; border-radius: 0; max-height: 100vh; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="brand" href="/">Space Calendar</a>
+    <h1>Make a wall calendar</h1>
+    <p class="intro">A year of sky for your location, to print or laser engrave.</p>
+
+    <form id="form">
+     <details id="customize" open>
+      <summary>Options</summary>
+      <div class="fields">
+        <label>Type
+          <select name="type">
+            <option value="moon-calendar">Moon calendar</option>
+            <option value="year-wheel-day">Year wheel, daylight</option>
+            <option value="year-wheel-night">Year wheel, night sky</option>
+          </select>
+        </label>
+        <label>Year <select name="year"></select></label>
+        <label>Location name <input name="place" maxlength="24" placeholder="e.g. Ohio" autocomplete="off" /></label>
+        <label>US zip or Canadian postal code <input id="zip" maxlength="7" autocomplete="off" /></label>
+        <label>Latitude <input name="lat" type="number" min="-90" max="90" step="any" placeholder="e.g. 40" /></label>
+        <label>Longitude <input name="lon" type="number" min="-180" max="180" step="any" placeholder="e.g. -83" /></label>
+        <label>Time zone <input name="tz" autocomplete="off" /></label>
+      </div>
+      <label class="check" id="qr-row"><input type="checkbox" name="qr" /> Add a QR code that opens the events online</label>
+      <div class="actions"><button type="button" id="btn-locate">Use my location</button></div>
+     </details>
+      <div class="actions">
+        <button type="button" id="btn-print-file" class="btn-primary" disabled>Download</button>
+        <button type="button" id="btn-laser-file" disabled>Download for engraving</button>
+        <button type="button" id="btn-print" disabled>Print</button>
+        <button type="button" id="btn-share" disabled>Copy link</button>
+      </div>
+      <p class="note" id="note" role="status"></p>
+    </form>
+
+    <div id="drawing"></div>
+
+    <div class="tips">
+      <p>The page is 16 × 12 in. It stays sharp at any size that keeps the 4:3 shape.</p>
+      <p>The engraving file has a red outline of the page. Set it to Ignore before you engrave.</p>
+      <p>"Copy link" makes a link that opens this calendar, so it includes the location.</p>
+      <p>Your browser draws the calendar. Your location is not sent to this site.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { completeYears, defaultYear, drawWallCalendar, fileName, parseOptions, readLink, writeLink } from './wall-calendar.js';
+
+    const form = document.getElementById('form');
+    const note = document.getElementById('note');
+    const drawing = document.getElementById('drawing');
+    const buttons = ['btn-print-file', 'btn-laser-file', 'btn-print', 'btn-share'].map((id) => document.getElementById(id));
+    const fields = form.elements;
+    let events = null;
+    let notice = '';
+    let timer = null;
+    let years = [];
+
+    function link() {
+      const values = { qr: fields.qr.checked && fields.type.value !== 'moon-calendar' ? 'true' : '' };
+      for (const name of ['type', 'year', 'lat', 'lon', 'tz', 'place']) values[name] = fields[name].value;
+      return writeLink(values);
+    }
+
+    function options(mode) {
+      const query = new URLSearchParams(link().slice(1));
+      query.set('mode', mode);
+      return parseOptions(query, new Date());
+    }
+
+    // Fill the form from a link, with defaults for whatever the link leaves out.
+    function applyLink(hash) {
+      const given = readLink(hash);
+      fields.type.value = given.type ?? 'moon-calendar';
+      if (!fields.type.value) fields.type.value = 'moon-calendar';
+      for (const name of ['lat', 'lon', 'place']) fields[name].value = given[name] ?? '';
+      fields.tz.value = given.tz ?? (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+      fields.qr.checked = given.qr === 'true';
+
+      const wanted = Number(given.year ?? defaultYear(new Date()));
+      const year = years.includes(wanted) ? wanted : years.at(-1);
+      fields.year.value = String(year);
+      // Events are kept for two calendar years, so an old link outlives its data.
+      notice = given.year && year !== wanted ? `${given.year} is not available, so this is ${year}.` : '';
+      // A link with a place is a finished calendar: show it before the form.
+      document.getElementById('customize').open = !(given.lat && given.lon);
+      draw();
+    }
+
+    function update() {
+      notice = '';
+      clearTimeout(timer);
+      timer = setTimeout(draw, 250);
+    }
+
+    function draw() {
+      // The moon calendar has no room for a QR code.
+      document.getElementById('qr-row').style.display = fields.type.value === 'moon-calendar' ? 'none' : '';
+      const parsed = options('print');
+      const ready = events !== null && !('error' in parsed);
+      buttons.forEach((button) => { button.disabled = !ready; });
+      if (events === null) return;
+      if (!ready) {
+        drawing.replaceChildren();
+        document.getElementById('customize').open = true;
+        const placed = fields.lat.value && fields.lon.value;
+        note.textContent = placed ? `Check the form: ${parsed.error}.` : 'Enter a location to draw your calendar.';
+        return;
+      }
+      note.textContent = notice;
+      // The address always holds the options, so it can be shared or bookmarked. They follow
+      // the # because browsers do not send that part to the server.
+      history.replaceState(null, '', link());
+      const label = fields.type.selectedOptions[0].textContent;
+      document.title = `${parsed.year} ${label}${fields.place.value.trim() ? `, ${fields.place.value.trim()}` : ''} — Space Calendar`;
+      const svg = new DOMParser().parseFromString(drawWallCalendar(parsed, events), 'image/svg+xml').documentElement;
+      svg.removeAttribute('width');
+      svg.removeAttribute('height');
+      drawing.replaceChildren(document.importNode(svg, true));
+    }
+
+    function download(mode) {
+      const parsed = options(mode);
+      const url = URL.createObjectURL(new Blob([drawWallCalendar(parsed, events)], { type: 'image/svg+xml' }));
+      const link = Object.assign(document.createElement('a'), { href: url, download: fileName(parsed) });
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    }
+
+    async function lookUpZip(raw) {
+      const code = raw.replace(/\s+/g, '').toUpperCase();
+      const key = /^\d/.test(code) ? code.slice(0, 5) : code.slice(0, 3);
+      if (key.length < (/^\d/.test(code) ? 5 : 3)) return;
+      const entry = (await (await fetch('zip-latitudes.json')).json())[key];
+      if (!entry) { note.textContent = 'That postal code was not found.'; return; }
+      [fields.lat.value, fields.lon.value] = entry;
+      update();
+    }
+
+    document.getElementById('zip').addEventListener('input', (e) => {
+      e.stopPropagation(); // not one of the options itself
+      lookUpZip(e.target.value).catch(() => { note.textContent = 'Could not look up that postal code.'; });
+    });
+    document.getElementById('btn-locate').addEventListener('click', () => {
+      const failed = () => { note.textContent = 'Could not get your location. Enter it in the form.'; };
+      if (!navigator.geolocation) return failed();
+      navigator.geolocation.getCurrentPosition(({ coords }) => {
+        fields.lat.value = coords.latitude.toFixed(1);
+        fields.lon.value = coords.longitude.toFixed(1);
+        update();
+      }, failed);
+    });
+    document.getElementById('btn-print-file').addEventListener('click', () => download('print'));
+    document.getElementById('btn-laser-file').addEventListener('click', () => download('laser'));
+    document.getElementById('btn-print').addEventListener('click', () => window.print());
+    document.getElementById('btn-share').addEventListener('click', async () => {
+      const url = new URL(link(), location.href).href;
+      try {
+        await navigator.clipboard.writeText(url);
+        note.textContent = 'Link copied.';
+      } catch {
+        note.textContent = url; // in-app browsers can withhold the clipboard
+      }
+    });
+    // A link pasted into an open page changes only the part after the #. replaceState, which
+    // keeps the address current, does not fire this.
+    addEventListener('hashchange', () => { if (events !== null) applyLink(location.hash); });
+    form.addEventListener('input', update);
+    form.addEventListener('submit', (e) => e.preventDefault());
+
+    note.textContent = 'Loading…';
+    try {
+      const res = await fetch('/wall-calendar.json');
+      if (!res.ok) throw new Error(String(res.status));
+      events = (await res.json()).events;
+      years = completeYears(events);
+      for (const year of years) fields.year.add(new Option(year, year));
+      applyLink(location.hash);
+    } catch {
+      note.textContent = 'The calendar data is not available. Try again later.';
+    }
+  </script>
+</body>
+</html>

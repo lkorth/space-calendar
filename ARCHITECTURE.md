@@ -106,11 +106,14 @@ Outputs: one JSON file per category written to `data/`, then:
 
 **Pipeline language: TypeScript** (same as the worker — shared types, no separate runtime required)
 
+**Wall calendar events:** The monthly run also writes `data/wall-calendar-events.json`: the moon phases, eclipses, seasons, meteor showers and oppositions of this calendar year and the next. A wall calendar needs a whole year, and the rolling window rarely holds one. The same generators make both files. To write only this file, run `npm run pipeline -- --wall-calendar`.
+
 ### 2. Cloudflare KV Store
 
 | Key pattern | Source | TTL |
 |-------------|--------|-----|
 | `static:<category>` | Generated on pipeline schedule by GitHub Actions | No expiry — overwritten on each run |
+| `static:wall-calendar-events` | Full calendar years for wall calendars, from the monthly pipeline | No expiry |
 | `launches:<deploy>` | Launch Library 2 API | 1 hour |
 | `mission-milestones:<deploy>` | Launch Library 2 events API | 1 hour |
 | `aurora:<lat>:<deploy>` / `aurora-australis:<lat>:<deploy>` | NOAA SWPC 3-day Kp forecast | 3–4 hours |
@@ -190,6 +193,8 @@ parser (`src/worker/params.ts`) is deliberately tolerant of URLs we would not ge
 
 Retired slugs still honored for existing subscriptions: `sky-events` → `moon-phases`, `meteor-showers`, `solstices-equinoxes`, `eclipses-solar`, `eclipses-lunar`; `planetary` → `oppositions`, `elongations`, `asteroids`, `comets`.
 
+**Wall calendar data** (`GET /wall-calendar.json`, see `src/worker/wall-calendar.ts`): passes `static:wall-calendar-events` through without parsing it. It is not written to the usage dataset, which counts feed subscriptions.
+
 ### 4. Configurator UI (Workers static assets)
 
 A single static HTML page in `src/site/`, served as [static assets](https://developers.cloudflare.com/workers/static-assets/) by the same Worker, on the same domain as the feed.
@@ -212,6 +217,17 @@ Serving the configurator and the feed from one domain removes the root redirect 
 - A per-visit `sid` (UUIDv7, so it carries its own mint time) is written into the generated subscription URL, so unique subscribers and subscription age can both be read from the usage dataset
 - Live preview of upcoming events, capped at whichever of 4 month sections or 20 events comes first. Sections are months that contain events, not calendar months from today, so a sparse selection (eclipses only, say) still previews its next few months rather than coming up empty
 - No backend required — pure client-side
+
+`src/site/wall-calendar.html` (`/wall-calendar`) draws wall calendars in the browser. A Worker on the free plan has 10 ms of CPU time per request, and one drawing takes more than ten times that. A static file is free and unlimited. `npm run build:site` bundles `src/shared/wall-calendar/browser.ts` into `src/site/wall-calendar.js`, which is not committed. The `[build]` section of `wrangler.toml` runs it before each deploy.
+
+- Dated events come from `/wall-calendar.json`, so a calendar agrees with the feed. Milky Way nights come from `src/shared/milky-way.ts`, which the `milky-way` category also uses.
+- The feed data does not hold the daily curves of one place: the Moon each night, sunrise, sunset, twilight and moonrise. `src/shared/wall-calendar/sky.ts` computes them with short series from Meeus. There is no ephemeris dependency.
+- The laser file has filled paths only: no strokes, text, transforms or clipping. Text is drawn from Jost outlines in `jost-glyphs.json`, which `npm run generate-wall-calendar-font` extracts. The print file draws the same paths in other colors.
+- Artwork stays in the middle 11 in of the page, which is the engraving depth of a Glowforge Basic.
+- The options follow the `#` in the address, so the location is not sent to the server.
+- A bad option is an error. The feed parser is tolerant because old URLs must keep working, but a calendar in ink or metal cannot be corrected later.
+
+`src/site/sky.html` (`/sky?lat=<n>&lon=<n>`) is the page that a wall calendar QR code opens. It lists the events of `/feed.json` by month and needs no subscription. An "Add to my calendar" button subscribes to the same events with `utm_source=wall-calendar`. Aurora and launches load in their own requests, because a slow outside service must not delay the other events.
 
 ### 5. Curated Data Files
 

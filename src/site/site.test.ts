@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import { STATIC_CATEGORIES, LIVE_CATEGORIES } from '../shared/models.ts';
+import { TYPES, parseOptions, readLink } from '../shared/wall-calendar/options.ts';
 
 // Both aurora slugs are represented by a single checkbox; getAuroraSlug() maps
 // it to 'aurora' or 'aurora-australis' based on hemisphere.
@@ -440,6 +441,81 @@ describe('configurator location', () => {
       });
     });
   }
+
+  describe('wall calendar links', () => {
+    const url = pageFunction('wallCalendarUrl', urlDeps) as (type: string, lat: number | null, lon: number | null) => string;
+
+    it('open a finished calendar once the location is known', () => {
+      const hash = url('year-wheel-night', 40, -83).replace('/wall-calendar', '');
+      expect(readLink(hash)).toEqual({ type: 'year-wheel-night', lat: '40', lon: '-83', tz: 'America/New_York' });
+      expect(parseOptions(new URLSearchParams(hash.slice(1)), new Date())).not.toHaveProperty('error');
+    });
+
+    it('open the form when it is not', () => {
+      expect(url('moon-calendar', -34, null)).toBe('/wall-calendar#type=moon-calendar');
+    });
+
+    it('cover every type', () => {
+      for (const type of TYPES) expect(html).toContain(`data-type="${type}" href="/wall-calendar#type=${type}"`);
+    });
+  });
+
+  describe('wall calendar page', () => {
+    const page = readFileSync('src/site/wall-calendar.html', 'utf-8');
+
+    it('offers every type', () => {
+      for (const type of TYPES) expect(page).toContain(`value="${type}"`);
+      expect(page.match(/<option value=/g)).toHaveLength(TYPES.length);
+    });
+
+    it('imports only what the bundle exports', () => {
+      const names = (src: string, pattern: RegExp) => pattern.exec(src)![1]!.split(',').map((s) => s.trim());
+      const imported = names(page, /import \{([^}]+)\} from '\.\/wall-calendar\.js'/);
+      const exported = names(readFileSync('src/shared/wall-calendar/browser.ts', 'utf-8'), /export \{([^}]+)\}/);
+      for (const name of imported) expect(exported).toContain(name);
+    });
+
+    it('is bundled by wrangler before each deploy', () => {
+      expect(readFileSync('wrangler.toml', 'utf-8')).toMatch(/\[build\]\s+command = "npm run build:site"/);
+    });
+  });
+
+  describe('event browser (sky.html)', () => {
+    const sky = readFileSync('src/site/sky.html', 'utf-8');
+    const skyFunction = (name: string, deps: Record<string, unknown> = {}) => {
+      const src = new RegExp(`function ${name}\\([\\s\\S]*?\\n    \\}`).exec(sky)?.[0];
+      return new Function(...Object.keys(deps), `${src}; return ${name};`)(...Object.values(deps));
+    };
+
+    it('reads the place a wall calendar links to', () => {
+      const readPlace = skyFunction('readPlace');
+      expect(readPlace('?lat=40&lon=-83')).toEqual({ lat: 40, lon: -83 });
+      expect(readPlace('')).toBeNull();
+      expect(readPlace('?lat=40')).toBeNull();
+      expect(readPlace('?lat=95&lon=0')).toBeNull();
+    });
+
+    it('asks for local categories only with a place, and the aurora of its hemisphere', () => {
+      const categoriesFor = skyFunction('categoriesFor');
+      const groups = [{ categories: ['moon-phases'] }, { categories: ['aurora'], place: true }];
+      expect(categoriesFor(null, groups)).toEqual(['moon-phases']);
+      expect(categoriesFor({ lat: 40, lon: 0 }, groups)).toEqual(['moon-phases', 'aurora']);
+      expect(categoriesFor({ lat: -40, lon: 0 }, groups)).toEqual(['moon-phases', 'aurora-australis']);
+    });
+
+    it('requests only categories that exist', () => {
+      const known = new Set<string>([...STATIC_CATEGORIES, ...LIVE_CATEGORIES]);
+      const listed = [...sky.matchAll(/categories: \[([^\]]+)\]/g)].flatMap((m) => m[1]!.match(/[a-z-]+/g)!);
+      expect(listed.length).toBeGreaterThan(8);
+      for (const slug of listed) expect(known.has(slug), slug).toBe(true);
+    });
+
+    it('sends the hemisphere with a southern latitude, which the worker requires', () => {
+      const feedUrl = skyFunction('feedUrl', { FEED_BASE: 'https://example.com', tz: 'UTC' });
+      expect(feedUrl('/feed.json', { lat: -40, lon: 170 }, ['milky-way']).searchParams.get('hemi')).toBe('south');
+      expect(feedUrl('/feed.json', { lat: 40, lon: 170 }, ['milky-way']).searchParams.has('hemi')).toBe(false);
+    });
+  });
 
   describe('zip lookup', () => {
     const db = JSON.parse(readFileSync('src/site/zip-latitudes.json', 'utf-8')) as Record<string, unknown>;

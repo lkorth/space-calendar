@@ -5,10 +5,13 @@
  *   npm run pipeline:weekly           — weekly schedule only
  *   tsx src/pipeline/run.ts --generator moon-phases
  *   tsx src/pipeline/run.ts --year 2027
+ *   tsx src/pipeline/run.ts --wall-calendar   — only data/wall-calendar-events.json
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Generator } from '../shared/models.ts';
+import { WALL_CALENDAR_CATEGORIES } from '../shared/wall-calendar/events.ts';
+import { wallCalendarYears, selectWallCalendarEvents } from './wall-calendar-events.ts';
+import type { CalendarEvent, Generator } from '../shared/models.ts';
 
 import { moonPhasesGenerator } from './generators/moon-phases.ts';
 import { meteorShowersGenerator } from './generators/meteor-showers.ts';
@@ -74,7 +77,27 @@ function getWindow(year?: number): { years: number[]; dateMin?: Date; dateMax?: 
   return { years, dateMin, dateMax };
 }
 
+/** Fetch only what the wall calendars need, one request set at a time. */
+async function generateWallCalendarEvents(): Promise<CalendarEvent[]> {
+  const events: CalendarEvent[] = [];
+  for (const gen of ALL_GENERATORS.filter((g) => WALL_CALENDAR_CATEGORIES.includes(g.slug))) {
+    for (const year of wallCalendarYears(new Date())) events.push(...(await gen.generate(year)));
+  }
+  return events;
+}
+
+/** Full calendar years for the wall calendars, from the same events as the feed. */
+function writeWallCalendarEvents(events: readonly CalendarEvent[]) {
+  const years = wallCalendarYears(new Date());
+  const selected = selectWallCalendarEvents(events, years);
+  const outPath = join('data', 'wall-calendar-events.json');
+  writeFileSync(outPath, JSON.stringify(selected, null, 2));
+  console.log(`  ✓ ${selected.length} wall calendar events (${years.join(', ')}) → ${outPath}`);
+}
+
 async function main() {
+  mkdirSync('data', { recursive: true });
+  if (process.argv.includes('--wall-calendar')) return writeWallCalendarEvents(await generateWallCalendarEvents());
   const { schedule, generator, year } = parseArgs();
 
   let generators = ALL_GENERATORS;
@@ -91,12 +114,13 @@ async function main() {
     ? `${dateMin.toISOString().slice(0, 10)} to ${dateMax.toISOString().slice(0, 10)}`
     : `year=${years[0]}`;
 
-  mkdirSync('data', { recursive: true });
+  const generated: CalendarEvent[] = [];
 
   for (const gen of generators) {
     console.log(`Running generator: ${gen.slug} (${windowDesc})`);
     try {
       const allEvents = (await Promise.all(years.map((y) => gen.generate(y)))).flat();
+      generated.push(...allEvents);
 
       const seen = new Set<string>();
       const unique = allEvents.filter((e) => {
@@ -120,6 +144,13 @@ async function main() {
       process.exit(1);
     }
   }
+
+  // Whole years of what the generators above just fetched, before the window cut them down.
+  // Only a run of all the monthly generators has everything it needs.
+  if (!generator && year === undefined && schedule !== 'weekly') writeWallCalendarEvents(generated);
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

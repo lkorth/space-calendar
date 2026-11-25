@@ -154,6 +154,9 @@
     .empty-msg { color: var(--text-faint); font-size: 0.88rem; font-family: system-ui, sans-serif; }
     .copied { background: #2f7a4a !important; }
 
+    .wall-calendar-link { padding: 0.6rem 1.1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: var(--bg-inset); color: var(--text); border: 1px solid var(--border-strong); }
+    .wall-calendar-link:hover { background: #17172c; border-color: var(--accent); }
+
     /* ---- Footer ----------------------------------------------------------- */
     .footer { margin-top: 2.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; flex-wrap: wrap; }
     .footer-note { font-size: 0.8rem; color: var(--text-faint); line-height: 1.5; flex: 1 1 18rem; }
@@ -297,6 +300,14 @@
         Your browser blocked the clipboard. Select the URL below and copy it manually:
         <input id="url-fallback-input" type="text" readonly onclick="this.select()" />
       </div>
+    </div>
+
+    <div class="section-label">Wall Calendar</div>
+    <div class="section-note">A year of sky for your location, to print or laser engrave.</div>
+    <div class="actions">
+      <a class="wall-calendar-link" data-type="moon-calendar" href="/wall-calendar#type=moon-calendar">Moon calendar</a>
+      <a class="wall-calendar-link" data-type="year-wheel-day" href="/wall-calendar#type=year-wheel-day">Year wheel, daylight</a>
+      <a class="wall-calendar-link" data-type="year-wheel-night" href="/wall-calendar#type=year-wheel-night">Year wheel, night sky</a>
     </div>
 
     <div class="footer">
@@ -523,6 +534,7 @@
       document.getElementById('url-fallback').style.display = 'none';
 
       schedulePreview(categories, globalLat, globalLon, hemi, clubId, ready);
+      updateWallCalendarLinks();
     }
 
     // Apple platforms handle webcal:// natively — one tap opens Calendar with a subscribe
@@ -590,6 +602,24 @@
         el.addEventListener('change', update);
       }
     });
+
+    // Opens the finished calendar when the location is known, and the form when it is not.
+    function wallCalendarUrl(type, lat, lon) {
+      const options = new URLSearchParams({ type });
+      if (lat !== null && lon !== null) {
+        options.set('lat', lat);
+        options.set('lon', lon);
+        if (detectedTZ) options.set('tz', detectedTZ);
+      }
+      return `/wall-calendar#${options}`;
+    }
+
+    // Set as the location changes, not on click, so that copying a link gets the full address.
+    function updateWallCalendarLinks() {
+      document.querySelectorAll('.wall-calendar-link').forEach((link) => {
+        link.href = wallCalendarUrl(link.dataset.type, globalLat, globalLon);
+      });
+    }
 
     let _previewTimer = null;
     let _previewCtrl = null;

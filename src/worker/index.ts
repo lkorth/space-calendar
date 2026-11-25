@@ -6,6 +6,7 @@ import { milkyWayCategory } from './categories/milky-way.ts';
 import { astronomyClubsCategory } from './categories/astronomy-clubs.ts';
 import { missionMilestonesCategory } from './categories/mission-milestones.ts';
 import { isFixedOffsetTimezone, parseParams } from './params.ts';
+import { WALL_CALENDAR_PATH, serveWallCalendarEvents } from './wall-calendar.ts';
 import { recordUsage } from './usage.ts';
 import { LIVE_CATEGORIES, RETIRED_CATEGORIES, STATIC_CATEGORIES } from '../shared/models.ts';
 import type { CalendarEvent, CategorySlug } from '../shared/models.ts';
@@ -22,6 +23,8 @@ const KNOWN_CATEGORIES: ReadonlySet<string> = new Set([...STATIC_CATEGORIES, ...
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === WALL_CALENDAR_PATH) return serveWallCalendarEvents(env);
 
     // The configurator and its assets are served by the [assets] binding in wrangler.toml,
     // which is matched before the Worker runs. Anything reaching here matched no asset.

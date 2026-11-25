@@ -14,6 +14,7 @@ npm run typecheck                # TypeScript type check (both pipeline and work
 npm run pipeline                 # run all data generators → writes to data/
 npm run pipeline -- --generator moon-phases  # run one generator
 npm run pipeline -- --year 2027  # generate for a specific year
+npm run wall-calendar -- --type moon-calendar --lat 40 --lon -83 --tz America/New_York  # draw a wall calendar SVG
 npm run worker:dev               # local Cloudflare Worker dev server
 ```
 
@@ -32,7 +33,8 @@ src/
     index.ts      # Cloudflare Worker entry point — routing + category dispatch
   shared/
     models.ts     # shared types and constants (CategorySlug, CalendarEvent, STATIC_CATEGORIES)
-data/             # pre-generated JSON files, one per category — committed to repo
+  shared/wall-calendar/ # wall calendar SVGs: sky math, geometry, text outlines, layouts
+data/             # pre-generated JSON files, one per category, plus wall-calendar-events.json (full years) — committed to repo
 occultations.yaml # curated lunar occultation events
 comets.yaml       # curated notable comets
 history.yaml      # curated space history events for milestone anniversaries

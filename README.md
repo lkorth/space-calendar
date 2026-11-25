@@ -57,6 +57,52 @@ Prefer a real IANA zone name for `tz`. A fixed offset (`UTC+2`, `+02:00`) is acc
 it carries no daylight-saving rules, so times in event descriptions will be an hour off for
 part of the year if your region observes DST.
 
+## Wall calendars
+
+[Make a wall calendar](https://space-calendar.lukekorth.com/wall-calendar) draws a full year of sky for one place. The result is a 16 × 12 in SVG to print or laser engrave. Your browser draws it, so your location stays on your computer.
+
+"Copy link" on the page makes a link that opens the same calendar. The configurator links to a finished calendar when it knows your location. To write a link yourself, put the options after the `#`:
+
+```
+https://space-calendar.lukekorth.com/wall-calendar#type=year-wheel-night&lat=40&lon=-83&tz=America/New_York&place=Ohio&qr=true
+```
+
+| Option | Required | Description |
+|--------|----------|-------------|
+| `type` | Yes | The type of calendar. See the next table. A link without it opens the moon calendar. |
+| `lat` | Yes | Latitude in degrees, from -90 to 90. South is negative. It is rounded to 0.1°. |
+| `lon` | Yes | Longitude in degrees, from -180 to 180. West is negative. It is rounded to 0.1°. |
+| `tz` | Yes | IANA timezone of the place, such as `America/New_York`. A link without it uses the timezone of the browser. |
+| `place` | No | The location name to print, up to 24 characters. The default is the latitude, such as `40° N`. |
+| `qr` | No | `true` adds a QR code. The default is `false`. Year wheels only. |
+| `year` | No | This year or the next. The default is this year, or the next year from October. A link with a year that is not available opens the latest year and says so. |
+
+A link includes the location. Browsers do not send the part after the `#` to the server.
+
+| `type` | What it shows |
+|--------|---------------|
+| `moon-calendar` | The Moon on every day of the year, with full moons, new moons and eclipses |
+| `year-wheel-day` | The year as a circle, with the hours of daylight, moon phases, Milky Way nights and events |
+| `year-wheel-night` | The same circle, with sunset, sunrise, full darkness, midnight and the hours that the Moon is up |
+
+The page has two files to download. "Download" gives a print file, which is light on dark. "Download for engraving" gives only filled black paths, and a red outline marks the edge of the page. Before you engrave, set the red outline to Ignore in the laser software.
+
+The QR code opens a page that lists the events for that place, such as [/sky?lat=40&lon=-83](https://space-calendar.lukekorth.com/sky?lat=40&lon=-83). The page needs no subscription. It has an optional button that adds the events to a calendar app. The link has only whole degrees.
+
+To draw a calendar on your own computer, use the same options. `--mode` is `print` (default) or `laser`:
+
+```bash
+npm run -s wall-calendar -- --type moon-calendar --lat 40 --lon -83 --tz America/New_York --place Ohio --mode laser > moon.svg
+```
+
+### Wall calendar data
+
+```
+GET https://space-calendar.lukekorth.com/wall-calendar.json
+```
+
+Returns `{ "events": [...] }`, the events that the calendars are drawn from. They are the moon phases, eclipses, seasons, meteor showers and oppositions of this calendar year and the next. Each event is a `CalendarEvent` object with an empty description. The response sets `Cache-Control: max-age=86400` and allows requests from any origin. If the data is not ready, the status is `503`.
+
 ## How it works
 
 Static astronomical data (eclipses, moon phases, meteor showers, planetary events, history milestones) is generated once a year from USNO and JPL data via GitHub Actions and stored in this repo. Rocket launch data is fetched live from [The Space Devs Launch Library 2](https://thespacedevs.com/llapi) and cached hourly. Aurora forecasts are fetched from [NOAA SWPC](https://www.swpc.noaa.gov/) and cached every few hours. A Cloudflare Worker merges the requested categories into a single ICS or JSON response at request time.

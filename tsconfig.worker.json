@@ -7,5 +7,5 @@
     "noEmit": true
   },
   "include": ["src/worker/**/*", "src/shared/**/*"],
-  "exclude": ["src/worker/**/*.test.ts"]
+  "exclude": ["src/worker/**/*.test.ts", "src/shared/**/*.test.ts"]
 }

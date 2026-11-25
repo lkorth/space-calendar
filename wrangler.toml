@@ -6,6 +6,12 @@ routes = [
   { pattern = "space-calendar.lukekorth.com", custom_domain = true }
 ]
 
+# Bundles the drawing code for /wall-calendar into src/site before assets are uploaded.
+# Watching only its source keeps `wrangler dev` from rebuilding on its own output.
+[build]
+command = "npm run build:site"
+watch_dir = "src/shared/wall-calendar"
+
 # The configurator is served from the same domain as the feed. Static assets are matched
 # before the Worker runs, so page loads never invoke it — those requests are free and
 # unlimited — while /feed.ics and /feed.json fall through to the Worker as usual.
