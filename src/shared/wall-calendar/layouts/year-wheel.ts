@@ -113,8 +113,10 @@ export function yearWheel(input: WheelInput): Shape[] {
 
   // Milky Way, hanging from the inner circle
   add('milky-way', ringAt(250, 0.8));
+  // Nights of ten hours or more, common in the south, must still end short of the labels.
+  const perHour = Math.min(4, 28 / Math.max(...galaxy.hours));
   const bars = galaxy.hours.map((h, i) =>
-    h > 0 ? radialBar(CX, CY, s(250 - 4 - 4 * h), s(250), theta(i), barHalf) : '',
+    h > 0 ? radialBar(CX, CY, s(250 - 4 - perHour * h), s(250), theta(i), barHalf) : '',
   );
   add('milky-way', bars.join(''));
 
@@ -235,11 +237,16 @@ function nightRing(
   return shapes;
 }
 
-/** The clock hours the night ring spans: 5 PM to 8:15 AM, wider where nights run longer. */
+/** The clock hours the night ring spans: from the hour before the earliest sunset of the year
+ *  to the quarter hour after the latest sunrise, so every place fills the ring. Always holds
+ *  midnight, and at most noon to noon. */
 export function nightSpan(all: readonly { sunset: number; sunrise: number }[]): { from: number; to: number } {
-  const from = Math.min(17, Math.floor(Math.min(...all.map((x) => x.sunset))));
+  const earliest = Math.min(...all.map((x) => x.sunset));
   const latest = Math.max(...all.map((x) => x.sunrise));
-  return { from: Math.max(12, from), to: Math.min(36, latest <= 32.25 ? 32.25 : Math.ceil(latest * 2) / 2) };
+  return {
+    from: Math.min(Math.max(Math.floor(earliest), 12), 23),
+    to: Math.max(Math.min(Math.ceil(latest * 4) / 4, 36), 25),
+  };
 }
 
 /** Dots along one edge of full darkness, broken where a night never gets that dark. */

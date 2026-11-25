@@ -64,7 +64,7 @@ part of the year if your region observes DST.
 "Copy link" on the page makes a link that opens the same calendar. The configurator links to a finished calendar when it knows your location. To write a link yourself, put the options after the `#`:
 
 ```
-https://space-calendar.lukekorth.com/wall-calendar#type=year-wheel-night&lat=40&lon=-83&tz=America/New_York&place=Ohio&qr=true
+https://space-calendar.lukekorth.com/wall-calendar#type=year-wheel-night&lat=51.5&lon=0&tz=Europe/London&place=Greenwich&qr=true
 ```
 
 | Option | Required | Description |
@@ -72,8 +72,8 @@ https://space-calendar.lukekorth.com/wall-calendar#type=year-wheel-night&lat=40&
 | `type` | Yes | The type of calendar. See the next table. A link without it opens the moon calendar. |
 | `lat` | Yes | Latitude in degrees, from -90 to 90. South is negative. It is rounded to 0.1°. |
 | `lon` | Yes | Longitude in degrees, from -180 to 180. West is negative. It is rounded to 0.1°. |
-| `tz` | Yes | IANA timezone of the place, such as `America/New_York`. A link without it uses the timezone of the browser. |
-| `place` | No | The location name to print, up to 24 characters. The default is the latitude, such as `40° N`. |
+| `tz` | Yes | IANA timezone of the place, such as `Europe/London`. A link without it uses the timezone of the browser. |
+| `place` | No | The location name to print, up to 24 characters. The default is the latitude, such as `51.5° N`. |
 | `qr` | No | `true` adds a QR code. The default is `false`. Year wheels only. |
 | `year` | No | This year or the next. The default is this year, or the next year from October. A link with a year that is not available opens the latest year and says so. |
 
@@ -87,12 +87,12 @@ A link includes the location. Browsers do not send the part after the `#` to the
 
 The page has two files to download. "Download" gives a print file, which is light on dark. "Download for engraving" gives only filled black paths, and a red outline marks the edge of the page. Before you engrave, set the red outline to Ignore in the laser software.
 
-The QR code opens a page that lists the events for that place, such as [/sky?lat=40&lon=-83](https://space-calendar.lukekorth.com/sky?lat=40&lon=-83). The page needs no subscription. It has an optional button that adds the events to a calendar app. The link has only whole degrees.
+The QR code opens a page that lists the events for that place, such as [/sky?lat=52&lon=0](https://space-calendar.lukekorth.com/sky?lat=52&lon=0). The page needs no subscription. It has an optional button that adds the events to a calendar app. The link has only whole degrees.
 
 To draw a calendar on your own computer, use the same options. `--mode` is `print` (default) or `laser`:
 
 ```bash
-npm run -s wall-calendar -- --type moon-calendar --lat 40 --lon -83 --tz America/New_York --place Ohio --mode laser > moon.svg
+npm run -s wall-calendar -- --type moon-calendar --lat 51.5 --lon 0 --tz Europe/London --place Greenwich --mode laser > moon.svg
 ```
 
 ### Wall calendar data

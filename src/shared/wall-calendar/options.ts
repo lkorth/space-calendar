@@ -37,7 +37,7 @@ export function parseOptions(q: URLSearchParams, now: Date): Options | { error: 
   const lon = coordinate(q.get('lon'), 180);
   if (lon === undefined) return { error: 'lon must be in degrees, from -180 to 180' };
   const tz = zone(q.get('tz'));
-  if (!tz) return { error: 'tz must be an IANA time zone, such as America/New_York' };
+  if (!tz) return { error: 'tz must be an IANA time zone, such as Europe/London' };
 
   const mode = q.get('mode') ?? 'print';
   if (mode !== 'print' && mode !== 'laser') return { error: 'mode must be print or laser' };

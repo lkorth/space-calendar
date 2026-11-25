@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { LocalClock, formatDay } from './clock.ts';
 import { daysOfYear, milkyWay, nights, sunDays } from './year-sky.ts';
 
-const OHIO = { lat: 40, lon: -83 };
-const clock = new LocalClock('America/New_York');
+const MADRID = { lat: 40, lon: -4 };
+const clock = new LocalClock('Europe/Madrid');
 const days = daysOfYear(2027);
 
 describe('daysOfYear', () => {
@@ -15,10 +15,10 @@ describe('daysOfYear', () => {
 
 describe('nights', () => {
   it('runs from sunset to the next sunrise in clock hours', () => {
-    const all = nights(days, sunDays(days, clock, OHIO), clock, OHIO);
+    const all = nights(days, sunDays(days, clock, MADRID), clock, MADRID);
     const jan15 = all[14]!;
-    expect(jan15.sunset).toBeCloseTo(17.53, 1);
-    expect(jan15.sunrise).toBeCloseTo(31.87, 1);
+    expect(jan15.sunset).toBeCloseTo(18.25, 1);
+    expect(jan15.sunrise).toBeCloseTo(32.6, 1);
     expect(jan15.dusk!).toBeGreaterThan(jan15.sunset);
     expect(jan15.dawn!).toBeLessThan(jan15.sunrise);
     for (const night of all) {
@@ -52,10 +52,9 @@ describe('nights', () => {
 
 describe('milkyWay', () => {
   it('finds the same windows as the calendar feed and drops lone nights', () => {
-    const { hours, best } = milkyWay(days, clock, OHIO);
+    const { hours, best } = milkyWay(days, clock, MADRID);
     const starts = hours.flatMap((h, i) => (h > 0 && !hours[i - 1] ? [formatDay(days[i]!)] : []));
     const ends = hours.flatMap((h, i) => (h > 0 && !hours[i + 1] ? [formatDay(days[i]!)] : []));
-    // Within a night of the mockup, which sampled a finer Moon every five minutes.
     expect(starts).toEqual(['MAY 2', 'MAY 29', 'JUN 26', 'JUL 26']);
     expect(ends).toEqual(['MAY 14', 'JUN 12', 'JUL 10', 'AUG 6']);
     expect(best).not.toBeNull();

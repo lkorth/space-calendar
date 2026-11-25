@@ -4,7 +4,7 @@ import {
   sunCrossing, sunMoonSeparation,
 } from './sky.ts';
 
-const OHIO = { lat: 40, lon: -83 };
+const MADRID = { lat: 40, lon: -4 };
 const MINUTE = 60_000;
 
 describe('moonPosition', () => {
@@ -18,7 +18,7 @@ describe('moonPosition', () => {
 });
 
 describe('moonPhase', () => {
-  it('matches reference fractions at 9 PM Eastern', () => {
+  it('matches reference fractions', () => {
     const golden: [number, number, boolean][] = [
       [Date.UTC(2027, 0, 2, 2), 0.2769, false],
       [Date.UTC(2027, 0, 5, 2), 0.0688, false],
@@ -36,31 +36,30 @@ describe('moonPhase', () => {
 });
 
 describe('sunCrossing', () => {
-  const at = (utc: number) => solarNoon(utc, OHIO.lon);
+  const at = (utc: number) => solarNoon(utc, MADRID.lon);
 
   it('finds sunrise and sunset to within two minutes', () => {
-    // January 15 in Ohio: 7:52 AM and 5:32 PM Eastern. The handoff mockups say 7:50 and
-    // 5:33 because they count the radius of the Sun twice.
-    const jan = sunCrossing(at(Date.UTC(2027, 0, 15, 17)), OHIO, RISE_SET_ALT);
+    // At 40° N on January 15 the day is 9 h 39 min long, centered on 12:25 UTC at 4° W.
+    const jan = sunCrossing(at(Date.UTC(2027, 0, 15, 12)), MADRID, RISE_SET_ALT);
     if (typeof jan === 'string') throw new Error(jan);
-    expect(Math.abs(jan.rise - Date.UTC(2027, 0, 15, 12, 52))).toBeLessThan(2 * MINUTE);
-    expect(Math.abs(jan.set - Date.UTC(2027, 0, 15, 22, 32))).toBeLessThan(2 * MINUTE);
+    expect(Math.abs(jan.rise - Date.UTC(2027, 0, 15, 7, 36))).toBeLessThan(2 * MINUTE);
+    expect(Math.abs(jan.set - Date.UTC(2027, 0, 15, 17, 15))).toBeLessThan(2 * MINUTE);
   });
 
   it('gives the longest and shortest day', () => {
     const hours = (utc: number) => {
-      const day = sunCrossing(at(utc), OHIO, RISE_SET_ALT);
+      const day = sunCrossing(at(utc), MADRID, RISE_SET_ALT);
       return typeof day === 'string' ? NaN : (day.set - day.rise) / 3_600_000;
     };
-    expect(hours(Date.UTC(2027, 5, 21, 17))).toBeCloseTo(15 + 1 / 60, 1);
-    expect(hours(Date.UTC(2027, 11, 22, 17))).toBeCloseTo(9 + 20 / 60, 1);
+    expect(hours(Date.UTC(2027, 5, 21, 12))).toBeCloseTo(15 + 1 / 60, 1);
+    expect(hours(Date.UTC(2027, 11, 22, 12))).toBeCloseTo(9 + 20 / 60, 1);
   });
 
   it('returns times at which the Sun really is at that altitude', () => {
-    const dark = sunCrossing(at(Date.UTC(2027, 3, 1, 17)), OHIO, ASTRONOMICAL_DARK_ALT);
+    const dark = sunCrossing(at(Date.UTC(2027, 3, 1, 12)), MADRID, ASTRONOMICAL_DARK_ALT);
     if (typeof dark === 'string') throw new Error(dark);
-    expect(sunAltitude(dark.set, OHIO)).toBeCloseTo(-18, 1);
-    expect(sunAltitude(dark.rise, OHIO)).toBeCloseTo(-18, 1);
+    expect(sunAltitude(dark.set, MADRID)).toBeCloseTo(-18, 1);
+    expect(sunAltitude(dark.rise, MADRID)).toBeCloseTo(-18, 1);
   });
 
   it('reports days on which the Sun never crosses', () => {
@@ -74,18 +73,18 @@ describe('sunCrossing', () => {
 
 describe('moonUpSpans', () => {
   it('splits the night at moonrise and moonset', () => {
-    const from = Date.UTC(2027, 0, 15, 23);
-    const to = Date.UTC(2027, 0, 16, 12);
-    const spans = moonUpSpans(from, to, OHIO);
+    const from = Date.UTC(2027, 0, 15, 18);
+    const to = Date.UTC(2027, 0, 16, 7);
+    const spans = moonUpSpans(from, to, MADRID);
     expect(spans).toHaveLength(1);
     const [start, end] = spans[0]!;
     expect(start).toBe(from); // first quarter: already up at dusk
     expect(end).toBeLessThan(to);
-    expect(moonAltitude(end, OHIO)).toBeCloseTo(0, 0);
+    expect(moonAltitude(end, MADRID)).toBeCloseTo(0, 0);
   });
 
   it('returns nothing for an empty night', () => {
-    expect(moonUpSpans(10, 10, OHIO)).toEqual([]);
+    expect(moonUpSpans(10, 10, MADRID)).toEqual([]);
   });
 });
 

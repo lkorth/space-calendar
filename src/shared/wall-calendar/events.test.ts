@@ -3,28 +3,28 @@ import type { CalendarEvent, CategorySlug } from '../models.ts';
 import { LocalClock, formatDay } from './clock.ts';
 import { fullMoonName, readYearEvents } from './events.ts';
 
-const OHIO = { lat: 40, lon: -83 };
-const clock = new LocalClock('America/New_York');
+const MADRID = { lat: 40, lon: -4 };
+const clock = new LocalClock('Europe/Madrid');
 
 function event(category: CategorySlug, uid: string, title: string, start: string, extra: Partial<CalendarEvent> = {}) {
   const allDay = !start.includes('T');
   return { uid, title, start, end: start, allDay, description: '', category, ...extra } satisfies CalendarEvent;
 }
 
-const read = (events: CalendarEvent[], place = OHIO, zone = clock, year = 2027) =>
+const read = (events: CalendarEvent[], place = MADRID, zone = clock, year = 2027) =>
   readYearEvents(events, year, zone, place);
 
 describe('LocalClock', () => {
   it('converts across a daylight-saving change', () => {
-    expect(clock.at(Date.UTC(2027, 0, 1), 21)).toBe(Date.UTC(2027, 0, 2, 2));
-    expect(clock.at(Date.UTC(2027, 6, 1), 21)).toBe(Date.UTC(2027, 6, 2, 1));
-    expect(clock.hoursAfter(Date.UTC(2027, 6, 1), Date.UTC(2027, 6, 2, 1))).toBe(21);
+    expect(clock.at(Date.UTC(2027, 0, 1), 21)).toBe(Date.UTC(2027, 0, 1, 20));
+    expect(clock.at(Date.UTC(2027, 6, 1), 21)).toBe(Date.UTC(2027, 6, 1, 19));
+    expect(clock.hoursAfter(Date.UTC(2027, 6, 1), Date.UTC(2027, 6, 1, 19))).toBe(21);
   });
 
   it('formats times and dates', () => {
-    expect(clock.time(Date.UTC(2027, 0, 15, 12, 52))).toBe('7:52 AM');
-    expect(clock.time(Date.UTC(2027, 0, 15, 5, 5))).toBe('12:05 AM');
-    expect(clock.nearestHour(Date.UTC(2027, 7, 17, 7, 14))).toBe('3 AM');
+    expect(clock.time(Date.UTC(2027, 0, 15, 6, 52))).toBe('7:52 AM');
+    expect(clock.time(Date.UTC(2027, 0, 14, 23, 5))).toBe('12:05 AM');
+    expect(clock.nearestHour(Date.UTC(2027, 7, 17, 7, 14))).toBe('9 AM');
     expect(formatDay(Date.UTC(2027, 11, 3))).toBe('DEC 3');
   });
 });
@@ -44,7 +44,7 @@ describe('readYearEvents', () => {
       event('moon-phases', 'a', '🌕 Full Moon — Strawberry Moon', '2027-06-19T00:44:00.000Z'),
       event('moon-phases', 'b', '🌑 New Moon', '2027-07-04T03:02:00.000Z'),
       event('moon-phases', 'c', '🌑 New Moon', '2028-01-01T12:00:00.000Z'),
-    ]);
+    ], { lat: 34, lon: -118 }, new LocalClock('America/Los_Angeles'));
     expect(fullMoons.map((m) => `${m.name} ${formatDay(m.day)}`)).toEqual(['STRAWBERRY JUN 18']);
     expect(newMoons.map(formatDay)).toEqual(['JUL 3']);
   });
@@ -56,7 +56,7 @@ describe('readYearEvents', () => {
       shower('quadrantids', '2027-01-04'), shower('delta-aquariids', '2027-07-30'), shower('geminids', '2027-12-14'),
     ]);
     expect(showers.map((s) => `${s.name} ${s.moonPercent}`)).toEqual([
-      'QUADRANTIDS 6', 'DELTA AQUARIIDS 7', 'GEMINIDS 96',
+      'QUADRANTIDS 7', 'DELTA AQUARIIDS 9', 'GEMINIDS 97',
     ]);
   });
 
@@ -80,8 +80,8 @@ describe('readYearEvents', () => {
       lunar('2027-08-17T05:25:00Z', '2027-08-17T09:03:00Z', '2027-08-17T07:14:00Z'),
     ]);
     // July's lasts ten minutes and cannot be seen from anywhere.
-    expect(eclipses.map((e) => [formatDay(e.day), e.visible])).toEqual([['FEB 20', true], ['AUG 17', true]]);
-    expect(eclipses[1]!.when).toBe('AROUND 3 AM');
+    expect(eclipses.map((e) => [formatDay(e.day), e.visible])).toEqual([['FEB 21', true], ['AUG 17', true]]);
+    expect(eclipses.map((e) => e.when)).toEqual(['AROUND 12 AM', 'AT MOONSET']);
   });
 
   it('marks a lunar eclipse below the horizon as not visible', () => {
@@ -99,11 +99,12 @@ describe('readYearEvents', () => {
       event('eclipses-solar', 's1', '🌑 Annular Solar Eclipse', '2027-02-06'),
       event('eclipses-solar', 's2', '🌑 Total Solar Eclipse', '2027-08-02'),
     ];
-    expect(read(solar).eclipses.map((e) => e.visible)).toEqual([false, false]);
+    const sydney = read(solar, { lat: -34, lon: 151 }, new LocalClock('Australia/Sydney'));
+    expect(sydney.eclipses.map((e) => e.visible)).toEqual([false, false]);
     // Luxor is on the center line of the 2027 August total eclipse; Madrid is off it.
     const luxor = read(solar, { lat: 25.7, lon: 32.6 }, new LocalClock('Africa/Cairo')).eclipses[1]!;
     expect([luxor.visible, luxor.type]).toEqual([true, 'Total']);
-    const madrid = read(solar, { lat: 40.4, lon: -3.7 }, new LocalClock('Europe/Madrid')).eclipses[1]!;
+    const madrid = read(solar).eclipses[1]!;
     expect([madrid.visible, madrid.type, formatDay(madrid.day)]).toEqual([true, 'Partial', 'AUG 2']);
   });
 });

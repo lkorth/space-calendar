@@ -6,7 +6,7 @@ export interface LayoutInput {
   lon: number;
   /** IANA zone for every clock time on the page */
   tz: string;
-  /** Label such as "OHIO", in capitals */
+  /** Label to print, in capitals */
   place: string;
   /** Calendar events that cover the whole year (data/wall-calendar-events.json) */
   events: readonly CalendarEvent[];

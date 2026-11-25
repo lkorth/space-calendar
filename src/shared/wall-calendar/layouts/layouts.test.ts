@@ -14,13 +14,13 @@ import { LABEL_GAP, WHEEL_CENTER, WHEEL_RADIUS, eventLabels, formatLength, night
 const events = JSON.parse(
   readFileSync('src/shared/wall-calendar/fixtures/events-2027.json', 'utf-8'),
 ) as CalendarEvent[];
-const ohio = { year: 2027, lat: 40, lon: -83, tz: 'America/New_York', place: 'OHIO', events };
-const qrUrl = 'https://space-calendar.lukekorth.com/sky?lat=40&lon=-83';
+const madrid = { year: 2027, lat: 40, lon: -4, tz: 'Europe/Madrid', place: 'MADRID', events };
+const qrUrl = 'https://space-calendar.lukekorth.com/sky?lat=40&lon=-4';
 
 const layouts: Record<string, () => Shape[]> = {
-  'moon calendar': () => moonCalendar(ohio),
-  'day wheel': () => yearWheel({ ...ohio, ring: 'day', qrUrl }),
-  'night wheel': () => yearWheel({ ...ohio, ring: 'night', qrUrl }),
+  'moon calendar': () => moonCalendar(madrid),
+  'day wheel': () => yearWheel({ ...madrid, ring: 'day', qrUrl }),
+  'night wheel': () => yearWheel({ ...madrid, ring: 'night', qrUrl }),
 };
 
 for (const [name, build] of Object.entries(layouts)) {
@@ -82,42 +82,42 @@ for (const [name, build] of Object.entries(layouts)) {
 
 describe('moon calendar', () => {
   it('rings full and new moons, and only the eclipses seen from the place', () => {
-    const count = (layer: string) => moonCalendar(ohio).filter((s) => s.layer === layer).length;
-    expect(count('eclipse-ring')).toBe(2);
-    expect(count('double-ring')).toBe(25 - 2);
+    const count = (layer: string) => moonCalendar(madrid).filter((s) => s.layer === layer).length;
+    expect(count('eclipse-ring')).toBe(3);
+    expect(count('double-ring')).toBe(25 - 3);
     expect(count('moon-outline')).toBe(365);
   });
 
   it('mirrors the Moon south of the equator', () => {
-    const lit = (lat: number) => moonCalendar({ ...ohio, lat }).filter((s) => s.layer === 'moon-lit').map((s) => s.d);
+    const lit = (lat: number) => moonCalendar({ ...madrid, lat }).filter((s) => s.layer === 'moon-lit').map((s) => s.d);
     expect(lit(-40)[10]).not.toBe(lit(40)[10]);
   });
 
   it('names the zone where it has a plain name', () => {
     const at = Date.UTC(2027, 0, 1);
-    expect(zoneLabel('America/New_York', at)).toBe('EASTERN');
+    expect(zoneLabel('America/Denver', at)).toBe('MOUNTAIN');
     expect(zoneLabel('UTC', at)).toBe('UTC');
     expect(zoneLabel('Etc/GMT+5', at)).toBe('LOCAL TIME');
   });
 });
 
 describe('event labels', () => {
-  const clock = new LocalClock(ohio.tz);
+  const clock = new LocalClock(madrid.tz);
   const days = daysOfYear(2027);
-  const found = readYearEvents(events, 2027, clock, ohio);
-  const labels = eventLabels(found, milkyWay(days, clock, ohio), days);
+  const found = readYearEvents(events, 2027, clock, madrid);
+  const labels = eventLabels(found, milkyWay(days, clock, madrid), days);
   const texts = labels.map((l) => `${l.title} / ${l.detail}`);
 
   it('merges events on neighboring days', () => {
-    expect(texts).toContain('PENUMBRAL ECLIPSE / FEB 20 · MARS OPPOSITION');
-    expect(texts).toContain('SOLSTICE · URSIDS / DEC 21 · DEC 22');
+    expect(texts).toContain('PENUMBRAL ECLIPSE / FEB 21 · MARS OPPOSITION FEB 20');
+    expect(texts).toContain('SOLSTICE · URSIDS / DEC 22');
   });
 
   it('gives everything else its own label', () => {
-    expect(texts).toContain('QUADRANTIDS / JAN 4 · MOON 6%');
+    expect(texts).toContain('QUADRANTIDS / JAN 4 · MOON 7%');
     expect(texts).toContain('JUPITER OPPOSITION / FEB 11');
-    expect(texts).toContain('PENUMBRAL ECLIPSE / AUG 17 · AROUND 3 AM');
-    expect(labels).toHaveLength(17);
+    expect(texts).toContain('PENUMBRAL ECLIPSE / AUG 17 · AT MOONSET');
+    expect(labels).toHaveLength(18);
   });
 
   it('are spread at least the minimum gap apart, across the new year too', () => {
@@ -129,7 +129,7 @@ describe('event labels', () => {
   });
 
   it('stay between the center circle and the leaders', () => {
-    for (const { d } of yearWheel({ ...ohio, ring: 'night' }).filter((s) => s.layer === 'labels')) {
+    for (const { d } of yearWheel({ ...madrid, ring: 'night' }).filter((s) => s.layer === 'labels')) {
       for (const [x, y] of contours(d).flat()) {
         const r = Math.hypot(x - WHEEL_CENTER[0], y - WHEEL_CENTER[1]) / 1.04;
         expect(r).toBeGreaterThan(72);
@@ -142,7 +142,7 @@ describe('event labels', () => {
 describe('year wheel', () => {
   it('keeps the legend, title and QR code clear of the wheel', () => {
     for (const ring of ['day', 'night'] as const) {
-      for (const { layer, d } of yearWheel({ ...ohio, ring, qrUrl })) {
+      for (const { layer, d } of yearWheel({ ...madrid, ring, qrUrl })) {
         if (!['legend', 'title', 'qr'].includes(layer) || !d) continue;
         for (const [x, y] of contours(d).flat()) {
           const r = Math.hypot(x - WHEEL_CENTER[0], y - WHEEL_CENTER[1]);
@@ -153,13 +153,13 @@ describe('year wheel', () => {
   });
 
   it('draws a QR code only when asked', () => {
-    const hasQr = (input: object) => yearWheel({ ...ohio, ring: 'day', ...input }).some((s) => s.layer === 'qr');
+    const hasQr = (input: object) => yearWheel({ ...madrid, ring: 'day', ...input }).some((s) => s.layer === 'qr');
     expect(hasQr({})).toBe(false);
     expect(hasQr({ qrUrl })).toBe(true);
   });
 
   it('keeps full moon names clear of the new moon circles', () => {
-    const shapes = yearWheel({ ...ohio, ring: 'day' });
+    const shapes = yearWheel({ ...madrid, ring: 'day' });
     const points = (layer: string) => shapes.filter((x) => x.layer === layer).map((x) => contours(x.d).flat());
     const centers = points('new-moons').map((ps) => {
       const xs = ps.map(([x]) => x);
@@ -171,9 +171,21 @@ describe('year wheel', () => {
     }
   });
 
-  it('widens the night ring only where nights run longer than Ohio’s', () => {
-    expect(nightSpan([{ sunset: 17.1, sunrise: 31.9 }])).toEqual({ from: 17, to: 32.25 });
-    expect(nightSpan([{ sunset: 15.5, sunrise: 33.1 }])).toEqual({ from: 15, to: 33.5 });
+  it('keeps Milky Way bars clear of the labels, however long the nights', () => {
+    for (const where of [madrid, { ...madrid, lat: -34, lon: 151, tz: 'Australia/Sydney' }, { ...madrid, lat: -30, lon: -70, tz: 'America/Santiago' }]) {
+      const bars = yearWheel({ ...where, ring: 'day' }).find((x) => x.layer === 'milky-way' && contours(x.d).length > 2)!;
+      for (const [x, y] of contours(bars.d).flat()) {
+        expect(Math.hypot(x - WHEEL_CENTER[0], y - WHEEL_CENTER[1]) / 1.04, where.tz).toBeGreaterThan(217);
+      }
+    }
+  });
+
+  it('fits the night ring to the nights of the place', () => {
+    expect(nightSpan([{ sunset: 17.11, sunrise: 32.11 }])).toEqual({ from: 17, to: 32.25 });
+    expect(nightSpan([{ sunset: 17.98, sunrise: 30.38 }])).toEqual({ from: 17, to: 30.5 }); // near the equator
+    expect(nightSpan([{ sunset: 15.85, sunrise: 33.1 }, { sunset: 21, sunrise: 28 }])).toEqual({ from: 15, to: 33.25 });
+    expect(nightSpan([{ sunset: 11.2, sunrise: 37 }])).toEqual({ from: 12, to: 36 }); // polar night
+    expect(nightSpan([{ sunset: 26, sunrise: 24.2 }])).toEqual({ from: 23, to: 25 }); // always holds midnight
   });
 
   it('formats day lengths', () => {
@@ -194,9 +206,9 @@ describe('other places', () => {
   for (const where of places) {
     it(`${where.place} draws sane calendars`, () => {
       const all = [
-        moonCalendar({ ...ohio, ...where }),
-        yearWheel({ ...ohio, ...where, ring: 'day' }),
-        yearWheel({ ...ohio, ...where, ring: 'night' }),
+        moonCalendar({ ...madrid, ...where }),
+        yearWheel({ ...madrid, ...where, ring: 'day' }),
+        yearWheel({ ...madrid, ...where, ring: 'night' }),
       ];
       for (const shapes of all) {
         for (const { layer, d } of shapes) {

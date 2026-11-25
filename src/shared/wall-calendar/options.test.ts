@@ -8,14 +8,14 @@ import { MAX_QR_MODULES, qrMatrix } from './qr.ts';
 const events = JSON.parse(
   readFileSync('src/shared/wall-calendar/fixtures/events-2027.json', 'utf-8'),
 ) as CalendarEvent[];
-const OHIO = 'lat=40&lon=-83&tz=America/New_York&place=Ohio&year=2027';
+const MADRID = 'lat=40&lon=-4&tz=Europe/Madrid&place=Madrid&year=2027';
 const NOW = new Date('2026-11-25T00:00:00Z');
 const parse = (query: string) => parseOptions(new URLSearchParams(query), NOW);
 
 describe('parseOptions', () => {
   it('reads every option', () => {
-    expect(parse(`type=year-wheel-night&${OHIO}&mode=laser&qr=true`)).toEqual({
-      type: 'year-wheel-night', year: 2027, lat: 40, lon: -83, tz: 'America/New_York', place: 'OHIO', mode: 'laser',
+    expect(parse(`type=year-wheel-night&${MADRID}&mode=laser&qr=true`)).toEqual({
+      type: 'year-wheel-night', year: 2027, lat: 40, lon: -4, tz: 'Europe/Madrid', place: 'MADRID', mode: 'laser',
       qr: true,
     });
   });
@@ -29,29 +29,29 @@ describe('parseOptions', () => {
   });
 
   it('keeps accented place names and rejects what the font cannot draw', () => {
-    expect(parse(`type=moon-calendar&${OHIO.replace('Ohio', 'S%C3%A3o Paulo')}`)).toMatchObject({ place: 'SÃO PAULO' });
-    expect(parse(`type=moon-calendar&${OHIO.replace('Ohio', '東京')}`)).toHaveProperty('error');
-    expect(parse(`type=moon-calendar&${OHIO.replace('Ohio', 'x'.repeat(25))}`)).toHaveProperty('error');
+    expect(parse(`type=moon-calendar&${MADRID.replace('place=Madrid', 'place=S%C3%A3o Paulo')}`)).toMatchObject({ place: 'SÃO PAULO' });
+    expect(parse(`type=moon-calendar&${MADRID.replace('place=Madrid', 'place=東京')}`)).toHaveProperty('error');
+    expect(parse(`type=moon-calendar&${MADRID.replace('place=Madrid', `place=${'x'.repeat(25)}`)}`)).toHaveProperty('error');
   });
 
   it('rejects bad input', () => {
     const bad = [
-      'lon=-83&tz=UTC', 'lat=40&tz=UTC', 'lat=40&lon=-83', 'lat=abc&lon=-83&tz=UTC', 'lat=91&lon=0&tz=UTC',
-      'lat=40&lon=181&tz=UTC', 'lat=&lon=0&tz=UTC', 'lat=40&lon=-83&tz=Mars/Olympus', `${OHIO}&mode=cut`,
-      `${OHIO}&qr=1`, `${OHIO}&qr=https://example.com`, 'lat=40&lon=-83&tz=UTC&year=27',
+      'lon=-4&tz=UTC', 'lat=40&tz=UTC', 'lat=40&lon=-4', 'lat=abc&lon=-4&tz=UTC', 'lat=91&lon=0&tz=UTC',
+      'lat=40&lon=181&tz=UTC', 'lat=&lon=0&tz=UTC', 'lat=40&lon=-4&tz=Mars/Olympus', `${MADRID}&mode=cut`,
+      `${MADRID}&qr=1`, `${MADRID}&qr=https://example.com`, 'lat=40&lon=-4&tz=UTC&year=27',
     ];
     for (const query of bad) expect(parse(`type=year-wheel-day&${query}`), query).toHaveProperty('error');
   });
 
   it('names the types when one is missing or unknown', () => {
     const error = { error: 'type must be one of moon-calendar, year-wheel-day, year-wheel-night' };
-    expect(parse(`type=poster&${OHIO}`)).toEqual(error);
-    expect(parse(OHIO)).toEqual(error);
+    expect(parse(`type=poster&${MADRID}`)).toEqual(error);
+    expect(parse(MADRID)).toEqual(error);
   });
 
   it('refuses a QR code on the moon calendar, which has no room for one', () => {
-    expect(parse(`type=moon-calendar&${OHIO}&qr=true`)).toHaveProperty('error');
-    expect(parse(`type=moon-calendar&${OHIO}&qr=false`)).toMatchObject({ qr: false });
+    expect(parse(`type=moon-calendar&${MADRID}&qr=true`)).toHaveProperty('error');
+    expect(parse(`type=moon-calendar&${MADRID}&qr=false`)).toMatchObject({ qr: false });
   });
 });
 
@@ -80,7 +80,7 @@ describe('completeYears', () => {
 describe('drawWallCalendar', () => {
   for (const type of TYPES) {
     it(`draws ${type}`, () => {
-      const options = parse(`type=${type}&${OHIO}&mode=laser`) as Options;
+      const options = parse(`type=${type}&${MADRID}&mode=laser`) as Options;
       expect(drawWallCalendar(options, events)).toContain('fill="#000000"');
       expect(fileName(options)).toBe(`${type}-2027-laser.svg`);
     });

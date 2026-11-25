@@ -446,8 +446,8 @@ describe('configurator location', () => {
     const url = pageFunction('wallCalendarUrl', urlDeps) as (type: string, lat: number | null, lon: number | null) => string;
 
     it('open a finished calendar once the location is known', () => {
-      const hash = url('year-wheel-night', 40, -83).replace('/wall-calendar', '');
-      expect(readLink(hash)).toEqual({ type: 'year-wheel-night', lat: '40', lon: '-83', tz: 'America/New_York' });
+      const hash = url('year-wheel-night', 40, -4).replace('/wall-calendar', '');
+      expect(readLink(hash)).toEqual({ type: 'year-wheel-night', lat: '40', lon: '-4', tz: 'America/New_York' });
       expect(parseOptions(new URLSearchParams(hash.slice(1)), new Date())).not.toHaveProperty('error');
     });
 
@@ -489,7 +489,7 @@ describe('configurator location', () => {
 
     it('reads the place a wall calendar links to', () => {
       const readPlace = skyFunction('readPlace');
-      expect(readPlace('?lat=40&lon=-83')).toEqual({ lat: 40, lon: -83 });
+      expect(readPlace('?lat=40&lon=-4')).toEqual({ lat: 40, lon: -4 });
       expect(readPlace('')).toBeNull();
       expect(readPlace('?lat=40')).toBeNull();
       expect(readPlace('?lat=95&lon=0')).toBeNull();

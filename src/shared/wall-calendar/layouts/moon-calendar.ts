@@ -126,7 +126,7 @@ function key(y: number): string[] {
   return out;
 }
 
-/** "EASTERN" for America/New_York. Zones without such a name get "LOCAL TIME". */
+/** "MOUNTAIN" for America/Denver. Zones without such a name get "LOCAL TIME". */
 export function zoneLabel(tz: string, at: number): string {
   if (tz === 'UTC') return 'UTC';
   const name = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longGeneric' })

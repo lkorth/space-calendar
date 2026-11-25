@@ -1,8 +1,8 @@
 /**
  * Draws one wall calendar to stdout, from the calendar data in data/wall-calendar-events.json.
  *
- *   npm run -s wall-calendar -- --type year-wheel-night --year 2027 --lat 40 --lon -83 \
- *     --tz America/New_York --place OHIO --mode laser --qr true > calendar.svg
+ *   npm run -s wall-calendar -- --type year-wheel-night --year 2027 --lat 51.5 --lon 0 \
+ *     --tz Europe/London --place Greenwich --mode laser --qr true > calendar.svg
  *
  * --events <file> reads the events from somewhere else.
  */

@@ -14,7 +14,7 @@ npm run typecheck                # TypeScript type check (both pipeline and work
 npm run pipeline                 # run all data generators → writes to data/
 npm run pipeline -- --generator moon-phases  # run one generator
 npm run pipeline -- --year 2027  # generate for a specific year
-npm run wall-calendar -- --type moon-calendar --lat 40 --lon -83 --tz America/New_York  # draw a wall calendar SVG
+npm run wall-calendar -- --type moon-calendar --lat 51.5 --lon 0 --tz Europe/London  # draw a wall calendar SVG
 npm run worker:dev               # local Cloudflare Worker dev server
 ```
 
