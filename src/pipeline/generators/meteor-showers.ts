@@ -1,5 +1,5 @@
-import { usno } from '../clients/usno.ts';
-import type { MoonPhase } from '../clients/usno.ts';
+import { fetchMoonPhases } from '../clients/sun-moon.ts';
+import type { MoonPhase } from '../clients/sun-moon.ts';
 import { ANNUAL_SHOWERS } from '../clients/ams.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
@@ -70,7 +70,7 @@ export const meteorShowersGenerator: Generator = {
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const { phasedata } = await usno.moonPhases(year);
+    const phases = await fetchMoonPhases(year);
 
     return ANNUAL_SHOWERS.map((shower) => {
       const date = new Date(Date.UTC(year, shower.peakMonth - 1, shower.peakDay));
@@ -79,7 +79,7 @@ export const meteorShowersGenerator: Generator = {
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
       const nextDayStr = nextDay.toISOString().split('T')[0]!;
 
-      const { illumination, isWaxing } = moonPhaseOnDate(dateStr, phasedata);
+      const { illumination, isWaxing } = moonPhaseOnDate(dateStr, phases);
 
       return {
         uid: `meteor-shower-${shower.name.toLowerCase().replace(/\s+/g, '-')}-${year}@space-calendar`,

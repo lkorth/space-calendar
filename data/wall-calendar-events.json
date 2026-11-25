@@ -1,0 +1,942 @@
+[
+  {
+    "uid": "moon-phase-2026-01-03T10:03:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Wolf Moon (Supermoon)",
+    "start": "2026-01-03T10:03:00.000Z",
+    "end": "2026-01-03T10:03:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-quadrantids-2026@space-calendar",
+    "title": "🌠 Quadrantids Meteor Shower — Peak Night",
+    "start": "2026-01-04",
+    "end": "2026-01-05",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "opposition-jupiter-2026-01-10@space-calendar",
+    "title": "🔭 Jupiter at Opposition — Closest & Brightest",
+    "start": "2026-01-10",
+    "end": "2026-01-11",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2026-01-18T19:52:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-01-18T19:52:00.000Z",
+    "end": "2026-01-18T19:52:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-02-01T22:09:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Snow Moon",
+    "start": "2026-02-01T22:09:00.000Z",
+    "end": "2026-02-01T22:09:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "eclipse-solar-2026-02-17@space-calendar",
+    "title": "🌑 Annular Solar Eclipse",
+    "start": "2026-02-17",
+    "end": "2026-02-18",
+    "allDay": true,
+    "description": "",
+    "category": "eclipses-solar"
+  },
+  {
+    "uid": "moon-phase-2026-02-17T12:01:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-02-17T12:01:00.000Z",
+    "end": "2026-02-17T12:01:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "eclipse-lunar-2026-03-03@space-calendar",
+    "title": "🌕 Total Lunar Eclipse — Blood Moon",
+    "start": "2026-03-03T08:45:00Z",
+    "end": "2026-03-03T14:23:00Z",
+    "allDay": false,
+    "description": "",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2026-03-03T08:45:00Z"
+      },
+      {
+        "label": "U1 — partial begins",
+        "utc": "2026-03-03T09:51:00Z"
+      },
+      {
+        "label": "U2 — totality begins",
+        "utc": "2026-03-03T11:04:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2026-03-03T11:34:00Z"
+      },
+      {
+        "label": "U3 — totality ends",
+        "utc": "2026-03-03T12:03:00Z"
+      },
+      {
+        "label": "U4 — partial ends",
+        "utc": "2026-03-03T13:17:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2026-03-03T14:23:00Z"
+      }
+    ],
+    "category": "eclipses-lunar"
+  },
+  {
+    "uid": "moon-phase-2026-03-03T11:38:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Worm Moon",
+    "start": "2026-03-03T11:38:00.000Z",
+    "end": "2026-03-03T11:38:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-03-19T01:23:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-03-19T01:23:00.000Z",
+    "end": "2026-03-19T01:23:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-equinox-3-2026@space-calendar",
+    "title": "🌸 March Equinox — Vernal Equinox (Northern Hemisphere)",
+    "start": "2026-03-20T14:46:00.000Z",
+    "end": "2026-03-20T14:46:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "moon-phase-2026-04-02T02:12:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Pink Moon",
+    "start": "2026-04-02T02:12:00.000Z",
+    "end": "2026-04-02T02:12:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-04-17T11:52:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-04-17T11:52:00.000Z",
+    "end": "2026-04-17T11:52:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-lyrids-2026@space-calendar",
+    "title": "🌠 Lyrids Meteor Shower — Peak Night",
+    "start": "2026-04-22",
+    "end": "2026-04-23",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2026-05-01T17:23:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Flower Moon",
+    "start": "2026-05-01T17:23:00.000Z",
+    "end": "2026-05-01T17:23:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-eta-aquariids-2026@space-calendar",
+    "title": "🌠 Eta Aquariids Meteor Shower — Peak Night",
+    "start": "2026-05-06",
+    "end": "2026-05-07",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2026-05-16T20:01:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-05-16T20:01:00.000Z",
+    "end": "2026-05-16T20:01:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-05-31T08:45:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Flower Moon — Blue Moon",
+    "start": "2026-05-31T08:45:00.000Z",
+    "end": "2026-05-31T08:45:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-06-15T02:54:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-06-15T02:54:00.000Z",
+    "end": "2026-06-15T02:54:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-solstice-6-2026@space-calendar",
+    "title": "☀️ June Solstice — Summer Solstice (Northern Hemisphere)",
+    "start": "2026-06-21T08:25:00.000Z",
+    "end": "2026-06-21T08:25:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "moon-phase-2026-06-29T23:57:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Strawberry Moon",
+    "start": "2026-06-29T23:57:00.000Z",
+    "end": "2026-06-29T23:57:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-07-14T09:44:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-07-14T09:44:00.000Z",
+    "end": "2026-07-14T09:44:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-07-29T14:36:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Buck Moon",
+    "start": "2026-07-29T14:36:00.000Z",
+    "end": "2026-07-29T14:36:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-delta-aquariids-2026@space-calendar",
+    "title": "🌠 Delta Aquariids Meteor Shower — Peak Night",
+    "start": "2026-07-30",
+    "end": "2026-07-31",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "eclipse-solar-2026-08-12@space-calendar",
+    "title": "🌑 Total Solar Eclipse",
+    "start": "2026-08-12",
+    "end": "2026-08-13",
+    "allDay": true,
+    "description": "",
+    "category": "eclipses-solar"
+  },
+  {
+    "uid": "moon-phase-2026-08-12T17:37:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-08-12T17:37:00.000Z",
+    "end": "2026-08-12T17:37:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-perseids-2026@space-calendar",
+    "title": "🌠 Perseids Meteor Shower — Peak Night",
+    "start": "2026-08-13",
+    "end": "2026-08-14",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "eclipse-lunar-2026-08-28@space-calendar",
+    "title": "🌕 Partial Lunar Eclipse",
+    "start": "2026-08-28T01:26:00Z",
+    "end": "2026-08-28T07:02:00Z",
+    "allDay": false,
+    "description": "",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2026-08-28T01:26:00Z"
+      },
+      {
+        "label": "U1 — partial begins",
+        "utc": "2026-08-28T02:35:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2026-08-28T04:14:00Z"
+      },
+      {
+        "label": "U4 — partial ends",
+        "utc": "2026-08-28T05:53:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2026-08-28T07:02:00Z"
+      }
+    ],
+    "category": "eclipses-lunar"
+  },
+  {
+    "uid": "moon-phase-2026-08-28T04:19:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Sturgeon Moon",
+    "start": "2026-08-28T04:19:00.000Z",
+    "end": "2026-08-28T04:19:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-09-11T03:27:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-09-11T03:27:00.000Z",
+    "end": "2026-09-11T03:27:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-equinox-9-2026@space-calendar",
+    "title": "🍂 September Equinox — Autumnal Equinox (Northern Hemisphere)",
+    "start": "2026-09-23T00:05:00.000Z",
+    "end": "2026-09-23T00:05:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "opposition-neptune-2026-09-26@space-calendar",
+    "title": "🔭 Neptune at Opposition — Closest & Brightest",
+    "start": "2026-09-26",
+    "end": "2026-09-27",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2026-09-26T16:49:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Harvest Moon",
+    "start": "2026-09-26T16:49:00.000Z",
+    "end": "2026-09-26T16:49:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "opposition-saturn-2026-10-05@space-calendar",
+    "title": "🔭 Saturn at Opposition — Closest & Brightest",
+    "start": "2026-10-05",
+    "end": "2026-10-06",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2026-10-10T15:50:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-10-10T15:50:00.000Z",
+    "end": "2026-10-10T15:50:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-orionids-2026@space-calendar",
+    "title": "🌠 Orionids Meteor Shower — Peak Night",
+    "start": "2026-10-21",
+    "end": "2026-10-22",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2026-10-26T04:12:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Hunter's Moon",
+    "start": "2026-10-26T04:12:00.000Z",
+    "end": "2026-10-26T04:12:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2026-11-09T07:02:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-11-09T07:02:00.000Z",
+    "end": "2026-11-09T07:02:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-leonids-2026@space-calendar",
+    "title": "🌠 Leonids Meteor Shower — Peak Night",
+    "start": "2026-11-17",
+    "end": "2026-11-18",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2026-11-24T14:54:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Beaver Moon",
+    "start": "2026-11-24T14:54:00.000Z",
+    "end": "2026-11-24T14:54:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "opposition-uranus-2026-11-26@space-calendar",
+    "title": "🔭 Uranus at Opposition — Closest & Brightest",
+    "start": "2026-11-26",
+    "end": "2026-11-27",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2026-12-09T00:52:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2026-12-09T00:52:00.000Z",
+    "end": "2026-12-09T00:52:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-geminids-2026@space-calendar",
+    "title": "🌠 Geminids Meteor Shower — Peak Night",
+    "start": "2026-12-14",
+    "end": "2026-12-15",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "season-solstice-12-2026@space-calendar",
+    "title": "❄️ December Solstice — Winter Solstice (Northern Hemisphere)",
+    "start": "2026-12-21T20:50:00.000Z",
+    "end": "2026-12-21T20:50:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "meteor-shower-ursids-2026@space-calendar",
+    "title": "🌠 Ursids Meteor Shower — Peak Night",
+    "start": "2026-12-22",
+    "end": "2026-12-23",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2026-12-24T01:28:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Cold Moon (Supermoon)",
+    "start": "2026-12-24T01:28:00.000Z",
+    "end": "2026-12-24T01:28:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-quadrantids-2027@space-calendar",
+    "title": "🌠 Quadrantids Meteor Shower — Peak Night",
+    "start": "2027-01-04",
+    "end": "2027-01-05",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2027-01-07T20:24:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-01-07T20:24:00.000Z",
+    "end": "2027-01-07T20:24:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-01-22T12:17:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Wolf Moon (Supermoon)",
+    "start": "2027-01-22T12:17:00.000Z",
+    "end": "2027-01-22T12:17:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "eclipse-solar-2027-02-06@space-calendar",
+    "title": "🌑 Annular Solar Eclipse",
+    "start": "2027-02-06",
+    "end": "2027-02-07",
+    "allDay": true,
+    "description": "",
+    "category": "eclipses-solar"
+  },
+  {
+    "uid": "moon-phase-2027-02-06T15:56:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-02-06T15:56:00.000Z",
+    "end": "2027-02-06T15:56:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "opposition-jupiter-2027-02-11@space-calendar",
+    "title": "🔭 Jupiter at Opposition — Closest & Brightest",
+    "start": "2027-02-11",
+    "end": "2027-02-12",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "opposition-mars-2027-02-20@space-calendar",
+    "title": "🔭 Mars at Opposition — Closest & Brightest",
+    "start": "2027-02-20",
+    "end": "2027-02-21",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "eclipse-lunar-2027-02-20@space-calendar",
+    "title": "🌕 Penumbral Lunar Eclipse",
+    "start": "2027-02-20T21:14:00Z",
+    "end": "2027-02-21T01:14:00Z",
+    "allDay": false,
+    "description": "",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2027-02-20T21:14:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2027-02-20T23:14:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2027-02-21T01:14:00Z"
+      }
+    ],
+    "category": "eclipses-lunar"
+  },
+  {
+    "uid": "moon-phase-2027-02-20T23:24:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Snow Moon (Supermoon)",
+    "start": "2027-02-20T23:24:00.000Z",
+    "end": "2027-02-20T23:24:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-03-08T09:29:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-03-08T09:29:00.000Z",
+    "end": "2027-03-08T09:29:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-equinox-3-2027@space-calendar",
+    "title": "🌸 March Equinox — Vernal Equinox (Northern Hemisphere)",
+    "start": "2027-03-20T20:25:00.000Z",
+    "end": "2027-03-20T20:25:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "moon-phase-2027-03-22T10:44:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Worm Moon",
+    "start": "2027-03-22T10:44:00.000Z",
+    "end": "2027-03-22T10:44:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-04-06T23:51:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-04-06T23:51:00.000Z",
+    "end": "2027-04-06T23:51:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-04-20T22:27:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Pink Moon",
+    "start": "2027-04-20T22:27:00.000Z",
+    "end": "2027-04-20T22:27:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-lyrids-2027@space-calendar",
+    "title": "🌠 Lyrids Meteor Shower — Peak Night",
+    "start": "2027-04-22",
+    "end": "2027-04-23",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-eta-aquariids-2027@space-calendar",
+    "title": "🌠 Eta Aquariids Meteor Shower — Peak Night",
+    "start": "2027-05-06",
+    "end": "2027-05-07",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2027-05-06T10:59:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-05-06T10:59:00.000Z",
+    "end": "2027-05-06T10:59:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-05-20T10:59:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Flower Moon",
+    "start": "2027-05-20T10:59:00.000Z",
+    "end": "2027-05-20T10:59:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-06-04T19:40:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-06-04T19:40:00.000Z",
+    "end": "2027-06-04T19:40:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-06-19T00:44:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Strawberry Moon",
+    "start": "2027-06-19T00:44:00.000Z",
+    "end": "2027-06-19T00:44:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-solstice-6-2027@space-calendar",
+    "title": "☀️ June Solstice — Summer Solstice (Northern Hemisphere)",
+    "start": "2027-06-21T14:11:00.000Z",
+    "end": "2027-06-21T14:11:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "moon-phase-2027-07-04T03:02:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-07-04T03:02:00.000Z",
+    "end": "2027-07-04T03:02:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-07-18T15:45:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Buck Moon",
+    "start": "2027-07-18T15:45:00.000Z",
+    "end": "2027-07-18T15:45:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "eclipse-lunar-2027-07-18@space-calendar",
+    "title": "🌕 Penumbral Lunar Eclipse",
+    "start": "2027-07-18T15:59:00Z",
+    "end": "2027-07-18T16:09:00Z",
+    "allDay": false,
+    "description": "",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2027-07-18T15:59:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2027-07-18T16:04:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2027-07-18T16:09:00Z"
+      }
+    ],
+    "category": "eclipses-lunar"
+  },
+  {
+    "uid": "meteor-shower-delta-aquariids-2027@space-calendar",
+    "title": "🌠 Delta Aquariids Meteor Shower — Peak Night",
+    "start": "2027-07-30",
+    "end": "2027-07-31",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "eclipse-solar-2027-08-02@space-calendar",
+    "title": "🌑 Total Solar Eclipse",
+    "start": "2027-08-02",
+    "end": "2027-08-03",
+    "allDay": true,
+    "description": "",
+    "category": "eclipses-solar"
+  },
+  {
+    "uid": "moon-phase-2027-08-02T10:05:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-08-02T10:05:00.000Z",
+    "end": "2027-08-02T10:05:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-perseids-2027@space-calendar",
+    "title": "🌠 Perseids Meteor Shower — Peak Night",
+    "start": "2027-08-13",
+    "end": "2027-08-14",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "eclipse-lunar-2027-08-17@space-calendar",
+    "title": "🌕 Penumbral Lunar Eclipse",
+    "start": "2027-08-17T05:25:00Z",
+    "end": "2027-08-17T09:03:00Z",
+    "allDay": false,
+    "description": "",
+    "contactTimes": [
+      {
+        "label": "P1 — penumbral begins",
+        "utc": "2027-08-17T05:25:00Z"
+      },
+      {
+        "label": "Greatest eclipse",
+        "utc": "2027-08-17T07:14:00Z"
+      },
+      {
+        "label": "P4 — penumbral ends",
+        "utc": "2027-08-17T09:03:00Z"
+      }
+    ],
+    "category": "eclipses-lunar"
+  },
+  {
+    "uid": "moon-phase-2027-08-17T07:29:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Sturgeon Moon",
+    "start": "2027-08-17T07:29:00.000Z",
+    "end": "2027-08-17T07:29:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-08-31T17:41:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-08-31T17:41:00.000Z",
+    "end": "2027-08-31T17:41:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-09-15T23:04:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Harvest Moon",
+    "start": "2027-09-15T23:04:00.000Z",
+    "end": "2027-09-15T23:04:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "season-equinox-9-2027@space-calendar",
+    "title": "🍂 September Equinox — Autumnal Equinox (Northern Hemisphere)",
+    "start": "2027-09-23T06:02:00.000Z",
+    "end": "2027-09-23T06:02:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "opposition-neptune-2027-09-29@space-calendar",
+    "title": "🔭 Neptune at Opposition — Closest & Brightest",
+    "start": "2027-09-29",
+    "end": "2027-09-30",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2027-09-30T02:36:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-09-30T02:36:00.000Z",
+    "end": "2027-09-30T02:36:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-10-15T13:47:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Hunter's Moon",
+    "start": "2027-10-15T13:47:00.000Z",
+    "end": "2027-10-15T13:47:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "opposition-saturn-2027-10-18@space-calendar",
+    "title": "🔭 Saturn at Opposition — Closest & Brightest",
+    "start": "2027-10-18",
+    "end": "2027-10-19",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "meteor-shower-orionids-2027@space-calendar",
+    "title": "🌠 Orionids Meteor Shower — Peak Night",
+    "start": "2027-10-21",
+    "end": "2027-10-22",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2027-10-29T13:37:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-10-29T13:37:00.000Z",
+    "end": "2027-10-29T13:37:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "moon-phase-2027-11-14T03:26:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Beaver Moon",
+    "start": "2027-11-14T03:26:00.000Z",
+    "end": "2027-11-14T03:26:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-leonids-2027@space-calendar",
+    "title": "🌠 Leonids Meteor Shower — Peak Night",
+    "start": "2027-11-17",
+    "end": "2027-11-18",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "moon-phase-2027-11-28T03:24:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-11-28T03:24:00.000Z",
+    "end": "2027-11-28T03:24:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "opposition-uranus-2027-11-30@space-calendar",
+    "title": "🔭 Uranus at Opposition — Closest & Brightest",
+    "start": "2027-11-30",
+    "end": "2027-12-01",
+    "allDay": true,
+    "description": "",
+    "category": "oppositions"
+  },
+  {
+    "uid": "moon-phase-2027-12-13T16:09:00.000Z@space-calendar",
+    "title": "🌕 Full Moon — Cold Moon",
+    "start": "2027-12-13T16:09:00.000Z",
+    "end": "2027-12-13T16:09:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  },
+  {
+    "uid": "meteor-shower-geminids-2027@space-calendar",
+    "title": "🌠 Geminids Meteor Shower — Peak Night",
+    "start": "2027-12-14",
+    "end": "2027-12-15",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-ursids-2027@space-calendar",
+    "title": "🌠 Ursids Meteor Shower — Peak Night",
+    "start": "2027-12-22",
+    "end": "2027-12-23",
+    "allDay": true,
+    "description": "",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "season-solstice-12-2027@space-calendar",
+    "title": "❄️ December Solstice — Winter Solstice (Northern Hemisphere)",
+    "start": "2027-12-22T02:42:00.000Z",
+    "end": "2027-12-22T02:42:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "solstices-equinoxes"
+  },
+  {
+    "uid": "moon-phase-2027-12-27T20:12:00.000Z@space-calendar",
+    "title": "🌑 New Moon",
+    "start": "2027-12-27T20:12:00.000Z",
+    "end": "2027-12-27T20:12:00.000Z",
+    "allDay": false,
+    "description": "",
+    "category": "moon-phases"
+  }
+]

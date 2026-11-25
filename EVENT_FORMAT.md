@@ -43,7 +43,7 @@ When the Moon is within 362,000 km of Earth at the time of full moon, "(Supermoo
 - Note if it's a supermoon, micromoon, or has a traditional name
 - Best viewing tips (e.g., full moons rise at sunset, new moons are ideal for deep-sky observing)
 
-**Authoritative source:** [USNO Astronomical Applications](https://aa.usno.navy.mil/)
+**Authoritative source:** [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/)
 
 ---
 
@@ -93,7 +93,7 @@ September Equinox — Autumnal Equinox (Northern Hemisphere)
 - What it means for daylight hours and seasons
 - Brief note on cultural or historical significance
 
-**Authoritative source:** [USNO Astronomical Applications](https://aa.usno.navy.mil/)
+**Authoritative source:** [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/)
 
 ---
 
@@ -249,7 +249,7 @@ Venus at Greatest Eastern Elongation — Evening Star
 - How high above the horizon the planet will appear
 - Why inner planets can only ever be seen near sunrise or sunset
 
-**Authoritative source:** [USNO Astronomical Applications](https://aa.usno.navy.mil/) or [In-The-Sky.org](https://in-the-sky.org/)
+**Authoritative source:** [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/) or [In-The-Sky.org](https://in-the-sky.org/)
 
 ---
 

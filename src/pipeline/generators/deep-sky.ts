@@ -1,5 +1,5 @@
-import { usno } from '../clients/usno.ts';
-import type { MoonPhase } from '../clients/usno.ts';
+import { fetchMoonPhases } from '../clients/sun-moon.ts';
+import type { MoonPhase } from '../clients/sun-moon.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
 export function messierMarathonDate(year: number, phases: MoonPhase[]): string {
@@ -27,8 +27,8 @@ export const deepSkyGenerator: Generator = {
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const { phasedata } = await usno.moonPhases(year);
-    const dateStr = messierMarathonDate(year, phasedata);
+    const phases = await fetchMoonPhases(year);
+    const dateStr = messierMarathonDate(year, phases);
 
     return [
       {

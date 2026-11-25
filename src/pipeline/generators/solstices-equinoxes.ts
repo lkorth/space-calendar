@@ -1,8 +1,7 @@
-import { usno } from '../clients/usno.ts';
+import { fetchSeasons } from '../clients/sun-moon.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
-// USNO returns phenom as "Equinox" or "Solstice" — use month to determine which.
-// January=Perihelion and July=Aphelion are also returned; we skip those.
+// The phenomenon is "Equinox" or "Solstice" — the month says which one.
 function phenomMeta(phenom: string, month: number): { title: string; description: string } | null {
   if (phenom === 'Equinox' && month === 3) return {
     title: '🌸 March Equinox — Vernal Equinox (Northern Hemisphere)',
@@ -20,7 +19,7 @@ function phenomMeta(phenom: string, month: number): { title: string; description
     title: '❄️ December Solstice — Winter Solstice (Northern Hemisphere)',
     description: `The Sun rises at its southernmost point on the horizon and follows its lowest arc across the midday sky — today is the shortest day of the year in the Northern Hemisphere. Near the Arctic Circle only a few hours of pale twilight are visible. After today, days begin growing longer again.\n\nThe December solstice has been marked by virtually every human culture: Roman Saturnalia, Norse Yule, Persian Yalda Night, China's Dongzhi, and the Christian Christmas all cluster around this turning point. Stonehenge's main axis aligns with the setting midwinter Sun, suggesting it was meaningful to its builders 5,000 years ago. In the Southern Hemisphere today is the summer solstice — the longest day of the year.`,
   };
-  return null; // Perihelion, Aphelion, or unexpected value — skip
+  return null;
 }
 
 export const solsticesEquinoxesGenerator: Generator = {
@@ -28,10 +27,10 @@ export const solsticesEquinoxesGenerator: Generator = {
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const data = await usno.seasons(year);
+    const seasons = await fetchSeasons(year);
     const events: CalendarEvent[] = [];
 
-    for (const season of data.data) {
+    for (const season of seasons) {
       const meta = phenomMeta(season.phenom, season.month);
       if (!meta) continue;
 
@@ -46,7 +45,7 @@ export const solsticesEquinoxesGenerator: Generator = {
         end: dt.toISOString(),
         allDay: false,
         description: meta.description,
-        url: 'https://aa.usno.navy.mil/data/EarthSeasons',
+        url: 'https://spaceplace.nasa.gov/seasons/en/',
         category: 'solstices-equinoxes',
       });
     }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { moonPhaseOnDate, moonViewingNote } from './meteor-showers.ts';
-import type { MoonPhase } from '../clients/usno.ts';
+import type { MoonPhase } from '../clients/sun-moon.ts';
 
 function newMoon(year: number, month: number, day: number): MoonPhase {
   return { year, month, day, phase: 'New Moon', time: '00:00' };

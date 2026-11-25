@@ -105,7 +105,7 @@ Returns `{ "events": [...] }`, the events that the calendars are drawn from. The
 
 ## How it works
 
-Static astronomical data (eclipses, moon phases, meteor showers, planetary events, history milestones) is generated once a year from USNO and JPL data via GitHub Actions and stored in this repo. Rocket launch data is fetched live from [The Space Devs Launch Library 2](https://thespacedevs.com/llapi) and cached hourly. Aurora forecasts are fetched from [NOAA SWPC](https://www.swpc.noaa.gov/) and cached every few hours. A Cloudflare Worker merges the requested categories into a single ICS or JSON response at request time.
+Static astronomical data (eclipses, moon phases, meteor showers, planetary events, history milestones) is generated every month from JPL and NASA data via GitHub Actions and stored in this repo. Rocket launch data is fetched live from [The Space Devs Launch Library 2](https://thespacedevs.com/llapi) and cached hourly. Aurora forecasts are fetched from [NOAA SWPC](https://www.swpc.noaa.gov/) and cached every few hours. A Cloudflare Worker merges the requested categories into a single ICS or JSON response at request time.
 
 ## Documentation
 

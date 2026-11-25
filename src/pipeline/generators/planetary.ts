@@ -47,7 +47,7 @@ export const elongationsGenerator: Generator = {
           end: nextDayStr(e.date),
           allDay: true,
           description: describeElongation(e.name, isEast, e.elongation),
-          url: 'https://aa.usno.navy.mil/data/planets',
+          url: 'https://science.nasa.gov/solar-system/planets/',
           category: 'elongations',
         };
       });

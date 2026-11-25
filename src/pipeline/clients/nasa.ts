@@ -121,6 +121,39 @@ export async function fetchLunarEclipses(year: number): Promise<LunarEclipse[]> 
   return results;
 }
 
+const SOLAR_CATALOG_URL = 'https://eclipse.gsfc.nasa.gov/5MCSE/5MKSEcatalog.txt';
+
+export interface SolarEclipse {
+  year: number;
+  month: number;
+  day: number;
+  type: 'Total' | 'Annular' | 'Hybrid' | 'Partial';
+}
+
+const SOLAR_TYPES: Record<string, SolarEclipse['type']> = { T: 'Total', A: 'Annular', H: 'Hybrid', P: 'Partial' };
+
+/** Solar eclipses from NASA's Five Millennium Catalog (Espenak and Meeus). Columns: catalog
+ *  number, plate, year, month, day, time of greatest eclipse, ΔT in seconds, lunation, saros,
+ *  type, … The time is Terrestrial Time, which runs ΔT ahead of UT. */
+export async function fetchSolarEclipses(year: number): Promise<SolarEclipse[]> {
+  const res = await fetch(SOLAR_CATALOG_URL);
+  if (!res.ok) throw new Error(`NASA solar eclipse catalog error ${res.status}`);
+  const results: SolarEclipse[] = [];
+  for (const line of (await res.text()).split('\n')) {
+    const m = /^\s*\d+\s+\d+\s+(\d{4})\s+([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2}):(\d{2}):(\d{2})\s+(-?\d+)\s+-?\d+\s+\d+\s+([A-Z])/.exec(line);
+    if (!m) continue;
+    const month = MONTH_MAP[m[2]!];
+    const type = SOLAR_TYPES[m[8]!];
+    if (!month || !type) continue;
+    const ut = new Date(
+      Date.UTC(Number(m[1]), month - 1, Number(m[3]), Number(m[4]), Number(m[5]), Number(m[6]) - Number(m[7])),
+    );
+    if (ut.getUTCFullYear() !== year) continue;
+    results.push({ year, month: ut.getUTCMonth() + 1, day: ut.getUTCDate(), type });
+  }
+  return results;
+}
+
 /** Rough visibility description based on longitude of greatest eclipse */
 export function eclipseVisibility(geoLng: number): string {
   // The eclipse is visible from roughly ±90° of the sub-lunar longitude

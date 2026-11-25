@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchLunarEclipses, eclipseVisibility } from './nasa.ts';
+import { fetchLunarEclipses, fetchSolarEclipses, eclipseVisibility } from './nasa.ts';
 
 const CATALOG_HEADER = `Title: Five Millennium Catalog of Lunar Eclipses
  Cat      Calendar   Greatest
@@ -103,5 +103,41 @@ describe('eclipseVisibility', () => {
   it('returns Asia for eastern longitudes', () => {
     const result = eclipseVisibility(90);
     expect(result).toContain('Asia');
+  });
+});
+
+describe('fetchSolarEclipses', () => {
+  const catalog = `Title: Five Millennium Catalog of Solar Eclipses
+    1  001  -1999 Jun 12  03:14:51  46438 -49456    5   T   -n  -0.2701  1.0733   6.0N  33.3W  74  344  247  06m37s
+ 9566  479   2026 Aug 12  17:47:06     75    329  126   T   -p   0.8977  1.0386  65.2N  25.2W  26  248  294  02m18s
+ 9567  479   2027 Feb 06  16:00:48     76    335  131   A   -n  -0.2952  0.9281  31.3S  48.5W  73  334  282  07m51s
+ 9568  479   2027 Aug 02  10:07:50     76    341  136   T   nn   0.1421  1.0790  25.5N  33.2E  82  202  258  06m23s
+ 9571  479   2029 Jan 14  17:13:48     77    359  151   P   t-   1.0553  0.8714  63.7N 114.2W   0  145
+ 9575  479   2030 Mar 02  00:00:40     78    400  150   H   t-   0.1000  1.0014  63.7N 114.2W   0  145
+`;
+
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(catalog) }));
+  });
+
+  it('returns the date and type of each eclipse in the year', async () => {
+    expect(await fetchSolarEclipses(2027)).toEqual([
+      { year: 2027, month: 2, day: 6, type: 'Annular' },
+      { year: 2027, month: 8, day: 2, type: 'Total' },
+    ]);
+    expect(await fetchSolarEclipses(2028)).toEqual([]);
+  });
+
+  it('reads rows without a path width', async () => {
+    expect(await fetchSolarEclipses(2029)).toEqual([{ year: 2029, month: 1, day: 14, type: 'Partial' }]);
+  });
+
+  it('converts Terrestrial Time to UT, which can change the date', async () => {
+    expect(await fetchSolarEclipses(2030)).toEqual([{ year: 2030, month: 3, day: 1, type: 'Hybrid' }]);
+  });
+
+  it('reports a failed request', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+    await expect(fetchSolarEclipses(2027)).rejects.toThrow('503');
   });
 });

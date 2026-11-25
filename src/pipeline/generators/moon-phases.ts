@@ -1,4 +1,4 @@
-import { usno } from '../clients/usno.ts';
+import { fetchMoonPhases, fetchSeasons } from '../clients/sun-moon.ts';
 import { fetchMoonDistances } from '../clients/jpl.ts';
 import type { CalendarEvent, Generator } from '../../shared/models.ts';
 
@@ -85,16 +85,16 @@ export const moonPhasesGenerator: Generator = {
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const [phasesData, seasonsData, moonDistances] = await Promise.all([
-      usno.moonPhases(year),
-      usno.seasons(year),
+    const [phases, seasons, moonDistances] = await Promise.all([
+      fetchMoonPhases(year),
+      fetchSeasons(year),
       fetchMoonDistances(year),
     ]);
 
-    const fullMoonPhases = phasesData.phasedata.filter((p) => p.phase === 'Full Moon');
-    const newMoonPhases = phasesData.phasedata.filter((p) => p.phase === 'New Moon');
+    const fullMoonPhases = phases.filter((p) => p.phase === 'Full Moon');
+    const newMoonPhases = phases.filter((p) => p.phase === 'New Moon');
 
-    const septEquinox = seasonsData.data.find((s) => s.phenom === 'Equinox' && s.month === 9);
+    const septEquinox = seasons.find((s) => s.phenom === 'Equinox' && s.month === 9);
     const equinoxDate = septEquinox
       ? new Date(`${year}-${String(septEquinox.month).padStart(2, '0')}-${String(septEquinox.day).padStart(2, '0')}T${septEquinox.time}:00Z`)
       : new Date(`${year}-09-22T12:00:00Z`);
@@ -123,7 +123,7 @@ export const moonPhasesGenerator: Generator = {
         end: dt.toISOString(),
         allDay: false,
         description: describeFullMoon(name, blueMoon, superMoon),
-        url: 'https://aa.usno.navy.mil/data/MoonPhases',
+        url: 'https://science.nasa.gov/moon/moon-phases/',
         category: 'moon-phases',
       });
     }
@@ -140,7 +140,7 @@ export const moonPhasesGenerator: Generator = {
         allDay: false,
         description:
           'The Moon is between Earth and the Sun, with its illuminated side facing away from us. The night sky is at its darkest — ideal for deep-sky observing. New moons also mark the start of each lunar cycle.',
-        url: 'https://aa.usno.navy.mil/data/MoonPhases',
+        url: 'https://science.nasa.gov/moon/moon-phases/',
         category: 'moon-phases',
       });
     }

@@ -1,5 +1,4 @@
-import { usno } from '../clients/usno.ts';
-import { fetchLunarEclipses, eclipseVisibility } from '../clients/nasa.ts';
+import { fetchLunarEclipses, fetchSolarEclipses, eclipseVisibility } from '../clients/nasa.ts';
 import { fetchEclipsePath, matchCitiesToPath } from '../clients/eclipse-path.ts';
 import type { CalendarEvent, ContactTime, Generator } from '../../shared/models.ts';
 
@@ -13,23 +12,15 @@ function nextDayStr(dateStr: string): string {
   return d.toISOString().split('T')[0]!;
 }
 
-function parseSolarType(event: string): string {
-  const e = event.toLowerCase();
-  if (e.includes('total')) return 'Total';
-  if (e.includes('annular')) return 'Annular';
-  if (e.includes('hybrid')) return 'Hybrid';
-  return 'Partial';
-}
-
 export const solarEclipsesGenerator: Generator = {
   slug: 'eclipses-solar',
   schedule: 'monthly',
 
   async generate(year: number): Promise<CalendarEvent[]> {
-    const data = await usno.solarEclipses(year);
-    return Promise.all(data.eclipses_in_year.map(async (eclipse) => {
+    const eclipses = await fetchSolarEclipses(year);
+    return Promise.all(eclipses.map(async (eclipse) => {
       const dateStr = makeDateStr(eclipse.year, eclipse.month, eclipse.day);
-      const type = parseSolarType(eclipse.event);
+      const { type } = eclipse;
 
       const pathPoints = await fetchEclipsePath(eclipse.year, eclipse.month, eclipse.day, type);
       const pathLocations = matchCitiesToPath(pathPoints, dateStr);

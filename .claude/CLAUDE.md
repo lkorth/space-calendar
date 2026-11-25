@@ -23,7 +23,7 @@ npm run worker:dev               # local Cloudflare Worker dev server
 ```
 src/
   pipeline/
-    clients/      # typed API clients (USNO, JPL, NASA, AMS)
+    clients/      # typed API clients (JPL, NASA, AMS)
     generators/   # one file per category slug — reads APIs, writes CalendarEvent[]
     run.ts        # CLI orchestrator — registers all generators
   worker/
@@ -118,6 +118,6 @@ Always develop and commit on `main`. Create a branch only when explicitly workin
 ## Common pitfalls
 
 - The pipeline generates a rolling window (6 months back, 1 year ahead) by default, spanning up to two calendar years. The `data/` JSON is overwritten on each run. Use `--year N` to generate for a specific year instead.
-- USNO API endpoints differ between features — check `src/pipeline/clients/usno.ts` before assuming a new endpoint exists.
+- NASA eclipse catalogs give times in Terrestrial Time, about 70 seconds ahead of UT.
 - JPL Horizons output is plain text embedded in JSON — always check the `$$SOE`/`$$EOE` markers and test your regex against real output.
 - Cloudflare Workers KV is eventually consistent. Don't assume a `put` is immediately visible to concurrent reads.

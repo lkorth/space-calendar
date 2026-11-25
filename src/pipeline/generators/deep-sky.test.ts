@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { messierMarathonDate } from './deep-sky.ts';
-import type { MoonPhase } from '../clients/usno.ts';
+import type { MoonPhase } from '../clients/sun-moon.ts';
 
 function phase(year: number, month: number, day: number, phase = 'New Moon'): MoonPhase {
   return { year, month, day, phase, time: '00:00' };

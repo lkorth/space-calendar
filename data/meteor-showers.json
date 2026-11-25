@@ -1,15 +1,5 @@
 [
   {
-    "uid": "meteor-shower-eta-aquariids-2026@space-calendar",
-    "title": "🌠 Eta Aquariids Meteor Shower — Peak Night",
-    "start": "2026-05-06",
-    "end": "2026-05-07",
-    "allDay": true,
-    "description": "The Eta Aquariids meteor shower reaches its peak tonight, produced by debris left behind by Comet 1P/Halley as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 50 meteors per hour (ZHR). Meteors radiate from the constellation Aquarius but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 73% illuminated (waning gibbous) — rises in the late evening. The first hours after dark offer the best viewing before moonrise.",
-    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#eta+Aquariids",
-    "category": "meteor-showers"
-  },
-  {
     "uid": "meteor-shower-delta-aquariids-2026@space-calendar",
     "title": "🌠 Delta Aquariids Meteor Shower — Peak Night",
     "start": "2026-07-30",
@@ -127,6 +117,16 @@
     "allDay": true,
     "description": "The Orionids meteor shower reaches its peak tonight, produced by debris left behind by Comet 1P/Halley as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 20 meteors per hour (ZHR). Meteors radiate from the constellation Orion but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 53% illuminated (near last quarter) — rises around midnight. Evening hours are best before the moon climbs.",
     "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Orionids",
+    "category": "meteor-showers"
+  },
+  {
+    "uid": "meteor-shower-leonids-2027@space-calendar",
+    "title": "🌠 Leonids Meteor Shower — Peak Night",
+    "start": "2027-11-17",
+    "end": "2027-11-18",
+    "allDay": true,
+    "description": "The Leonids meteor shower reaches its peak tonight, produced by debris left behind by Comet 55P/Tempel-Tuttle as Earth passes through its orbital trail.\n\nUnder ideal dark-sky conditions, observers can expect up to 15 meteors per hour (ZHR). Meteors radiate from the constellation Leo but can appear anywhere in the sky. No equipment needed — just a dark location, a reclining chair, and patience. The best viewing is typically after midnight when the radiant is highest.\n\nMOON CONDITIONS: 79% illuminated (waning gibbous) — rises in the late evening. The first hours after dark offer the best viewing before moonrise.",
+    "url": "https://www.amsmeteors.org/meteor-showers/meteor-shower-calendar/#Leonids",
     "category": "meteor-showers"
   }
 ]

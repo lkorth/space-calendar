@@ -23,11 +23,11 @@ A single subscribable ICS feed where users select which event categories they wa
 │   GitHub Actions   │      │      GitHub Actions         │
 │   (deploy worker)  │      │     (data generation)       │
 └────────┬───────────┘      │                             │
-         │                  │  USNO API → moon phases,    │
-         │                  │  eclipses, solstices,       │
-         │                  │  elongations, oppositions   │
+         │                  │  JPL APIs → moon phases,    │
+         │                  │  solstices, elongations,    │
+         │                  │  oppositions, asteroids     │
          │                  │                             │
-         │                  │  JPL API → asteroid flybys  │
+         │                  │  NASA catalogs → eclipses   │
          │                  │                             │
          │                  │  AMS data → meteor showers  │
          │                  │  (static, curated annually) │
@@ -78,7 +78,7 @@ A single subscribable ICS feed where users select which event categories they wa
 
 ### 1. Static Data Generation (GitHub Actions)
 
-No astronomical calculations are performed — all data is consumed from public APIs and curated YAML files. Four workflows run on different schedules matching how often each data source changes:
+Positions and catalogs come from public APIs and curated YAML files. The pipeline calculates only the moments that follow from positions, such as a moon phase or an opposition. Four workflows run on different schedules matching how often each data source changes:
 
 | Workflow | Schedule | Generators |
 |----------|----------|------------|
@@ -89,9 +89,10 @@ No astronomical calculations are performed — all data is consumed from public 
 **Rolling data window:** Every pipeline run produces a rolling window of events — 6 months in the past through 1 year in the future — rather than a fixed calendar year. Generators are called for each calendar year that overlaps the window and results are merged, deduplicated by UID, and filtered to the window before writing to `data/`. The same 6-month lookback is applied when filtering live category results (astronomy clubs) before caching, and Milky Way viewing windows are computed over the full rolling window so the next season is always in the feed — at 40°N, for example, the season ends in mid-August, and a calendar-year window would show nothing upcoming until January.
 
 **API sources:**
-- [USNO Astronomical Applications API](https://aa.usno.navy.mil/data/api) — moon phases, solar eclipses, solstices, equinoxes (lunar eclipse and planetary phenomena endpoints do not exist in USNO's API)
+- [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api), Sun and Moon positions — moon phases, solstices and equinoxes. `src/pipeline/clients/sun-moon.ts` reads the ecliptic longitudes every six hours and interpolates the moment of each phase and season, to the nearest minute. Each body and year is requested once per run
+- [NASA Five Millennium Solar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCSE/5MKSEcatalog.txt) — solar eclipses. The date and type come from the plain-text catalog, with the time converted from Terrestrial Time to UT
 - [NASA Five Millennium Lunar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCLE/5MKLEcatalog.txt) — lunar eclipses; parsed from the plain-text catalog file, P1/P4 computed from penumbral duration
-- [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api) — planetary oppositions and Mercury/Venus elongations; daily ephemeris queried per planet, local maxima in elongation angle used to find event dates
+- [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api), planet positions — planetary oppositions and Mercury/Venus elongations; daily ephemeris queried per planet, local maxima in elongation angle used to find event dates
 - [JPL CNEOS close approach API](https://ssd-api.jpl.nasa.gov/cad.api) — notable asteroid close approaches
 - [JPL Small-Body Database](https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html) — comet orbital data
 - American Meteor Society annual calendar — static curated data, updated manually when AMS revises it
@@ -261,8 +262,8 @@ Serving the configurator and the feed from one domain removes the root redirect 
 | Key-value store | Cloudflare Workers KV |
 | Usage measurement | Cloudflare Workers Analytics Engine |
 | Launch data | The Space Devs Launch Library 2 |
-| Moon phases & solar eclipses | USNO API |
-| Lunar eclipses | NASA Five Millennium Catalog |
+| Moon phases, solstices & equinoxes | JPL Horizons API |
+| Solar & lunar eclipses | NASA Five Millennium Catalogs |
 | Planetary oppositions & elongations | JPL Horizons API |
 | Asteroid & comet data | JPL CNEOS + SBDB APIs |
 | Aurora forecast data | NOAA SWPC API |

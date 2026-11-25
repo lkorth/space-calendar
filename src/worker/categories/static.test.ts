@@ -26,7 +26,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
     end: '2026-03-20T14:46:00Z',
     allDay: false,
     description: 'In the Northern Hemisphere this marks the astronomical start of spring; in the Southern Hemisphere, the start of autumn.',
-    url: 'https://aa.usno.navy.mil/data/EarthSeasons',
+    url: 'https://spaceplace.nasa.gov/seasons/en/',
     category: 'solstices-equinoxes',
   },
   {
@@ -36,7 +36,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
     end: '2026-06-21T08:24:00Z',
     allDay: false,
     description: "The Sun reaches its northernmost point — the longest day of the year in the Northern Hemisphere and the shortest in the Southern.",
-    url: 'https://aa.usno.navy.mil/data/EarthSeasons',
+    url: 'https://spaceplace.nasa.gov/seasons/en/',
     category: 'solstices-equinoxes',
   },
   {
@@ -46,7 +46,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
     end: '2026-09-23T00:05:00Z',
     allDay: false,
     description: 'In the Northern Hemisphere this marks the astronomical start of autumn; in the Southern Hemisphere, the start of spring.',
-    url: 'https://aa.usno.navy.mil/data/EarthSeasons',
+    url: 'https://spaceplace.nasa.gov/seasons/en/',
     category: 'solstices-equinoxes',
   },
   {
@@ -56,7 +56,7 @@ const NH_SOLSTICE_EVENTS: CalendarEvent[] = [
     end: '2026-12-21T20:50:00Z',
     allDay: false,
     description: "The Sun reaches its southernmost point — the shortest day of the year in the Northern Hemisphere and the longest in the Southern.",
-    url: 'https://aa.usno.navy.mil/data/EarthSeasons',
+    url: 'https://spaceplace.nasa.gov/seasons/en/',
     category: 'solstices-equinoxes',
   },
 ];

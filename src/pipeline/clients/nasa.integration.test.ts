@@ -6,7 +6,7 @@
  * the mock catalog lines in nasa.test.ts.
  */
 import { describe, it, expect } from 'vitest';
-import { fetchLunarEclipses } from './nasa.ts';
+import { fetchLunarEclipses, fetchSolarEclipses } from './nasa.ts';
 
 describe('NASA lunar eclipse catalog (real)', () => {
   it('returns an array for the current year', async () => {
@@ -52,5 +52,14 @@ describe('NASA lunar eclipse catalog (real)', () => {
     expect(eclipses).toHaveLength(2);
     expect(eclipses[0]).toMatchObject({ month: 3, day: 3, type: 'Total' });
     expect(eclipses[1]).toMatchObject({ month: 8, day: 28, type: 'Partial' });
+  });
+});
+
+describe('NASA solar eclipse catalog (real)', () => {
+  it('lists the solar eclipses of 2027', async () => {
+    expect(await fetchSolarEclipses(2027)).toEqual([
+      { year: 2027, month: 2, day: 6, type: 'Annular' },
+      { year: 2027, month: 8, day: 2, type: 'Total' },
+    ]);
   });
 });
