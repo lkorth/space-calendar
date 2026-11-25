@@ -63,6 +63,7 @@ To add a **live category**: add slug to `CategorySlug` and `LIVE_CATEGORIES` in 
 - Extract pure helper functions from generators so they can be tested without mocking external APIs.
 - Worker category logic (e.g., aurora threshold, cache key format) must be covered by unit tests.
 - Run `npm test` and verify all tests pass before committing.
+- A hook (`.claude/hooks/check-before-commit.mjs`) runs the tests and the typecheck before each commit. If it refuses a commit, fix the reported failure and commit again.
 - Test files live alongside the code they test (`foo.ts` → `foo.test.ts`).
 
 ### Three test tiers
