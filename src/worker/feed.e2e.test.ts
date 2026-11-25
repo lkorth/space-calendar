@@ -5,6 +5,9 @@
  * Requires the worker to be deployed and KV populated by the pipeline.
  */
 import { describe, it, expect } from 'vitest';
+import { TYPES, completeYears } from '../shared/wall-calendar/options.ts';
+import { WALL_CALENDAR_CATEGORIES } from '../shared/wall-calendar/events.ts';
+import type { CalendarEvent } from '../shared/models.ts';
 import { jgapInSeason } from './categories/jgap-season.ts';
 
 const BASE = 'https://space-calendar.lukekorth.com';
@@ -651,4 +654,122 @@ describe('Worker site — static assets', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/html');
   });
+});
+
+// ---------------------------------------------------------------------------
+// Wall calendars and the event browser
+// ---------------------------------------------------------------------------
+
+describe('Wall calendars — data', () => {
+  async function getEvents(): Promise<{ res: Response; events: CalendarEvent[] }> {
+    const res = await fetch(`${BASE}/wall-calendar.json`);
+    return { res, events: ((await res.json()) as { events: CalendarEvent[] }).events };
+  }
+
+  it('serves cacheable JSON to any origin', async () => {
+    const { res } = await getEvents();
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('application/json');
+    expect(res.headers.get('access-control-allow-origin')).toBe('*');
+    expect(res.headers.get('cache-control')).toContain('max-age=86400');
+  });
+
+  it('covers two whole years, this one among them', async () => {
+    // Not "this year and the next": on January 1 that is untrue until the monthly run.
+    const years = completeYears((await getEvents()).events);
+    expect(years).toContain(new Date().getUTCFullYear());
+    expect(years).toHaveLength(2);
+  });
+
+  it('holds every category a calendar draws, without descriptions', async () => {
+    const { events } = await getEvents();
+    expect(new Set(events.map((e) => e.category))).toEqual(new Set(WALL_CALENDAR_CATEGORIES));
+    expect(events.every((e) => e.description === '')).toBe(true);
+  });
+
+  it('agrees with the feed on when each event happens', async () => {
+    const { events } = await getEvents();
+    const feed = (await (await fetch(`${BASE}/feed.json?c=moon-phases,eclipses-lunar,oppositions`)).json()) as { events: CalendarEvent[] };
+    const starts = new Map(events.map((e) => [e.uid, e.start]));
+    // The feed window can open before January 1, which the calendar data does not cover.
+    const years = completeYears(events);
+    const shared = feed.events.filter((e) => years.includes(new Date(e.start).getUTCFullYear()));
+    expect(shared.length).toBeGreaterThan(20);
+    for (const event of shared) expect(starts.get(event.uid), event.uid).toBe(event.start);
+  });
+
+  it('does not draw in the worker', async () => {
+    const { status } = await fetch(`${BASE}/wall-calendar.svg?type=moon-calendar&lat=40&lon=-4&tz=UTC`);
+    expect(status).toBe(404);
+  });
+});
+
+describe('Wall calendars — page', () => {
+  type Bundle = typeof import('../shared/wall-calendar/browser.ts');
+
+  /** The drawing code as deployed, rather than as it is in this checkout. */
+  async function loadBundle(): Promise<Bundle> {
+    const source = await (await fetch(`${BASE}/wall-calendar.js`)).text();
+    const url = `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
+    return (await import(/* @vite-ignore */ url)) as Bundle;
+  }
+
+  it('serves the page and the bundle that the deploy built', async () => {
+    const page = await fetch(`${BASE}/wall-calendar`);
+    expect(page.status).toBe(200);
+    expect(page.headers.get('content-type')).toContain('text/html');
+    expect(await page.text()).toContain("from './wall-calendar.js'");
+
+    const script = await fetch(`${BASE}/wall-calendar.js`);
+    expect(script.status).toBe(200);
+    expect(script.headers.get('content-type')).toContain('javascript');
+  });
+
+  for (const type of TYPES) {
+    it(`draws ${type} from a link, with the deployed code and data`, async () => {
+      const bundle = await loadBundle();
+      const { events } = (await (await fetch(`${BASE}/wall-calendar.json`)).json()) as { events: CalendarEvent[] };
+      const year = bundle.completeYears(events).at(-1)!;
+      const link = bundle.writeLink({ type, year: String(year), lat: '40', lon: '-4', tz: 'Europe/Madrid', place: 'Madrid' });
+      const options = bundle.parseOptions(new URLSearchParams(bundle.readLink(link)), new Date());
+      if ('error' in options) throw new Error(options.error);
+
+      const svg = bundle.drawWallCalendar(options, events);
+      expect(svg).toContain('width="16in" height="12in"');
+      expect(svg).toContain(`<title>${year} `);
+      expect(svg).not.toMatch(/NaN|undefined/);
+    });
+  }
+
+  it('is linked from the configurator for every type', async () => {
+    const html = await (await fetch(`${BASE}/`)).text();
+    for (const type of TYPES) expect(html).toContain(`href="/wall-calendar#type=${type}"`);
+  });
+});
+
+describe('Event browser — /sky', () => {
+  // The categories the page loads first. Launches and aurora load apart from these because
+  // they depend on outside services, so a test of the page must not depend on them either.
+  const CATEGORIES = 'moon-phases,eclipses-lunar,eclipses-solar,meteor-showers,oppositions,elongations,conjunctions,alignments,solstices-equinoxes,milky-way';
+
+  it('answers the link that a QR code holds', async () => {
+    const res = await fetch(`${BASE}/sky?lat=40&lon=-4`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const html = await res.text();
+    expect(html).toContain('Add to my calendar');
+    expect(html).toContain('href="/"');
+  });
+
+  for (const [name, place] of [['northern', 'lat=40&lon=-4'], ['southern', 'lat=-34&lon=151&hemi=south']] as const) {
+    it(`gets upcoming events in order for a ${name} place`, async () => {
+      const res = await fetch(`${BASE}/feed.json?c=${CATEGORIES}&${place}&tz=UTC`);
+      expect(res.status).toBe(200);
+      const { events } = (await res.json()) as { events: CalendarEvent[] };
+      const times = events.map((e) => Date.parse(e.start));
+      expect(times).toEqual([...times].sort((a, b) => a - b));
+      expect(times.filter((t) => t > Date.now()).length).toBeGreaterThan(10);
+      expect(events.some((e) => e.category === 'milky-way')).toBe(true);
+    });
+  }
 });
