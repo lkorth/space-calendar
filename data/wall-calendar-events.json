@@ -65,18 +65,18 @@
   {
     "uid": "eclipse-lunar-2026-03-03@space-calendar",
     "title": "🌕 Total Lunar Eclipse — Blood Moon",
-    "start": "2026-03-03T08:45:00Z",
+    "start": "2026-03-03T08:44:00Z",
     "end": "2026-03-03T14:23:00Z",
     "allDay": false,
     "description": "",
     "contactTimes": [
       {
         "label": "P1 — penumbral begins",
-        "utc": "2026-03-03T08:45:00Z"
+        "utc": "2026-03-03T08:44:00Z"
       },
       {
         "label": "U1 — partial begins",
-        "utc": "2026-03-03T09:51:00Z"
+        "utc": "2026-03-03T09:50:00Z"
       },
       {
         "label": "U2 — totality begins",
@@ -275,26 +275,26 @@
   {
     "uid": "eclipse-lunar-2026-08-28@space-calendar",
     "title": "🌕 Partial Lunar Eclipse",
-    "start": "2026-08-28T01:26:00Z",
+    "start": "2026-08-28T01:24:00Z",
     "end": "2026-08-28T07:02:00Z",
     "allDay": false,
     "description": "",
     "contactTimes": [
       {
         "label": "P1 — penumbral begins",
-        "utc": "2026-08-28T01:26:00Z"
+        "utc": "2026-08-28T01:24:00Z"
       },
       {
         "label": "U1 — partial begins",
-        "utc": "2026-08-28T02:35:00Z"
+        "utc": "2026-08-28T02:34:00Z"
       },
       {
         "label": "Greatest eclipse",
-        "utc": "2026-08-28T04:14:00Z"
+        "utc": "2026-08-28T04:13:00Z"
       },
       {
         "label": "U4 — partial ends",
-        "utc": "2026-08-28T05:53:00Z"
+        "utc": "2026-08-28T05:52:00Z"
       },
       {
         "label": "P4 — penumbral ends",
@@ -531,22 +531,22 @@
   {
     "uid": "eclipse-lunar-2027-02-20@space-calendar",
     "title": "🌕 Penumbral Lunar Eclipse",
-    "start": "2027-02-20T21:14:00Z",
-    "end": "2027-02-21T01:14:00Z",
+    "start": "2027-02-20T21:12:00Z",
+    "end": "2027-02-21T01:13:00Z",
     "allDay": false,
     "description": "",
     "contactTimes": [
       {
         "label": "P1 — penumbral begins",
-        "utc": "2027-02-20T21:14:00Z"
+        "utc": "2027-02-20T21:12:00Z"
       },
       {
         "label": "Greatest eclipse",
-        "utc": "2027-02-20T23:14:00Z"
+        "utc": "2027-02-20T23:13:00Z"
       },
       {
         "label": "P4 — penumbral ends",
-        "utc": "2027-02-21T01:14:00Z"
+        "utc": "2027-02-21T01:13:00Z"
       }
     ],
     "category": "eclipses-lunar"
@@ -689,18 +689,18 @@
   {
     "uid": "eclipse-lunar-2027-07-18@space-calendar",
     "title": "🌕 Penumbral Lunar Eclipse",
-    "start": "2027-07-18T15:59:00Z",
+    "start": "2027-07-18T15:57:00Z",
     "end": "2027-07-18T16:09:00Z",
     "allDay": false,
     "description": "",
     "contactTimes": [
       {
         "label": "P1 — penumbral begins",
-        "utc": "2027-07-18T15:59:00Z"
+        "utc": "2027-07-18T15:57:00Z"
       },
       {
         "label": "Greatest eclipse",
-        "utc": "2027-07-18T16:04:00Z"
+        "utc": "2027-07-18T16:03:00Z"
       },
       {
         "label": "P4 — penumbral ends",
@@ -748,14 +748,14 @@
   {
     "uid": "eclipse-lunar-2027-08-17@space-calendar",
     "title": "🌕 Penumbral Lunar Eclipse",
-    "start": "2027-08-17T05:25:00Z",
+    "start": "2027-08-17T05:24:00Z",
     "end": "2027-08-17T09:03:00Z",
     "allDay": false,
     "description": "",
     "contactTimes": [
       {
         "label": "P1 — penumbral begins",
-        "utc": "2027-08-17T05:25:00Z"
+        "utc": "2027-08-17T05:24:00Z"
       },
       {
         "label": "Greatest eclipse",

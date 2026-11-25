@@ -50,11 +50,10 @@ export const lunarEclipsesGenerator: Generator = {
       const suffix = eclipse.type === 'Total' ? ' — Blood Moon' : '';
       const visible = eclipseVisibility(eclipse.geoLng);
       const datePrefix = `${eclipse.year}-${String(eclipse.month).padStart(2, '0')}-${String(eclipse.day).padStart(2, '0')}`;
-      const greatestISO = `${datePrefix}T${eclipse.greatest}:00Z`;
       const contactTimes: ContactTime[] = [{ label: 'P1 — penumbral begins', utc: eclipse.p1 }];
       if (eclipse.u1) contactTimes.push({ label: 'U1 — partial begins', utc: eclipse.u1 });
       if (eclipse.u2) contactTimes.push({ label: 'U2 — totality begins', utc: eclipse.u2 });
-      contactTimes.push({ label: 'Greatest eclipse', utc: greatestISO });
+      contactTimes.push({ label: 'Greatest eclipse', utc: eclipse.greatest });
       if (eclipse.u3) contactTimes.push({ label: 'U3 — totality ends', utc: eclipse.u3 });
       if (eclipse.u4) contactTimes.push({ label: 'U4 — partial ends', utc: eclipse.u4 });
       contactTimes.push({ label: 'P4 — penumbral ends', utc: eclipse.p4 });

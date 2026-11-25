@@ -53,29 +53,30 @@ describe('fetchLunarEclipses', () => {
     expect(eclipses[1]).toMatchObject({ year: 2026, month: 8, day: 28 });
   });
 
-  it('parses greatest eclipse time as HH:MM', async () => {
+  it('converts greatest eclipse from Terrestrial Time to UT, to the nearest minute', async () => {
     const eclipses = await fetchLunarEclipses(2026);
-    expect(eclipses[0]?.greatest).toBe('11:34');
-    expect(eclipses[1]?.greatest).toBe('04:14');
+    expect(eclipses[0]?.greatest).toBe('2026-03-03T11:34:00Z'); // 11:34:52 less 75 s is 11:33:37
+    expect(eclipses[1]?.greatest).toBe('2026-08-28T04:13:00Z'); // 04:14:04 less 75 s is 04:12:49
   });
 
-  it('computes P1 as greatest minus half the penumbral duration', async () => {
-    const eclipses = await fetchLunarEclipses(2026);
-    const eclipse = eclipses[0]!;
-    // Greatest: 11:34:52, penDur: 338.6 min → half = 169.3 min
-    const greatestMs = new Date('2026-03-03T11:34:00Z').getTime();
-    const p1Ms = new Date(eclipse.p1).getTime();
-    const diffMinutes = (greatestMs - p1Ms) / 60000;
-    expect(diffMinutes).toBeCloseTo(169.3, 0);
+  it('counts every contact from the exact moment, then rounds once', async () => {
+    const [total] = await fetchLunarEclipses(2026);
+    // 11:33:37, give or take half of 338.6, 207.2 and 58.3 minutes
+    expect(total).toMatchObject({
+      p1: '2026-03-03T08:44:00Z',
+      u1: '2026-03-03T09:50:00Z',
+      u2: '2026-03-03T11:04:00Z',
+      u3: '2026-03-03T12:03:00Z',
+      u4: '2026-03-03T13:17:00Z',
+      p4: '2026-03-03T14:23:00Z',
+    });
   });
 
-  it('computes P4 as greatest plus half the penumbral duration', async () => {
-    const eclipses = await fetchLunarEclipses(2026);
-    const eclipse = eclipses[0]!;
-    const greatestMs = new Date('2026-03-03T11:34:00Z').getTime();
-    const p4Ms = new Date(eclipse.p4).getTime();
-    const diffMinutes = (p4Ms - greatestMs) / 60000;
-    expect(diffMinutes).toBeCloseTo(169.3, 0);
+  it('keeps the catalog date, which the event UID is made from, when UT falls on the day before', async () => {
+    const midnight = '09720   2030 Jun 15  00:00:40     78    400  140   P   a-   1.1000  0.8500  0.5000  261.0  100.0    -      10N   45E\n';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, text: () => Promise.resolve(midnight) }));
+    const [eclipse] = await fetchLunarEclipses(2030);
+    expect(eclipse).toMatchObject({ year: 2030, month: 6, day: 15, greatest: '2030-06-14T23:59:00Z' });
   });
 
   it('returns empty array when no eclipses match the year', async () => {

@@ -91,7 +91,7 @@ Positions and catalogs come from public APIs and curated YAML files. The pipelin
 **API sources:**
 - [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api), Sun and Moon positions — moon phases, solstices and equinoxes. `src/pipeline/clients/sun-moon.ts` reads the ecliptic longitudes every six hours and interpolates the moment of each phase and season, to the nearest minute. Each body and year is requested once per run
 - [NASA Five Millennium Solar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCSE/5MKSEcatalog.txt) — solar eclipses. The date and type come from the plain-text catalog, with the time converted from Terrestrial Time to UT
-- [NASA Five Millennium Lunar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCLE/5MKLEcatalog.txt) — lunar eclipses; parsed from the plain-text catalog file, P1/P4 computed from penumbral duration
+- [NASA Five Millennium Lunar Eclipse Catalog](https://eclipse.gsfc.nasa.gov/5MCLE/5MKLEcatalog.txt) — lunar eclipses; parsed from the plain-text catalog file, greatest eclipse converted from Terrestrial Time to UT, P1/P4 computed from penumbral duration
 - [JPL Horizons API](https://ssd.jpl.nasa.gov/api/horizons.api), planet positions — planetary oppositions and Mercury/Venus elongations; daily ephemeris queried per planet, local maxima in elongation angle used to find event dates
 - [JPL CNEOS close approach API](https://ssd-api.jpl.nasa.gov/cad.api) — notable asteroid close approaches
 - [JPL Small-Body Database](https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html) — comet orbital data

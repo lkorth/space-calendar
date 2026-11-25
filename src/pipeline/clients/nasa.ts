@@ -8,8 +8,8 @@
  *   [1] year
  *   [2] month abbreviation
  *   [3] day
- *   [4] time of greatest eclipse (HH:MM:SS UT)
- *   [5] ΔT (s)
+ *   [4] time of greatest eclipse (HH:MM:SS Terrestrial Time)
+ *   [5] ΔT (s): Terrestrial Time minus UT
  *   [6] lunation number
  *   [7] saros series
  *   [8] eclipse type (T/T+/T-/P/N/Nx/...)
@@ -32,10 +32,11 @@ const MONTH_MAP: Record<string, number> = {
 };
 
 export interface LunarEclipse {
+  /** Date as the catalog lists it, in Terrestrial Time. Event UIDs are made from it. */
   year: number;
   month: number;
   day: number;
-  /** UTC time of greatest eclipse HH:MM */
+  /** ISO 8601 UTC — greatest eclipse */
   greatest: string;
   type: 'Total' | 'Partial' | 'Penumbral';
   /** Penumbral duration in minutes — used to compute P1/P4 */
@@ -73,10 +74,9 @@ function parseLng(s: string): number {
   return match[2] === 'W' ? -deg : deg;
 }
 
-function addMinutes(isoDatetime: string, minutes: number): string {
-  const d = new Date(isoDatetime);
-  d.setMinutes(d.getMinutes() + minutes);
-  return d.toISOString().replace(/\.\d+Z$/, 'Z');
+/** ISO 8601 UTC to the nearest minute, e.g. "2026-03-03T11:34:00Z" */
+function isoMinute(ms: number): string {
+  return new Date(Math.round(ms / 60_000) * 60_000).toISOString().replace('.000Z', 'Z');
 }
 
 export async function fetchLunarEclipses(year: number): Promise<LunarEclipse[]> {
@@ -97,23 +97,25 @@ export async function fetchLunarEclipses(year: number): Promise<LunarEclipse[]> 
 
     const month = MONTH_MAP[parts[2] ?? ''];
     const day = parseInt(parts[3] ?? '', 10);
-    const timeStr = parts[4] ?? '00:00:00';
-    const greatest = timeStr.slice(0, 5); // HH:MM
+    const time = /^(\d{2}):(\d{2}):(\d{2})$/.exec(parts[4] ?? '');
+    const deltaT = Number(parts[5]);
     const type = eclipseType(parts[8] ?? 'N');
     const penDur = parseDuration(parts[13] ?? '-');
     const parDur = parseDuration(parts[14] ?? '-');
     const totDur = parseDuration(parts[15] ?? '-');
     const geoLng = parseLng(parts[17] ?? '0E');
 
-    if (!month || isNaN(day)) continue;
+    if (!month || isNaN(day) || !time || isNaN(deltaT)) continue;
 
-    const greatestISO = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${greatest}:00Z`;
-    const p1 = addMinutes(greatestISO, -penDur / 2);
-    const p4 = addMinutes(greatestISO, penDur / 2);
-    const u1 = parDur > 0 ? addMinutes(greatestISO, -parDur / 2) : undefined;
-    const u4 = parDur > 0 ? addMinutes(greatestISO, parDur / 2) : undefined;
-    const u2 = totDur > 0 ? addMinutes(greatestISO, -totDur / 2) : undefined;
-    const u3 = totDur > 0 ? addMinutes(greatestISO, totDur / 2) : undefined;
+    const middle = Date.UTC(year, month - 1, day, Number(time[1]), Number(time[2]), Number(time[3]) - deltaT);
+    const greatest = isoMinute(middle);
+    const contact = (durationMin: number, side: 1 | -1) => isoMinute(middle + (side * durationMin * 60_000) / 2);
+    const p1 = contact(penDur, -1);
+    const p4 = contact(penDur, 1);
+    const u1 = parDur > 0 ? contact(parDur, -1) : undefined;
+    const u4 = parDur > 0 ? contact(parDur, 1) : undefined;
+    const u2 = totDur > 0 ? contact(totDur, -1) : undefined;
+    const u3 = totDur > 0 ? contact(totDur, 1) : undefined;
 
     results.push({ year, month, day, greatest, type, penumbralDuration: penDur, p1, u1, u2, u3, u4, p4, geoLng });
   }

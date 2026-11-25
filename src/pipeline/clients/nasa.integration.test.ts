@@ -25,7 +25,7 @@ describe('NASA lunar eclipse catalog (real)', () => {
     expect(typeof entry.month).toBe('number');
     expect(typeof entry.day).toBe('number');
     expect(typeof entry.greatest).toBe('string');
-    expect(entry.greatest).toMatch(/^\d{2}:\d{2}$/); // HH:MM
+    expect(entry.greatest).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00Z$/);
     expect(['Total', 'Partial', 'Penumbral']).toContain(entry.type);
     expect(typeof entry.penumbralDuration).toBe('number');
     expect(entry.penumbralDuration).toBeGreaterThan(0);
@@ -39,9 +39,7 @@ describe('NASA lunar eclipse catalog (real)', () => {
     for (const eclipse of eclipses) {
       const p1 = new Date(eclipse.p1).getTime();
       const p4 = new Date(eclipse.p4).getTime();
-      const greatest = new Date(
-        `${eclipse.year}-${String(eclipse.month).padStart(2, '0')}-${String(eclipse.day).padStart(2, '0')}T${eclipse.greatest}:00Z`,
-      ).getTime();
+      const greatest = new Date(eclipse.greatest).getTime();
       expect(p1).toBeLessThan(greatest);
       expect(p4).toBeGreaterThan(greatest);
     }
@@ -52,6 +50,18 @@ describe('NASA lunar eclipse catalog (real)', () => {
     expect(eclipses).toHaveLength(2);
     expect(eclipses[0]).toMatchObject({ month: 3, day: 3, type: 'Total' });
     expect(eclipses[1]).toMatchObject({ month: 8, day: 28, type: 'Partial' });
+  });
+});
+
+describe('NASA lunar eclipse times (real)', () => {
+  it('agree with JPL positions to the minute', async () => {
+    // When the Moon is nearest the center of Earth's shadow, from JPL Horizons.
+    const jpl = { '2026-03-03': '11:33:42', '2026-08-28': '04:12:55' };
+    for (const eclipse of await fetchLunarEclipses(2026)) {
+      const date = eclipse.greatest.slice(0, 10) as keyof typeof jpl;
+      const difference = Date.parse(eclipse.greatest) - Date.parse(`${date}T${jpl[date]}Z`);
+      expect(Math.abs(difference), date).toBeLessThanOrEqual(40_000);
+    }
   });
 });
 
