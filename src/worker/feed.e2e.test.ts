@@ -9,10 +9,10 @@ import { jgapInSeason } from './categories/jgap-season.ts';
 
 const BASE = 'https://space-calendar.lukekorth.com';
 
-async function getFeed(params: string, { bypassCache = true } = {}): Promise<{ res: Response; body: string }> {
-  const sep = params.includes('?') ? '&' : '?';
-  const url = bypassCache ? `${BASE}/feed.ics${params}${sep}_bust=${Date.now()}` : `${BASE}/feed.ics${params}`;
-  const res = await fetch(url);
+/** No cache buster: the worker keys its edge cache on the parsed feed parameters, so one
+ *  would be ignored anyway, and each deploy's DEPLOY_ID already starts a fresh cache. */
+async function getFeed(params: string): Promise<{ res: Response; body: string }> {
+  const res = await fetch(`${BASE}/feed.ics${params}`);
   const body = await res.text();
   return { res, body };
 }
@@ -38,7 +38,7 @@ describe('Worker feed — response', () => {
   });
 
   it('sets Cache-Control with max-age of 1 hour', async () => {
-    const { res } = await getFeed('?c=moon-phases', { bypassCache: false });
+    const { res } = await getFeed('?c=moon-phases');
     const cc = res.headers.get('cache-control') ?? '';
     expect(cc).toContain('public');
     const match = cc.match(/max-age=(\d+)/);
@@ -156,6 +156,11 @@ describe('Worker feed — events', () => {
     expect(body).toContain('BEGIN:VEVENT');
   });
 
+  it('returns 400 when every category slug is unknown', async () => {
+    const { res } = await getFeed('?c=not-a-real-slug,also-not-real');
+    expect(res.status).toBe(400);
+  });
+
   it('aurora without lat returns 200 with empty event list', async () => {
     const { res, body } = await getFeed('?c=aurora');
     expect(res.status).toBe(200);
@@ -185,7 +190,7 @@ describe('Worker feed — events', () => {
   describe('milky-way longitude', () => {
     type Event = { uid: string; start: string };
     async function milkyWay(params: string): Promise<{ status: number; events: Event[] }> {
-      const res = await fetch(`${BASE}/feed.json?c=milky-way${params}&_bust=${Date.now()}`);
+      const res = await fetch(`${BASE}/feed.json?c=milky-way${params}`);
       const { events } = (await res.json()) as { events: Event[] };
       return { status: res.status, events };
     }
@@ -231,6 +236,13 @@ describe('Worker feed — events', () => {
     });
   });
 
+  it('treats an out-of-range lat as absent', async () => {
+    // A lat of 91 is northern, so it would fail the hemisphere cross-check if it were kept.
+    const { res, body } = await getFeed('?c=moon-phases&lat=91&hemi=south');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VEVENT');
+  });
+
   it('returns 400 when lat and hemi contradict each other', async () => {
     const { res } = await getFeed('?c=moon-phases&lat=-45&hemi=north');
     expect(res.status).toBe(400);
@@ -242,6 +254,14 @@ describe('Worker feed — events', () => {
     expect(body).toContain('X-WR-CALNAME:Astronomy Club');
     if (jgapInSeason(new Date())) expect(body).toContain('BEGIN:VEVENT');
     for (const event of extractEvents(body)) expect(event).toContain('SUMMARY:🔭');
+  });
+
+  it('astronomy-clubs aaap returns at least one event', async () => {
+    // Its calendar includes past events, so the feed is not empty between programs.
+    const { res, body } = await getFeed('?c=astronomy-clubs&club=aaap');
+    expect(res.status).toBe(200);
+    expect(body).toContain('BEGIN:VEVENT');
+    expect(body).toContain('SUMMARY:🔭');
   });
 
   it('launches returns at least one event', async () => {
@@ -348,7 +368,7 @@ describe('Worker feed — conditional requests', () => {
   const ETAG = /^(?:W\/)?"[0-9a-f]{32}"$/;
 
   it('sets an ETag on the ICS feed', async () => {
-    const { res } = await getFeed(params, { bypassCache: false });
+    const { res } = await getFeed(params);
     expect(res.headers.get('etag')).toMatch(ETAG);
   });
 
@@ -366,7 +386,7 @@ describe('Worker feed — conditional requests', () => {
   });
 
   it('answers a matching If-None-Match with an empty 304', async () => {
-    const { res: first } = await getFeed(params, { bypassCache: false });
+    const { res: first } = await getFeed(params);
     const etag = first.headers.get('etag')!;
 
     const res = await fetch(`${BASE}/feed.ics${params}`, { headers: { 'If-None-Match': etag } });
@@ -376,7 +396,7 @@ describe('Worker feed — conditional requests', () => {
   });
 
   it('accepts a validator that a cache has weakened', async () => {
-    const { res: first } = await getFeed(params, { bypassCache: false });
+    const { res: first } = await getFeed(params);
     const etag = first.headers.get('etag')!;
 
     const res = await fetch(`${BASE}/feed.ics${params}`, {
@@ -531,8 +551,8 @@ describe('Worker feed — subscriber ids', () => {
   }
 
   it('serves an id-tagged subscription exactly like an untagged one', async () => {
-    const tagged = await getFeed(`${params}&sid=${freshSid()}`, { bypassCache: false });
-    const plain = await getFeed(params, { bypassCache: false });
+    const tagged = await getFeed(`${params}&sid=${freshSid()}`);
+    const plain = await getFeed(params);
 
     expect(tagged.res.status).toBe(200);
     expect(tagged.body).toBe(plain.body);
