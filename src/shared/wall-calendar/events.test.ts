@@ -60,6 +60,14 @@ describe('readYearEvents', () => {
     ]);
   });
 
+  it('leaves out showers that do not rise at the place', () => {
+    const all = ['quadrantids', 'perseids', 'geminids', 'ursids'].map((slug) =>
+      event('meteor-showers', `meteor-shower-${slug}-2027@space-calendar`, 'x', '2027-12-14'));
+    const names = (lat: number) => read(all, { lat, lon: 151 }).showers.map((s) => s.name);
+    expect(names(52)).toEqual(['QUADRANTIDS', 'PERSEIDS', 'GEMINIDS', 'URSIDS']);
+    expect(names(-34)).toEqual(['GEMINIDS']);
+  });
+
   it('keeps the oppositions of naked-eye planets only', () => {
     const { oppositions } = read([
       event('oppositions', 'opposition-jupiter-2027-02-11@space-calendar', 'x', '2027-02-11'),

@@ -1,5 +1,5 @@
 import { buildICS } from './ics.ts';
-import { makeStaticCategory, makeSolsticesCategory } from './categories/static.ts';
+import { makeStaticCategory, makeSolsticesCategory, meteorShowersCategory } from './categories/static.ts';
 import { launchesCategory } from './categories/launches.ts';
 import { auroraCategory, auroraAustralisCategory } from './categories/aurora.ts';
 import { milkyWayCategory } from './categories/milky-way.ts';
@@ -14,7 +14,7 @@ import type { Category, CategoryResult, Env, RequestParams } from './types.ts';
 
 const STATIC_CATEGORY_MAP: Map<CategorySlug, Category> = new Map([
   ...STATIC_CATEGORIES
-    .filter((slug) => slug !== 'solstices-equinoxes')
+    .filter((slug) => slug !== 'solstices-equinoxes' && slug !== 'meteor-showers')
     .map((slug) => [slug, makeStaticCategory(slug)] as [CategorySlug, Category]),
 ]);
 
@@ -118,6 +118,7 @@ async function fetchEvents(params: RequestParams, env: Env): Promise<CategoryRes
   const CATEGORIES: Map<CategorySlug, Category> = new Map([
     ...STATIC_CATEGORY_MAP,
     ['solstices-equinoxes', makeSolsticesCategory(params.hemisphere)],
+    ['meteor-showers', meteorShowersCategory],
     ['launches', launchesCategory],
     ['mission-milestones', missionMilestonesCategory],
     ['aurora', auroraCategory],

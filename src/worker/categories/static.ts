@@ -1,4 +1,5 @@
 import type { CalendarEvent, CategorySlug } from '../../shared/models.ts';
+import { showerOf, showerVisible } from '../../shared/shower-visibility.ts';
 import type { Category, CategoryResult, Env, Hemisphere, RequestParams } from '../types.ts';
 
 export function makeStaticCategory(slug: CategorySlug): Category {
@@ -11,6 +12,19 @@ export function makeStaticCategory(slug: CategorySlug): Category {
     },
   };
 }
+
+/** Meteor showers, without those whose radiant does not rise for the subscriber. */
+export const meteorShowersCategory: Category = {
+  slug: 'meteor-showers',
+  async fetch(env: Env, params: RequestParams): Promise<CategoryResult> {
+    const { events, cache } = await makeStaticCategory('meteor-showers').fetch(env, params);
+    const visible = events.filter((event) => {
+      const shower = showerOf(event.uid);
+      return shower === null || showerVisible(shower, params);
+    });
+    return { events: visible, cache };
+  },
+};
 
 // ---------------------------------------------------------------------------
 // Hemisphere-aware solstices/equinoxes

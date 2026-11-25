@@ -15,7 +15,7 @@ Events visible to the naked eye that require no special equipment and broadly re
 | Emoji | Category | Description |
 |-------|----------|-------------|
 | 🌕 / 🌑 | Moon phases | Full moon (🌕) and new moon (🌑) — full moons include their traditional name (Wolf Moon, Harvest Moon, etc.), Blue Moon notation when a month contains two full moons, and Supermoon notation when the Moon is within 362,000 km of Earth |
-| ☄️ | Meteor showers | Peak activity nights for annual showers |
+| ☄️ | Meteor showers | Peak activity nights for annual showers. A shower is left out where its radiant stays under 10° above the horizon, such as the Ursids in the Southern Hemisphere |
 | 🌸 ☀️ 🍂 ❄️ | Solstices & equinoxes | The four seasonal turning points — emojis and labels reflect the correct season for your hemisphere |
 | 🌑 🌒 🌓 | Solar eclipses | 🌑 total, 🌒 annular, 🌓 partial — worldwide |
 | 🔴 🌕 | Lunar eclipses | 🔴 total (blood moon), 🌕 partial and penumbral — worldwide |

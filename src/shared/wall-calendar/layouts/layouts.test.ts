@@ -120,6 +120,15 @@ describe('event labels', () => {
     expect(labels).toHaveLength(18);
   });
 
+  it('name the December solstice alone where the Ursids do not rise', () => {
+    const sydney = { lat: -34, lon: 151 };
+    const local = new LocalClock('Australia/Sydney');
+    const south = eventLabels(readYearEvents(events, 2027, local, sydney), milkyWay(days, local, sydney), days);
+    const titles = south.map((l) => l.title);
+    expect(titles).toContain('DEC. SOLSTICE');
+    expect(titles.join()).not.toMatch(/URSIDS|PERSEIDS|QUADRANTIDS/);
+  });
+
   it('are spread at least the minimum gap apart, across the new year too', () => {
     const at = spreadLabels(labels.map((l) => (l.day - days[0]!) / 86_400_000), 365);
     at.forEach((p, i) => {

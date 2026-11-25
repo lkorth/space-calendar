@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { makeStaticCategory, makeSolsticesCategory, applyHemisphere } from './static.ts';
+import { makeStaticCategory, makeSolsticesCategory, meteorShowersCategory, applyHemisphere } from './static.ts';
 import type { CalendarEvent } from '../../shared/models.ts';
+import type { Env, RequestParams } from '../types.ts';
 
 function makeKV(store: Record<string, string>) {
   return { get: (key: string) => Promise.resolve(store[key] ?? null) };
@@ -167,5 +168,35 @@ describe('makeSolsticesCategory', () => {
     const cat = makeSolsticesCategory(undefined);
     const { events } = await cat.fetch({ CALENDAR_KV: kv as unknown as KVNamespace }, { categories: ['solstices-equinoxes'] });
     expect(events[0]!.title).toContain('Northern Hemisphere');
+  });
+});
+
+describe('meteorShowersCategory', () => {
+  const showers = ['quadrantids', 'perseids', 'geminids', 'ursids'].map((name): CalendarEvent => ({
+    uid: `meteor-shower-${name}-2027@space-calendar`,
+    title: name,
+    start: '2027-08-13',
+    end: '2027-08-14',
+    allDay: true,
+    description: '',
+    category: 'meteor-showers',
+  }));
+  const env = { CALENDAR_KV: makeKV({ 'static:meteor-showers': JSON.stringify(showers) }) } as unknown as Env;
+  const listed = async (params: Partial<RequestParams>) =>
+    (await meteorShowersCategory.fetch(env, { categories: ['meteor-showers'], ...params })).events.map((e) => e.title);
+
+  it('lists them all in the north', async () => {
+    expect(await listed({})).toEqual(['quadrantids', 'perseids', 'geminids', 'ursids']);
+    expect(await listed({ lat: 52, hemisphere: 'northern' })).toHaveLength(4);
+  });
+
+  it('leaves out what the subscriber cannot see', async () => {
+    expect(await listed({ lat: -34, hemisphere: 'southern' })).toEqual(['geminids']);
+    expect(await listed({ hemisphere: 'southern' })).toEqual(['quadrantids', 'perseids', 'geminids']);
+  });
+
+  it('serves an empty list when there is no data', async () => {
+    const empty = { CALENDAR_KV: makeKV({}) } as unknown as Env;
+    expect(await meteorShowersCategory.fetch(empty, { categories: ['meteor-showers'] })).toEqual({ events: [], cache: true });
   });
 });

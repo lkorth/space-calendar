@@ -2,6 +2,7 @@
  *  recognized by UID, which is stable, rather than by title, which is not. The one exception
  *  is a full moon's name, which only the title carries. */
 import type { CalendarEvent, CategorySlug } from '../models.ts';
+import { showerOf, showerVisibleFrom } from '../shower-visibility.ts';
 import { DAY_MS, HOUR_MS } from './clock.ts';
 import type { LocalClock } from './clock.ts';
 import { moonAltitude, moonPhase, sunAltitude, sunMoonSeparation } from './sky.ts';
@@ -78,8 +79,8 @@ export function readYearEvents(
     } else if (event.category === 'solstices-equinoxes') {
       out.seasons.push({ day, month: new Date(event.start).getUTCMonth() + 1 });
     } else if (event.category === 'meteor-showers') {
-      const name = /^meteor-shower-(.+)-\d{4}@/.exec(event.uid)?.[1];
-      if (!name) continue;
+      const name = showerOf(event.uid);
+      if (!name || !showerVisibleFrom(name, place.lat)) continue;
       // The Moon at 2 AM, in the hours when the shower is watched.
       const { fraction } = moonPhase(clock.at(day + DAY_MS, 2));
       out.showers.push({ day, name: name.replace(/-/g, ' ').toUpperCase(), moonPercent: Math.round(fraction * 100) });

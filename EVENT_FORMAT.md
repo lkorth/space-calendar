@@ -61,6 +61,8 @@ Perseid Meteor Shower — Peak Night
 Leonid Meteor Shower — Peak Night
 ```
 
+**Left out:** showers whose radiant never climbs 10° above the subscriber's horizon. Without a latitude, only the showers that nearly nobody in the hemisphere can see.
+
 **Body:**
 - Parent comet or asteroid and why it produces the shower
 - Expected zenithal hourly rate (ZHR) under ideal conditions
