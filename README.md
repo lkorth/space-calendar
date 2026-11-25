@@ -59,7 +59,7 @@ part of the year if your region observes DST.
 
 ## Wall calendars
 
-[Make a wall calendar](https://space-calendar.lukekorth.com/wall-calendar) draws a full year of sky for one place. The result is a 16 × 12 in SVG to print or laser engrave. Your browser draws it, so your location stays on your computer.
+[Make a wall calendar](https://space-calendar.lukekorth.com/wall-calendar) draws a full year of sky for one place. The result is an SVG to print or laser engrave: a 16 × 12 in page, or a 12 in circle. Your browser draws it, so your location stays on your computer.
 
 "Copy link" on the page makes a link that opens the same calendar. The configurator links to a finished calendar when it knows your location. To write a link yourself, put the options after the `#`:
 
@@ -74,7 +74,9 @@ https://space-calendar.lukekorth.com/wall-calendar#type=year-wheel-night&lat=51.
 | `lon` | Yes | Longitude in degrees, from -180 to 180. West is negative. It is rounded to 0.1°. |
 | `tz` | Yes | IANA timezone of the place, such as `Europe/London`. A link without it uses the timezone of the browser. |
 | `place` | No | The location name to print, up to 24 characters. The default is the latitude, such as `51.5° N`. |
-| `qr` | No | `true` adds a QR code. The default is `false`. Year wheels only. |
+| `qr` | No | `true` adds a QR code. The default is `false`. Year wheels only, and not with `shape=circle`. |
+| `shape` | No | `circle` draws only the wheel, as a 12 in disc without the title, key or QR code. The default is `rectangle`. Year wheels only. |
+| `text` | No | `outward` keeps all wheel text at the same rotation around the wheel, for a calendar that can be turned. The default is `upright`, which flips text that is upside down. Year wheels only. |
 | `year` | No | This year or the next. The default is this year, or the next year from October. A link with a year that is not available opens the latest year and says so. |
 
 A link includes the location. Browsers do not send the part after the `#` to the server.

@@ -16,7 +16,7 @@ describe('parseOptions', () => {
   it('reads every option', () => {
     expect(parse(`type=year-wheel-night&${MADRID}&mode=laser&qr=true`)).toEqual({
       type: 'year-wheel-night', year: 2027, lat: 40, lon: -4, tz: 'Europe/Madrid', place: 'MADRID', mode: 'laser',
-      qr: true,
+      qr: true, text: 'upright', shape: 'rectangle',
     });
   });
 
@@ -55,8 +55,24 @@ describe('parseOptions', () => {
   });
 });
 
+describe('wheel options', () => {
+  it('are read', () => {
+    expect(parse(`type=year-wheel-day&${MADRID}&shape=circle&text=outward`)).toMatchObject({ shape: 'circle', text: 'outward' });
+  });
+
+  it('are refused where they cannot apply', () => {
+    for (const query of ['shape=circle', 'text=outward']) expect(parse(`type=moon-calendar&${MADRID}&${query}`), query).toHaveProperty('error');
+    expect(parse(`type=year-wheel-day&${MADRID}&shape=circle&qr=true`)).toHaveProperty('error');
+    for (const query of ['shape=oval', 'text=sideways']) expect(parse(`type=year-wheel-day&${MADRID}&${query}`), query).toHaveProperty('error');
+  });
+
+  it('name the file of a circle', () => {
+    expect(fileName(parse(`type=year-wheel-night&${MADRID}&shape=circle`) as Options)).toBe('year-wheel-night-circle-2027-print.svg');
+  });
+});
+
 describe('links', () => {
-  const options = { type: 'year-wheel-day', year: '2027', lat: '-33.9', lon: '151.2', tz: 'Australia/Sydney', place: 'São & Co #1', qr: 'true' };
+  const options = { type: 'year-wheel-day', year: '2027', lat: '-33.9', lon: '151.2', tz: 'Australia/Sydney', place: 'São & Co #1', qr: 'true', text: 'outward', shape: 'rectangle' };
 
   it('carry every option there and back', () => {
     expect(readLink(writeLink(options))).toEqual(options);

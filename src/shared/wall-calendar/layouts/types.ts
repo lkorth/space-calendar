@@ -1,4 +1,6 @@
 import type { CalendarEvent } from '../../models.ts';
+import type { PageShape } from '../svg.ts';
+import type { TextTurn } from '../text.ts';
 
 export interface LayoutInput {
   year: number;
@@ -14,6 +16,9 @@ export interface LayoutInput {
 
 export interface WheelInput extends LayoutInput {
   ring: 'day' | 'night';
+  text?: TextTurn;
+  /** A circle has no corners, so it has no title, key or QR code. */
+  shape?: PageShape;
   /** Link the QR code opens. No code is drawn without it. */
   qrUrl?: string;
 }

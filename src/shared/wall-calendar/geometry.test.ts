@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  annulus, arcBand, capsule, circle, dashedRing, dotsAlong, moonLit, num, polygon, radialBar, strokePolyline, thinQuad,
+  annulus, arcBand, capsule, circle, dashedRing, dotsAlong, moonLit, num, polygon, radialBar, shiftPath, strokePolyline, thinQuad,
 } from './geometry.ts';
 import { bounds, contours, pathArea, signedArea } from './path-testing.ts';
 
@@ -119,5 +119,21 @@ describe('moonLit', () => {
 describe('polygon', () => {
   it('closes an absolute path', () => {
     expect(polygon([[0, 0], [1, 0], [1, 1]])).toBe('M0 0L1 0L1 1Z');
+  });
+});
+
+describe('shiftPath', () => {
+  it('moves every point sideways and leaves radii, flags and heights alone', () => {
+    expect(shiftPath('M10 20L30 40Q1 2 3 4A5 5 0 1 0 60 70Z', -10)).toBe('M0 20L20 40Q-9 2 -7 4A5 5 0 1 0 50 70Z');
+  });
+
+  it('moves real shapes without changing them', () => {
+    for (const d of [circle(50, 60, 9), annulus(0, 0, 50, 2), arcBand(0, 0, 10, 20, 0.3, 0.9), capsule([0, 0], [5, 9], 2)]) {
+      const [before, after] = [bounds(d), bounds(shiftPath(d, 100))];
+      expect(after.x0).toBeCloseTo(before.x0 + 100, 2);
+      expect(after.x1).toBeCloseTo(before.x1 + 100, 2);
+      expect(after.y0).toBeCloseTo(before.y0, 2);
+      expect(pathArea(shiftPath(d, 100))).toBeCloseTo(pathArea(d), 0);
+    }
   });
 });

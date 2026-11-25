@@ -41,6 +41,7 @@
     .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
     .note { margin-top: 0.8rem; min-height: 1.5em; overflow-wrap: anywhere; font-size: 0.88rem; color: var(--text-muted); }
     #drawing svg { display: block; width: 100%; height: auto; margin-top: 1rem; border: 1px solid var(--border-strong); border-radius: 8px; }
+    #drawing.circle svg { max-width: 720px; margin-inline: auto; border: 0; border-radius: 0; }
     .tips { margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted); }
     .tips p { margin-bottom: 0.5rem; }
     @page { size: landscape; margin: 0; }
@@ -76,7 +77,11 @@
         <label>Longitude <input name="lon" type="number" min="-180" max="180" step="any" placeholder="-180 to 180" /></label>
         <label>Time zone <input name="tz" autocomplete="off" /></label>
       </div>
-      <label class="check" id="qr-row"><input type="checkbox" name="qr" /> Add a QR code that opens the events online</label>
+      <div id="wheel-options">
+        <label class="check"><input type="checkbox" name="circle" /> Circle only, without the title and key</label>
+        <label class="check"><input type="checkbox" name="outward" /> Keep all text at the same rotation around the wheel</label>
+        <label class="check" id="qr-row"><input type="checkbox" name="qr" /> Add a QR code that opens the events online</label>
+      </div>
       <div class="actions"><button type="button" id="btn-locate">Use my location</button></div>
      </details>
       <div class="actions">
@@ -91,7 +96,7 @@
     <div id="drawing"></div>
 
     <div class="tips">
-      <p>The page is 16 × 12 in. It stays sharp at any size that keeps the 4:3 shape.</p>
+      <p>The page is 16 × 12 in, and the circle is 12 in across. Both stay sharp at any size that keeps their shape.</p>
       <p>The engraving file has a red outline of the page. Set it to Ignore before you engrave.</p>
       <p>"Copy link" makes a link that opens this calendar, so it includes the location.</p>
       <p>Your browser draws the calendar. Your location is not sent to this site.</p>
@@ -112,7 +117,13 @@
     let years = [];
 
     function link() {
-      const values = { qr: fields.qr.checked && fields.type.value !== 'moon-calendar' ? 'true' : '' };
+      const wheel = fields.type.value !== 'moon-calendar';
+      const circle = wheel && fields.circle.checked;
+      const values = {
+        qr: wheel && !circle && fields.qr.checked ? 'true' : '',
+        text: wheel && fields.outward.checked ? 'outward' : '',
+        shape: circle ? 'circle' : '',
+      };
       for (const name of ['type', 'year', 'lat', 'lon', 'tz', 'place']) values[name] = fields[name].value;
       return writeLink(values);
     }
@@ -131,6 +142,8 @@
       for (const name of ['lat', 'lon', 'place']) fields[name].value = given[name] ?? '';
       fields.tz.value = given.tz ?? (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
       fields.qr.checked = given.qr === 'true';
+      fields.circle.checked = given.shape === 'circle';
+      fields.outward.checked = given.text === 'outward';
 
       const wanted = Number(given.year ?? defaultYear(new Date()));
       const year = years.includes(wanted) ? wanted : years.at(-1);
@@ -149,8 +162,9 @@
     }
 
     function draw() {
-      // The moon calendar has no room for a QR code.
-      document.getElementById('qr-row').style.display = fields.type.value === 'moon-calendar' ? 'none' : '';
+      // The moon calendar takes none of the wheel options, and a circle has no room for a QR code.
+      document.getElementById('wheel-options').style.display = fields.type.value === 'moon-calendar' ? 'none' : '';
+      document.getElementById('qr-row').style.display = fields.circle.checked ? 'none' : '';
       const parsed = options('print');
       const ready = events !== null && !('error' in parsed);
       buttons.forEach((button) => { button.disabled = !ready; });
@@ -168,6 +182,7 @@
       history.replaceState(null, '', link());
       const label = fields.type.selectedOptions[0].textContent;
       document.title = `${parsed.year} ${label}${fields.place.value.trim() ? `, ${fields.place.value.trim()}` : ''} — Space Calendar`;
+      drawing.classList.toggle('circle', parsed.shape === 'circle');
       const svg = new DOMParser().parseFromString(drawWallCalendar(parsed, events), 'image/svg+xml').documentElement;
       svg.removeAttribute('width');
       svg.removeAttribute('height');

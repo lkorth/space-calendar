@@ -194,6 +194,65 @@ describe('year wheel', () => {
   });
 });
 
+describe('round calendar', () => {
+  const shapes = yearWheel({ ...madrid, ring: 'night', shape: 'circle', qrUrl });
+
+  it('has no title, key or QR code', () => {
+    expect(shapes.some((x) => ['title', 'legend', 'qr'].includes(x.layer))).toBe(false);
+    expect(shapes.some((x) => x.layer === 'months')).toBe(true);
+  });
+
+  it('is a 12 in disc with the wheel in the middle', () => {
+    const svg = renderSvg('x', shapes, 'laser', 'circle');
+    expect(svg).toContain('width="12in" height="12in" viewBox="0 0 1152 1152"');
+    expect(svg).toContain('<circle cx="576" cy="576" r="575.5" fill="none" stroke="#ff0000"');
+    const [artwork] = svg.split('<g id="page-outline-reference-only">');
+    expect(artwork).not.toMatch(/stroke|transform|<(text|use|rect|circle)\b/);
+    for (const [, d] of artwork!.matchAll(/ d="([^"]+)"/g)) {
+      for (const [x, y] of contours(d!).flat()) expect(Math.hypot(x - 576, y - 576)).toBeLessThan(WHEEL_RADIUS + 0.1);
+    }
+  });
+
+  it('prints on a dark disc, not a dark square', () => {
+    const svg = renderSvg('x', shapes, 'print', 'circle');
+    expect(svg).toContain('<circle cx="576" cy="576" r="576" fill="#111214"/>');
+    expect(svg).not.toContain('<rect');
+  });
+});
+
+describe('outward text', () => {
+  const wheel = (text: 'upright' | 'outward') => yearWheel({ ...madrid, ring: 'day', text });
+  const layer = (all: Shape[], name: string) => all.filter((x) => x.layer === name).map((x) => x.d);
+
+  it('keeps month names nearest the rim all the way around', () => {
+    // Spokes, names and sun lines alternate; a name is drawn at the larger radius.
+    const radius = (d: string) => {
+      const b = bounds(d);
+      return Math.hypot((b.x0 + b.x1) / 2 - WHEEL_CENTER[0], (b.y0 + b.y1) / 2 - WHEEL_CENTER[1]);
+    };
+    const months = layer(wheel('outward'), 'months');
+    for (let m = 0; m < 12; m++) expect(radius(months[m * 3 + 1]!), `month ${m}`).toBeGreaterThan(radius(months[m * 3 + 2]!));
+  });
+
+  it('changes only text', () => {
+    const [upright, outward] = [wheel('upright'), wheel('outward')];
+    for (const name of ['borders', 'ticks', 'moon-wave', 'milky-way', 'leaders', 'sun', 'title', 'legend']) {
+      expect(layer(outward, name), name).toEqual(layer(upright, name));
+    }
+    expect(layer(outward, 'labels')).not.toEqual(layer(upright, 'labels'));
+  });
+
+  it('keeps labels and full moon names where they fit', () => {
+    for (const { d } of wheel('outward').filter((x) => x.layer === 'labels')) {
+      for (const [x, y] of contours(d).flat()) {
+        const r = Math.hypot(x - WHEEL_CENTER[0], y - WHEEL_CENTER[1]) / 1.04;
+        expect(r).toBeGreaterThan(72);
+        expect(r).toBeLessThan(212);
+      }
+    }
+  });
+});
+
 describe('other places', () => {
   const places = [
     { lat: -34, lon: 151, tz: 'Australia/Sydney', place: 'SYDNEY' },

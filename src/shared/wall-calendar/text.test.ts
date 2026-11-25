@@ -71,3 +71,12 @@ describe('upright orientation', () => {
     expect(spokePlacement(Math.PI)).toEqual({ rotate: 2 * Math.PI, anchor: 'start' });
   });
 });
+
+describe('outward orientation', () => {
+  it('turns evenly with the angle, without flipping', () => {
+    for (let deg = 0; deg < 360; deg += 15) {
+      expect(tangentRotation(deg * DEG, 'outward')).toBeCloseTo((deg + 90) * DEG);
+      expect(spokePlacement(deg * DEG, 'outward')).toEqual({ rotate: deg * DEG + Math.PI, anchor: 'start' });
+    }
+  });
+});

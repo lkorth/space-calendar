@@ -4,8 +4,9 @@ import type { CalendarEvent } from '../models.ts';
 import { moonCalendar } from './layouts/moon-calendar.ts';
 import { yearWheel } from './layouts/year-wheel.ts';
 import { renderSvg } from './svg.ts';
-import type { Mode } from './svg.ts';
+import type { Mode, PageShape } from './svg.ts';
 import { hasGlyphs } from './text.ts';
+import type { TextTurn } from './text.ts';
 
 export const TYPES = ['moon-calendar', 'year-wheel-day', 'year-wheel-night'] as const;
 export type WallCalendarType = (typeof TYPES)[number];
@@ -20,6 +21,8 @@ export interface Options {
   mode: Mode;
   /** Draw a QR code that opens the event browser for this place */
   qr: boolean;
+  text: TextTurn;
+  shape: PageShape;
 }
 
 export const MAX_PLACE_LENGTH = 24;
@@ -44,7 +47,16 @@ export function parseOptions(q: URLSearchParams, now: Date): Options | { error: 
   const rawQr = q.get('qr') ?? 'false';
   if (rawQr !== 'true' && rawQr !== 'false') return { error: 'qr must be true or false' };
   const qr = rawQr === 'true';
-  if (qr && type === 'moon-calendar') return { error: 'qr is available on the year wheels only' };
+  const text = q.get('text') ?? 'upright';
+  if (text !== 'upright' && text !== 'outward') return { error: 'text must be upright or outward' };
+  const shape = q.get('shape') ?? 'rectangle';
+  if (shape !== 'rectangle' && shape !== 'circle') return { error: 'shape must be rectangle or circle' };
+  if (type === 'moon-calendar') {
+    if (qr) return { error: 'qr is available on the year wheels only' };
+    if (text === 'outward') return { error: 'text is available on the year wheels only' };
+    if (shape === 'circle') return { error: 'shape is available on the year wheels only' };
+  }
+  if (qr && shape === 'circle') return { error: 'a circle has no room for a qr code' };
 
   const rawYear = q.get('year');
   const year = rawYear === null ? defaultYear(now) : Number(rawYear);
@@ -54,7 +66,7 @@ export function parseOptions(q: URLSearchParams, now: Date): Options | { error: 
   if ([...place].length > MAX_PLACE_LENGTH) return { error: `place must be ${MAX_PLACE_LENGTH} characters or fewer` };
   if (!hasGlyphs(place, 400)) return { error: 'place has a character the font does not have' };
 
-  return { type, year, lat, lon, tz, place, mode, qr };
+  return { type, year, lat, lon, tz, place, mode, qr, text, shape };
 }
 
 /** A tenth of a degree moves sunrise by under half a minute. */
@@ -101,17 +113,18 @@ export function completeYears(events: readonly CalendarEvent[]): number[] {
 }
 
 export function drawWallCalendar(options: Options, events: readonly CalendarEvent[]): string {
-  const { type, year, lat, lon, tz, place, mode, qr } = options;
+  const { type, year, lat, lon, tz, place, mode, qr, text, shape } = options;
   const input = { year, lat, lon, tz, place, events };
   if (type === 'moon-calendar') return renderSvg(`${year} Lunar Calendar — ${place}`, moonCalendar(input), mode);
   const ring = type === 'year-wheel-night' ? 'night' : 'day';
   // Whole degrees, so the link does not say exactly where the calendar hangs.
   const qrUrl = `${BROWSE_URL}?lat=${Math.round(lat)}&lon=${Math.round(lon)}`;
-  return renderSvg(`${year} Year Wheel — ${place}`, yearWheel({ ...input, ring, ...(qr && { qrUrl }) }), mode);
+  const shapes = yearWheel({ ...input, ring, text, shape, ...(qr && { qrUrl }) });
+  return renderSvg(`${year} Year Wheel — ${place}`, shapes, mode, shape);
 }
 
 /** Options a link carries, as typed. The mode is left out: it belongs to a download. */
-const LINK_NAMES = ['type', 'year', 'lat', 'lon', 'tz', 'place', 'qr'] as const;
+const LINK_NAMES = ['type', 'year', 'lat', 'lon', 'tz', 'place', 'qr', 'text', 'shape'] as const;
 export type LinkOptions = Partial<Record<(typeof LINK_NAMES)[number], string>>;
 
 /** The part of a link after the #. Browsers do not send it, so the location stays private. */
@@ -134,6 +147,6 @@ export function readLink(hash: string): LinkOptions {
   return out;
 }
 
-export function fileName({ type, year, mode }: Options): string {
-  return `${type}-${year}-${mode}.svg`;
+export function fileName({ type, year, mode, shape }: Options): string {
+  return `${type}${shape === 'circle' ? '-circle' : ''}-${year}-${mode}.svg`;
 }

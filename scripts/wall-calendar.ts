@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { drawWallCalendar, parseOptions } from '../src/shared/wall-calendar/options.ts';
 
-const names = ['type', 'year', 'lat', 'lon', 'tz', 'place', 'mode', 'qr', 'events'] as const;
+const names = ['type', 'year', 'lat', 'lon', 'tz', 'place', 'mode', 'qr', 'text', 'shape', 'events'] as const;
 const { values } = parseArgs({
   // A negative coordinate would read as another option unless it is joined to its name.
   args: process.argv.slice(2).reduce<string[]>((args, arg) => {

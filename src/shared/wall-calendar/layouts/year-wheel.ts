@@ -10,7 +10,7 @@ import { qrMatrix, qrPath, qrSize } from '../qr.ts';
 import { PAGE_HEIGHT, PAGE_WIDTH } from '../svg.ts';
 import type { Shape } from '../svg.ts';
 import { fitStyle, spokePlacement, tangentRotation, textPath, textWidth, wrapText } from '../text.ts';
-import type { TextStyle, Weight } from '../text.ts';
+import type { TextStyle, TextTurn, Weight } from '../text.ts';
 import { daysOfYear, milkyWay, moonsAtNine, nights, sunDays } from '../year-sky.ts';
 import type { MilkyWay, SunDay } from '../year-sky.ts';
 import type { WheelInput } from './types.ts';
@@ -44,12 +44,12 @@ const text = (size: number, weight: Weight, spacing: number): TextStyle => ({
 });
 
 /** Text running along the circle of radius `r`, centered on angle `a`. */
-function tangent(label: string, r: number, a: number, style: TextStyle): string {
-  return textPath(label, at(r, a), style, { anchor: 'middle', align: 'middle', rotate: tangentRotation(a) });
+function tangent(label: string, r: number, a: number, style: TextStyle, turn: TextTurn): string {
+  return textPath(label, at(r, a), style, { anchor: 'middle', align: 'middle', rotate: tangentRotation(a, turn) });
 }
 
 export function yearWheel(input: WheelInput): Shape[] {
-  const { year, lat, lon, tz, events } = input;
+  const { year, lat, lon, tz, events, text: turn = 'upright' } = input;
   const clock = new LocalClock(tz);
   const days = daysOfYear(year);
   const n = days.length;
@@ -72,9 +72,10 @@ export function yearWheel(input: WheelInput): Shape[] {
     const last = dayIndex(Date.UTC(year, m + 1, 1));
     add('months', thinQuad(at(440, boundary(first)), at(OUTER_R, boundary(first)), s(1.2)));
     const middle = theta((first + last - 1) / 2);
-    const bottom = Math.sin(middle) > 0;
-    add('months', tangent(LONG_MONTHS[m]!, bottom ? 462 : 481, middle, text(14, 600, 4)));
-    add('months', tangent(sunLine(suns[first + 14]!, clock), bottom ? 483 : 460, middle, text(8.5, 400, 1)));
+    // The name stays above its sun line as the text reads.
+    const bottom = turn === 'upright' && Math.sin(middle) > 0;
+    add('months', tangent(LONG_MONTHS[m]!, bottom ? 462 : 481, middle, text(14, 600, 4), turn));
+    add('months', tangent(sunLine(suns[first + 14]!, clock), bottom ? 483 : 460, middle, text(8.5, 400, 1), turn));
   }
 
   // Days
@@ -100,15 +101,15 @@ export function yearWheel(input: WheelInput): Shape[] {
     const room = (358 * 2 * Math.PI * (next - i)) / n - 13 - 9;
     const nameStyle = fitStyle(name, text(8.5, 600, 0.6), s(room));
     const nameWidth = textWidth(name, nameStyle) / SCALE;
-    add('full-moons', tangent(name, 358, theta(i) + (nameWidth / 2 + 13) / 358, nameStyle));
+    add('full-moons', tangent(name, 358, theta(i) + (nameWidth / 2 + 13) / 358, nameStyle, turn));
     const number = String(new Date(day).getUTCDate());
     const numberStyle = text(8.5, 400, 0.4);
     const numberWidth = textWidth(number, numberStyle) / SCALE;
-    add('full-moons', tangent(number, 358, theta(i) - (numberWidth / 2 + 12) / 358, numberStyle));
+    add('full-moons', tangent(number, 358, theta(i) - (numberWidth / 2 + 12) / 358, numberStyle, turn));
   });
 
   // Day or night
-  if (input.ring === 'day') shapes.push(...dayRing(days, suns, found, theta, dayIndex, lat));
+  if (input.ring === 'day') shapes.push(...dayRing(days, suns, found, theta, dayIndex, lat, turn));
   else shapes.push(...nightRing(days, suns, clock, { lat, lon }, theta));
 
   // Milky Way, hanging from the inner circle
@@ -127,7 +128,7 @@ export function yearWheel(input: WheelInput): Shape[] {
     const trueAngle = theta(dayIndex(label.day));
     const labelAngle = theta(spots[k]!);
     add('leaders', strokePolyline([at(250, trueAngle), at(218, trueAngle), at(212, labelAngle)], s(1.4)));
-    const { rotate, anchor } = spokePlacement(labelAngle);
+    const { rotate, anchor } = spokePlacement(labelAngle, turn);
     const room = s(LABEL_OUTER_R - LABEL_INNER_R);
     const lines: [string, TextStyle, number][] = [
       [label.title, text(10.5, 600, 1.2), -5.5],
@@ -147,7 +148,7 @@ export function yearWheel(input: WheelInput): Shape[] {
     add('sun', capsule(at(23, a), at(k % 2 === 0 ? 33 : 29, a), s(1.6)));
   }
 
-  shapes.push(...corners(input));
+  if (input.shape !== 'circle') shapes.push(...corners(input));
   return shapes;
 }
 
@@ -166,6 +167,7 @@ function dayRing(
   theta: Theta,
   dayIndex: (day: number) => number,
   lat: number,
+  turn: TextTurn,
 ): Shape[] {
   const lengths = days.map((_, i) => suns[i]!.length);
   const min = Math.min(...lengths);
@@ -187,8 +189,8 @@ function dayRing(
     const i = dayIndex(day);
     const label = `${title} · ${formatLength(hours)}`;
     // On the band only if it is thick enough there to hold the text; otherwise above it.
-    if (title === 'LONGEST DAY' && outer[i]! >= 335) cutout = tangent(label, 318, theta(i), style);
-    else shapes.push({ layer: 'day-labels', d: tangent(label, outer[i]! + 14, theta(i), style) });
+    if (title === 'LONGEST DAY' && outer[i]! >= 335) cutout = tangent(label, 318, theta(i), style, turn);
+    else shapes.push({ layer: 'day-labels', d: tangent(label, outer[i]! + 14, theta(i), style, turn) });
   };
   place('LONGEST DAY', longestDay, max, text(11, 600, 1.6));
   place('SHORTEST DAY', shortestDay, min, text(10, 500, 1.6));

@@ -150,6 +150,17 @@ export function dotsAlong(points: readonly Point[], diameter: number, pitch: num
   return d;
 }
 
+/** The same path moved sideways. Only absolute M, L, Q, A and Z appear in these paths. */
+export function shiftPath(d: string, dx: number): string {
+  return d.replace(/([MLQAZ])([^MLQAZ]*)/g, (_, command: string, args: string) => {
+    const values = args.match(/-?[\d.]+/g) ?? [];
+    // An arc carries two radii and three flags before its end point.
+    const size = command === 'A' ? 7 : 2;
+    const x = command === 'A' ? 5 : 0;
+    return command + values.map((v, i) => (i % size === x ? num(Number(v) + dx) : v)).join(' ');
+  });
+}
+
 /** The lit part of a Moon of radius `r`, or '' when too little is lit to engrave.
  *
  *  Lit on the left it winds counter-clockwise, so it needs a path to itself.

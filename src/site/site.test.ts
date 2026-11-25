@@ -468,6 +468,11 @@ describe('configurator location', () => {
       expect(page.match(/<option value=/g)).toHaveLength(TYPES.length);
     });
 
+    it('offers the wheel options in links', () => {
+      for (const name of ['circle', 'outward', 'qr']) expect(page).toContain(`type="checkbox" name="${name}"`);
+      expect(page).toContain("shape: circle ? 'circle' : ''");
+    });
+
     it('imports only what the bundle exports', () => {
       const names = (src: string, pattern: RegExp) => pattern.exec(src)![1]!.split(',').map((s) => s.trim());
       const imported = names(page, /import \{([^}]+)\} from '\.\/wall-calendar\.js'/);

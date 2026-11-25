@@ -118,13 +118,18 @@ export function textPath(text: string, [x, y]: Point, style: TextStyle, placemen
   return d;
 }
 
-/** Rotation for text running along a circle at angle `a`, flipped in the bottom half so it
- *  stays upright. */
-export function tangentRotation(a: number): number {
-  return Math.sin(a) > 1e-9 ? a - Math.PI / 2 : a + Math.PI / 2;
+/** How wheel text is turned: flipped where it would be upside down, or at the same rotation
+ *  all the way around, so that a round calendar reads alike however it is turned. */
+export type TextTurn = 'upright' | 'outward';
+
+/** Rotation for text running along a circle at angle `a`. Upright text flips in the bottom
+ *  half; outward text always has its top toward the rim. */
+export function tangentRotation(a: number, turn: TextTurn = 'upright'): number {
+  return turn === 'upright' && Math.sin(a) > 1e-9 ? a - Math.PI / 2 : a + Math.PI / 2;
 }
 
-/** Placement for text running along a spoke, inward from its outer end. */
-export function spokePlacement(a: number): { rotate: number; anchor: 'start' | 'end' } {
-  return Math.cos(a) < -1e-9 ? { rotate: a + Math.PI, anchor: 'start' } : { rotate: a, anchor: 'end' };
+/** Placement for text on a spoke whose outer end is fixed. Upright text flips in the right
+ *  half; outward text always reads from the rim toward the center. */
+export function spokePlacement(a: number, turn: TextTurn = 'upright'): { rotate: number; anchor: 'start' | 'end' } {
+  return turn === 'outward' || Math.cos(a) < -1e-9 ? { rotate: a + Math.PI, anchor: 'start' } : { rotate: a, anchor: 'end' };
 }
